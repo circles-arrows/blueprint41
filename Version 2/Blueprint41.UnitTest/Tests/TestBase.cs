@@ -11,17 +11,25 @@ namespace Blueprint41.UnitTest.Tests
     [TestFixture]
     public abstract class TestBase
     {
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            MockModel model = MockModel.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE);
+            model.Execute(true);
+        }
+
         [SetUp]
         public void Setup()
         {
             TearDown();
-            //MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
-            //PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
-            throw new NotImplementedException();
 
-            TearDown();
+            // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!
+            MockModel model = new MockModel()
+            {
+                LogToConsole = true
+            };
+            model.Execute(true);
         }
-
 
         [TearDown]
         public void TearDown()

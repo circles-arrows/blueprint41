@@ -15,7 +15,6 @@ namespace Blueprint41
         public DriverSession? DriverSession { get; set; }
         public IQueryRunner? StatementRunner => DriverSession;
 
-
         static internal Session Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Session session = new Session(provider, readwrite, optimize, logger);
@@ -36,15 +35,8 @@ namespace Blueprint41
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningSession.Logger?.Log(message);
 
-        private void InitializeDriverAsync()
+        protected virtual void InitializeDriverAsync()
         {
-
-/* Unmerged change from project 'Blueprint41.Schema (net6.0)'
-Before:
-            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
-After:
-            Blueprint41.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? Blueprint41.AccessMode.Write : Blueprint41.AccessMode.Read;
-*/
             AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
 
             DriverSession = PersistenceProvider.Driver.Session(c =>
@@ -55,8 +47,9 @@ After:
                 c.WithFetchSize(ConfigBuilder.Infinite);
                 c.WithDefaultAccessMode(accessMode);
 
-                //if (Consistency is not null)
-                //    c.WithBookmarks(Consistency);
+                Bookmark consistency = GetConsistency();
+                if (consistency is not null)
+                    c.WithBookmarks(new Bookmarks(consistency));
             });
         }
 

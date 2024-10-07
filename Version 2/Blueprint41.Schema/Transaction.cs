@@ -49,27 +49,20 @@ namespace Blueprint41
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningTransaction.Logger?.Log(message);
 
-        protected void InitializeDriver()
+        protected virtual void InitializeDriver()
         {
             DriverSession = InitializeDriverSession();
             DriverTransaction = DriverSession.BeginTransaction();
         }
 
-        protected async Task InitializeDriverAsync()
+        protected virtual async Task InitializeDriverAsync()
         {
             DriverSession = InitializeDriverSession();
-            DriverTransaction = await DriverSession.BeginTransactionAsync();
+            DriverTransaction = await DriverSession.BeginTransactionAsync().ConfigureAwait(false);
         }
 
-        private DriverSession InitializeDriverSession()
+        protected virtual DriverSession InitializeDriverSession()
         {
-
-/* Unmerged change from project 'Blueprint41.Schema (net6.0)'
-Before:
-            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
-After:
-            Blueprint41.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? Blueprint41.AccessMode.Write : Blueprint41.AccessMode.Read;
-*/
             AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
 
             return PersistenceProvider.Driver.Session(c =>
