@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
+    <LangVersion>12</LangVersion>
     <RootNamespace>Blueprint41.UnitTest</RootNamespace>
     <DefineConstants>MEMGRAPH;$(COMPUTERNAME.Replace('-','_'))</DefineConstants>
   </PropertyGroup>
