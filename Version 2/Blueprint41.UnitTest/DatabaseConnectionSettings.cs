@@ -14,9 +14,15 @@ namespace Blueprint41.UnitTest
         public const string URI = "bolt://192.168.40.10:7687";
 #elif MEMGRAPH
         public const string URI = "bolt://localhost:7690";
-#endif    	
+#endif
 
         public const string USER_NAME = "neo4j";
         public const string PASSWORD = "neoneoneo";
+
+#if NEO4J
+        public const GDMS DatastoreTechnology = GDMS.Neo4j;
+#elif MEMGRAPH
+        public const GDMS DatastoreTechnology = GDMS.Memgraph;
+#endif
     }
 }

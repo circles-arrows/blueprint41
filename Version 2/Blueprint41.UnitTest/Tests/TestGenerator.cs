@@ -16,11 +16,7 @@ namespace Blueprint41.UnitTest.Tests
     {
         private class MockGeneratorModel : DatastoreModel<MockGeneratorModel>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -46,11 +42,7 @@ namespace Blueprint41.UnitTest.Tests
         }
         private class MockModelWithDeprecate : DatastoreModel<MockModelWithDeprecate>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers() { }
 

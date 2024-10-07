@@ -25,11 +25,7 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyRename
         private class DataModelPropertyRename : DatastoreModel<DataModelPropertyRename>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -95,11 +91,7 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyMove
         private class DataModelPropertyMove : DatastoreModel<DataModelPropertyMove>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -144,11 +136,7 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelPropertyMoveToBase : DatastoreModel<DataModelPropertyMove>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -195,11 +183,7 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelPropertyMoveFromBase : DatastoreModel<DataModelPropertyMove>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -277,11 +261,7 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyMerge
         private class DataModelPropertyMerge : DatastoreModel<DataModelPropertyMerge>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -362,11 +342,7 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyConvert
         private class DataModelPropertyConvert : DatastoreModel<DataModelPropertyConvert>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -452,11 +428,7 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertySetIndexTypeAndDeprecate
         private class DataModelPropertySetIndexTypeAndDeprecate : DatastoreModel<DataModelPropertySetIndexTypeAndDeprecate>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -559,11 +531,7 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelPropertyReroute : DatastoreModel<DataModelPropertyReroute>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -638,11 +606,7 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorConvert, IRefactorMakeMandatory(), IRefactorMakeNullable
         private class DataModelPropertyConvertRel : DatastoreModel<DataModelPropertyConvertRel>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {
@@ -717,11 +681,7 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorMakeMandatory with values
         private class DataModelPropertyMandatory : DatastoreModel<DataModelPropertyMandatory>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers()
             {

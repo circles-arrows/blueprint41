@@ -5,8 +5,7 @@ using System.Diagnostics;
 
 using Blueprint41;
 using Blueprint41.Persistence;
-
-using DataStore;
+using Blueprint41.UnitTest.DataStore;
 
 namespace Laboratory
 {

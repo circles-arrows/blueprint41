@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41", "..\Blueprint
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laboratory version 2", "Laboratory version 2\Laboratory version 2.csproj", "{659C9A45-6BAE-42BF-BFAA-956A12192480}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatastoreBP41v2", "DatastoreBP41v2\DatastoreBP41v2.csproj", "{6640796E-1B31-4BCE-8109-5DEAF57DC45E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.Neo4jDriver.v5", "..\Blueprint41.Neo4jDriver.v5\Blueprint41.Neo4jDriver.v5.csproj", "{28496640-762D-445B-8686-8FC39221AD54}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.Driver", "Blueprint41.Driver\Blueprint41.Driver.csproj", "{E122B847-1F0B-4F0D-8114-7CB5226BA568}"
@@ -108,18 +106,6 @@ Global
 		{659C9A45-6BAE-42BF-BFAA-956A12192480}.Release|x64.Build.0 = Release|Any CPU
 		{659C9A45-6BAE-42BF-BFAA-956A12192480}.Release|x86.ActiveCfg = Release|Any CPU
 		{659C9A45-6BAE-42BF-BFAA-956A12192480}.Release|x86.Build.0 = Release|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Debug|x64.Build.0 = Debug|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Debug|x86.Build.0 = Debug|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Release|x64.ActiveCfg = Release|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Release|x64.Build.0 = Release|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Release|x86.ActiveCfg = Release|Any CPU
-		{6640796E-1B31-4BCE-8109-5DEAF57DC45E}.Release|x86.Build.0 = Release|Any CPU
 		{28496640-762D-445B-8686-8FC39221AD54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{28496640-762D-445B-8686-8FC39221AD54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28496640-762D-445B-8686-8FC39221AD54}.Debug|x64.ActiveCfg = Debug|x64

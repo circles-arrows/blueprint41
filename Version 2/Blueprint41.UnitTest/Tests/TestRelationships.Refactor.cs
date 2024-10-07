@@ -13,12 +13,6 @@ using NUnit.Framework.Internal;
 using ClientException = Neo4j.Driver.ClientException;
 using DatabaseException = Neo4j.Driver.DatabaseException;
 
-#if NEO4J
-//using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
-#elif MEMGRAPH
-//using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
-#endif
-
 namespace Blueprint41.UnitTest.Tests
 {
     public partial class TestRelationships
