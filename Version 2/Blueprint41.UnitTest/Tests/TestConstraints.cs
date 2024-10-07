@@ -86,7 +86,7 @@ namespace Blueprint41.UnitTest.Tests
                 Exception ex = Assert.Throws<InvalidOperationException>(() => model.Execute(true));
 
                 Assert.That(ex.InnerException is NotSupportedException);
-                Assert.AreEqual("Multiple key not allowed.", ex.InnerException.Message);
+                Assert.AreEqual("Multiple key not allowed.", ex.InnerException?.Message);
             }
         }
     }

@@ -72,7 +72,7 @@ namespace Blueprint41.UnitTest.Tests
                 //TODO: This should fail when there is an existing inherited property
                 Assert.Throws<InvalidOperationException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename("LastModifiedOn"));
 
-                Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(null));                
+                Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(null!));                
                 Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(""));
             }
         }
@@ -347,7 +347,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities["Scene"].Properties["Numbers"].Refactor.Merge(Entities["Movie"].Properties["ReleaseDate"], MergeAlgorithm.PreferTarget);
 
                 Entities["Scene"].AddProperty("Numbers", typeof(List<int>));
-                Assert.Throws<NotImplementedException>(() => Relations["MOVIES_HAS"].OutProperty.Refactor.Merge(Entities["Scene"].Properties["Numbers"], MergeAlgorithm.PreferSource));
+                Assert.Throws<NotImplementedException>(() => Relations["MOVIES_HAS"].OutProperty?.Refactor.Merge(Entities["Scene"].Properties["Numbers"], MergeAlgorithm.PreferSource));
             }
         }
 
@@ -682,14 +682,14 @@ namespace Blueprint41.UnitTest.Tests
             [Version(0, 0, 1)]
             public void Script_0_0_1()
             {
-                Assert.IsTrue(Relations["DIRECTED_BY"].InProperty.PropertyType == PropertyType.Collection);
-                Assert.IsTrue(Relations["DIRECTED_BY"].OutProperty.PropertyType == PropertyType.Lookup);
+                Assert.IsTrue(Relations["DIRECTED_BY"].InProperty?.PropertyType == PropertyType.Collection);
+                Assert.IsTrue(Relations["DIRECTED_BY"].OutProperty?.PropertyType == PropertyType.Lookup);
 
-                Assert.Throws<NotImplementedException>(() => Relations["DIRECTED_BY"].InProperty.Refactor.ConvertToLookup(ConvertAlgorithm.TakeFirst));
-                Relations["DIRECTED_BY"].OutProperty.Refactor.ConvertToCollection();
+                Assert.Throws<NotImplementedException>(() => Relations["DIRECTED_BY"].InProperty?.Refactor.ConvertToLookup(ConvertAlgorithm.TakeFirst));
+                Relations["DIRECTED_BY"].OutProperty?.Refactor.ConvertToCollection();
 
-                Assert.IsTrue(Relations["DIRECTED_BY"].InProperty.PropertyType == PropertyType.Lookup);
-                Assert.IsTrue(Relations["DIRECTED_BY"].OutProperty.PropertyType == PropertyType.Collection);
+                Assert.IsTrue(Relations["DIRECTED_BY"].InProperty?.PropertyType == PropertyType.Lookup);
+                Assert.IsTrue(Relations["DIRECTED_BY"].OutProperty?.PropertyType == PropertyType.Collection);
             }
 
             [Version(0, 0, 2)]
@@ -783,8 +783,8 @@ namespace Blueprint41.UnitTest.Tests
             public void Script_0_0_1()
             {
                 Entities["Person"].Properties["Name"].Refactor.MakeMandatory("Mr/Mrs.");
-                Relations["MOVIE_HAS"].InProperty.Refactor.MakeMandatory("Action");
-                Relations["LIKES"].InProperty.Refactor.MakeMandatory(Entities["Genre"].Refactor.MatchNode("8"));
+                Relations["MOVIE_HAS"].InProperty?.Refactor.MakeMandatory("Action");
+                Relations["LIKES"].InProperty?.Refactor.MakeMandatory(Entities["Genre"].Refactor.MatchNode("8"));
             }
         }
 
@@ -889,13 +889,13 @@ namespace Blueprint41.UnitTest.Tests
 
             string GetSingleItem(object properties)
             {
-                object value = properties;
+                object? value = properties;
                 Type type = properties.GetType();
-                IEnumerable coll = properties as IEnumerable;
+                IEnumerable? coll = properties as IEnumerable;
                 if (properties is not string && coll is not null)
                     value = coll.Cast<object>().FirstOrDefault();
 
-                return value?.ToString(); 
+                return value?.ToString() ?? throw new NullReferenceException();
             }
         }
 

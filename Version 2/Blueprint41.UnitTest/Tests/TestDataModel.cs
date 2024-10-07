@@ -489,13 +489,14 @@ namespace Blueprint41.UnitTest.Tests
 
             Entity referenceType = model.Entities["ReferenceType"];
 
-            dynamic node = referenceType.Refactor.MatchNode("1");
+            dynamic? node = referenceType.Refactor.MatchNode("1");
             Assert.IsInstanceOf<DynamicEntity>(node);
 
-            DynamicEntity nodeType = node as DynamicEntity;
-            IReadOnlyDictionary<string, object> values = nodeType.GetDynamicEntityValues();
+            DynamicEntity? nodeType = node as DynamicEntity;
+            IReadOnlyDictionary<string, object?>? values = nodeType?.GetDynamicEntityValues();
 
-            Assert.AreEqual(values["Uid"], "1");
+            Assert.IsNotNull(values);
+            Assert.AreEqual(values!["Uid"], "1");
             Assert.AreEqual(values["Name"], "Opportunity");
             Assert.IsInstanceOf<List<string>>(values["Fields"]);
         }
@@ -671,7 +672,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 DatastoreModel model = new DataModelStaticDataWithDeleteNode();
                 model.Execute(true);
-                dynamic contactStatus = model.Entities["ContactStatus"].Refactor.MatchNode("1");
+                dynamic? contactStatus = model.Entities["ContactStatus"].Refactor.MatchNode("1");
             });
             
             Assert.That(exception.Message, Contains.Substring("Specified argument was out of the range of valid values."));
@@ -747,16 +748,17 @@ namespace Blueprint41.UnitTest.Tests
             model.Execute(true);
 
             Entity accountType = model.Entities["AccountType"];
-            dynamic account = accountType.Refactor.MatchNode("6");
+            dynamic? account = accountType.Refactor.MatchNode("6");
 
             Assert.IsInstanceOf<DynamicEntity>(account);
 
-            DynamicEntity nodeType = account as DynamicEntity;
-            IReadOnlyDictionary<string, object> values = nodeType.GetDynamicEntityValues();
-            Assert.AreEqual(values["Uid"], "6");
+            DynamicEntity? nodeType = account as DynamicEntity;
+            IReadOnlyDictionary<string, object?>? values = nodeType?.GetDynamicEntityValues();
+            Assert.IsNotNull(values);
+            Assert.AreEqual(values!["Uid"], "6");
             Assert.AreEqual(values["Name"], "Account");
 
-            Assert.Throws<ArgumentNullException>(() => accountType.Refactor.MatchNode(null));
+            Assert.Throws<ArgumentNullException>(() => accountType.Refactor.MatchNode(null!));
             Assert.Throws<InvalidCastException>(() => accountType.Refactor.MatchNode(6));
             Assert.Throws<ArgumentOutOfRangeException>(() => accountType.Refactor.MatchNode("7"));
         }
@@ -804,7 +806,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = Entities["AccountType"]; });
 
                 Assert.Throws<ArgumentNullException>(() => Entities["NewAccountType"].Refactor.Rename(""));
-                Assert.Throws<ArgumentNullException>(() => Entities["NewAccountType"].Refactor.Rename(null));
+                Assert.Throws<ArgumentNullException>(() => Entities["NewAccountType"].Refactor.Rename(null!));
             }
         }
 
@@ -1055,7 +1057,7 @@ namespace Blueprint41.UnitTest.Tests
 
             model = new DatastoreEntityBaseWithParent();
             model.Execute(true);
-            Assert.AreEqual(model.Entities["Child"].Inherits.Name, "BaseTwo");
+            Assert.AreEqual(model.Entities["Child"].Inherits?.Name, "BaseTwo");
         }
 
         #endregion

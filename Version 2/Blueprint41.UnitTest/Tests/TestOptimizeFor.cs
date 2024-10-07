@@ -58,7 +58,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                string key = null;
+                string? key = null;
 
                 string outputConsole;
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
@@ -114,10 +114,12 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction(OptimizeFor.RecursiveSubGraphAccess))
                 {
-                    Person p = Person.Load(key);
-                    Assert.Zero(p.DirectedMovies.Count);
+                    Person? p = Person.Load(key);
+                    Assert.IsNotNull(p);
+                    Assert.Zero(p!.DirectedMovies.Count);
                     Assert.Greater(p.ActedInMovies.Count, 0);
-                    Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
+                    Assert.IsNotNull(p.ActedInMovies[0]);
+                    Assert.Greater(p.ActedInMovies[0]!.Actors.Count, 0);
 
                     outputConsole = output.GetOutput();
 
@@ -129,10 +131,12 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction(OptimizeFor.PartialSubGraphAccess))
                 {
-                    Person p = Person.Load(key);
-                    Assert.Zero(p.DirectedMovies.Count);
+                    Person? p = Person.Load(key);
+                    Assert.IsNotNull(p);
+                    Assert.Zero(p!.DirectedMovies.Count);
                     Assert.Greater(p.ActedInMovies.Count, 0);
-                    Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
+                    Assert.IsNotNull(p.ActedInMovies[0]);
+                    Assert.Greater(p.ActedInMovies[0]!.Actors.Count, 0);
 
                     outputConsole = output.GetOutput();
 

@@ -42,7 +42,7 @@ namespace Blueprint41.Persistence
         /// </remarks>
         public Func<Neo4jHost, Neo4jHost[]>? DNSResolverHook { get; set; } = null;
 
-        internal TransactionLogger? GetLogger()
+        public TransactionLogger? GetLogger()
         {
             if (SimpleLogging || CustomLogging is not null)
                 return new TransactionLogger(this);

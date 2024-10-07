@@ -66,8 +66,8 @@ namespace Blueprint41.UnitTest.Tests
         public List<(DateTime from, DateTime till)> Expected { get; private set; }
         private List<(DateTime from, DateTime till, PropertySet set)> ExpectedEx { get; set; }
         public string ExpectedAsciiArt { get; private set; }
-        public List<(DateTime from, DateTime till)> Actual { get; private set; }
-        public string ActualAsciiArt { get; private set; }
+        public List<(DateTime from, DateTime till)>? Actual { get; private set; }
+        public string? ActualAsciiArt { get; private set; }
         public bool Error { get; private set; }
 
         public static List<(DateTime from, DateTime till)> RelationsFromMask(int mask)

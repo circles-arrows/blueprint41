@@ -23,7 +23,8 @@ namespace Blueprint41.UnitTest.Tests
 
             using (MockModel.BeginTransaction())
             {
-                Rating rating = Rating.Load(DatabaseUids.Ratings.PG);
+                Rating? rating = Rating.Load(DatabaseUids.Ratings.PG);
+                Assert.IsNotNull(rating);
 
                 CleanupRelations(MOVIE_CERTIFICATION.Relationship);
 
@@ -176,7 +177,8 @@ namespace Blueprint41.UnitTest.Tests
 
             using (MockModel.BeginTransaction())
             {
-                Rating rating = Rating.Load(DatabaseUids.Ratings.PG);
+                Rating? rating = Rating.Load(DatabaseUids.Ratings.PG);
+                Assert.IsNotNull(rating);
 
                 CleanupRelations(MOVIE_CERTIFICATION.Relationship);
 
@@ -399,21 +401,24 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var city = City.Load(DatabaseUids.Cities.Metropolis);
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+                    
+                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    Assert.IsNotNull(city);
 
                     CleanupRelations(PERSON_LIVES_IN.Relationship);
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till);
+                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till);
                     }
 
-                    person.SetCity(city, scenario.Moment);
+                    person!.SetCity(city, scenario.Moment);
 
                     Transaction.Flush();
 
-                    scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city));
+                    scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city!));
 
                     Transaction.Commit();
                 }
@@ -433,21 +438,24 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var city = City.Load(DatabaseUids.Cities.Metropolis);
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+
+                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    Assert.IsNotNull(city);
 
                     CleanupRelations(PERSON_LIVES_IN.Relationship);
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till);
+                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till);
                     }
 
-                    person.SetCity(null, scenario.Moment);
+                    person!.SetCity(null, scenario.Moment);
 
                     Transaction.Flush();
 
-                    scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city));
+                    scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city!));
 
                     Transaction.Commit();
                 }
@@ -468,10 +476,13 @@ namespace Blueprint41.UnitTest.Tests
             {
                 CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
-                var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                Assert.IsNotNull(person);
 
-                person.StreamingServiceSubscriptions.Add(netflix, DateTime.UtcNow);
+                StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                Assert.IsNotNull(netflix);
+
+                person!.StreamingServiceSubscriptions.Add(netflix!, DateTime.UtcNow);
 
                 Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
 #if NET5_0_OR_GREATER
@@ -496,21 +507,24 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix);
+                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    Assert.IsNotNull(netflix);
+
+                    var initial = GetSubscribedToState(scenario.Initial, netflix!);
+                    var expected = GetSubscribedToState(scenario.Expected, netflix!);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
                     foreach (var state in initial)
                     {
                         foreach (var relation in state.relations)
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till);
+                            WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till);
                     }
 
-                    person.StreamingServiceSubscriptions.Add(netflix, scenario.Moment);
+                    person!.StreamingServiceSubscriptions.Add(netflix!, scenario.Moment);
 
                     Transaction.Flush();
 
@@ -521,7 +535,7 @@ namespace Blueprint41.UnitTest.Tests
                         var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
-                    scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix));
+                    scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!));
 
                     Transaction.Commit();
                 }
@@ -541,21 +555,24 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix);
+                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    Assert.IsNotNull(netflix);
+
+                    var initial = GetSubscribedToState(scenario.Initial, netflix!);
+                    var expected = GetSubscribedToState(scenario.Expected, netflix!);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
                     foreach (var state in initial)
                     {
                         foreach (var relation in state.relations)
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till);
+                            WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till);
                     }
 
-                    person.StreamingServiceSubscriptions.Remove(netflix, scenario.Moment);
+                    person!.StreamingServiceSubscriptions.Remove(netflix!, scenario.Moment);
 
                     Transaction.Flush();
 
@@ -566,7 +583,7 @@ namespace Blueprint41.UnitTest.Tests
                         var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
-                    scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix));
+                    scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!));
 
                     Transaction.Commit();
                 }
@@ -590,11 +607,15 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var city = City.Load(DatabaseUids.Cities.Metropolis);
-                    var addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
-                    var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
-                    var properties = new Dictionary<string, object>()
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+
+                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    Assert.IsNotNull(city);
+
+                    string addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
+                    string addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
+                    Dictionary<string, object> properties = new Dictionary<string, object>()
                     {
                         { nameof(PERSON_LIVES_IN.AddressLine1), addr1 },
                         { nameof(PERSON_LIVES_IN.AddressLine2), addr2 },
@@ -604,21 +625,22 @@ namespace Blueprint41.UnitTest.Tests
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till, properties);
+                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till, properties);
                     }
 
-                    person.SetCity(city, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
+                    person!.SetCity(city, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
 
                     Transaction.Flush();
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city);
+                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
-                    foreach (var actual in relationsWithProperties.Select(item => item.properties))
+                    foreach (Dictionary<string, object>? actual in relationsWithProperties.Select(item => item.properties))
                     {
+                        Assert.IsNotNull(actual);
                         Assert.AreEqual(properties.Count, actual.Count);
                         foreach (var value in properties)
-                            Assert.AreEqual(value.Value, actual.GetValue(value.Key));
+                            Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
                     Transaction.Commit();
@@ -639,11 +661,15 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var city = City.Load(DatabaseUids.Cities.Metropolis);
-                    var addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
-                    var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
-                    var properties = new Dictionary<string, object>()
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+
+                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    Assert.IsNotNull(city);
+
+                    string addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
+                    string addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
+                    Dictionary<string, object> properties = new Dictionary<string, object>()
                     {
                         { nameof(PERSON_LIVES_IN.AddressLine1), addr1 },
                         { nameof(PERSON_LIVES_IN.AddressLine2), addr2 },
@@ -653,7 +679,7 @@ namespace Blueprint41.UnitTest.Tests
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till, properties);
+                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till, properties);
                     }
 
                     var addr3 = CityUids.AddressLines.Metropolis.ClarkKent_Later[0];
@@ -662,11 +688,11 @@ namespace Blueprint41.UnitTest.Tests
                         { nameof(PERSON_LIVES_IN.AddressLine1), addr3 },
                     };
 
-                    person.SetCity(city, scenario.Moment, AddressLine1: addr3);
+                    person!.SetCity(city, scenario.Moment, AddressLine1: addr3);
 
                     Transaction.Flush();
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city);
+                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
                     foreach ((DateTime from, DateTime till, Dictionary<string, object> properties) actual in relationsWithProperties)
@@ -680,7 +706,7 @@ namespace Blueprint41.UnitTest.Tests
 
                         Assert.AreEqual(p.Count, actual.properties.Count);
                         foreach (var value in p)
-                            Assert.AreEqual(value.Value, actual.properties.GetValue(value.Key));
+                            Assert.AreEqual(value.Value, actual.properties!.GetValue(value.Key));
                     }
 
                     Transaction.Commit();
@@ -701,11 +727,15 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var city = City.Load(DatabaseUids.Cities.Metropolis);
-                    var addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
-                    var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
-                    var properties = new Dictionary<string, object>()
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+
+                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    Assert.IsNotNull(city);
+
+                    string addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
+                    string addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
+                    Dictionary<string, object> properties = new Dictionary<string, object>()
                     {
                         { nameof(PERSON_LIVES_IN.AddressLine1), addr1 },
                         { nameof(PERSON_LIVES_IN.AddressLine2), addr2 },
@@ -715,22 +745,23 @@ namespace Blueprint41.UnitTest.Tests
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till, properties);
+                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till, properties);
                     }
 
                     // person.SetCity(null, scenario.Moment); // We could use this overload, in theory it should do the same as below. However, it's already tested in the Legacy tests.
-                    person.SetCity(null, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
+                    person!.SetCity(null, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
 
                     Transaction.Flush();
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city);
+                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
-                    foreach (var actual in relationsWithProperties.Select(item => item.properties))
+                    foreach (Dictionary<string, object>? actual in relationsWithProperties.Select(item => item.properties))
                     {
+                        Assert.IsNotNull(actual);
                         Assert.AreEqual(properties.Count, actual.Count);
                         foreach (var value in properties)
-                            Assert.AreEqual(value.Value, actual.GetValue(value.Key));
+                            Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
                     Transaction.Commit();
@@ -755,16 +786,20 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
-                    var price = StreamingServiceUids.Rates.Netflix;
-                    var properties = new Dictionary<string, object>()
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+
+                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    Assert.IsNotNull(netflix);
+
+                    decimal price = StreamingServiceUids.Rates.Netflix;
+                    Dictionary<string, object> properties = new Dictionary<string, object>()
                     {
                         { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
                     };
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix, price);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix, price);
+                    var initial = GetSubscribedToState(scenario.Initial, netflix!, price);
+                    var expected = GetSubscribedToState(scenario.Expected, netflix!, price);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
@@ -772,14 +807,14 @@ namespace Blueprint41.UnitTest.Tests
                     {
                         foreach (var relation in state.relations)
                         {
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                            WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
                             {
                                 { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
                             });
                         }
                     }
 
-                    person.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price);
+                    person!.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price);
 
                     Transaction.Flush();
 
@@ -791,14 +826,15 @@ namespace Blueprint41.UnitTest.Tests
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix);
+                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
-                    foreach (var actual in relationsWithProperties.Select(item => item.properties))
+                    foreach (Dictionary<string, object>? actual in relationsWithProperties.Select(item => item.properties))
                     {
+                        Assert.IsNotNull(actual);
                         Assert.AreEqual(properties.Count, actual.Count);
                         foreach (var value in properties)
-                            Assert.AreEqual(value.Value, actual.GetValue(value.Key));
+                            Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
                     Transaction.Commit();
@@ -819,16 +855,20 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
-                    var price = StreamingServiceUids.Rates.Hulu;
-                    var properties = new Dictionary<string, object>()
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+
+                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    Assert.IsNotNull(netflix);
+
+                    decimal price = StreamingServiceUids.Rates.Hulu;
+                    Dictionary<string, object> properties = new Dictionary<string, object>()
                     {
                         { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
                     };
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix, price);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix, price);
+                    var initial = GetSubscribedToState(scenario.Initial, netflix!, price);
+                    var expected = GetSubscribedToState(scenario.Expected, netflix!, price);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
@@ -836,7 +876,7 @@ namespace Blueprint41.UnitTest.Tests
                     {
                         foreach (var relation in state.relations)
                         {
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                            WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
                             {
                                 { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
                             });
@@ -848,7 +888,7 @@ namespace Blueprint41.UnitTest.Tests
                         { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price2 },
                     };
 
-                    person.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price2);
+                    person!.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price2);
 
                     Transaction.Flush();
 
@@ -860,7 +900,7 @@ namespace Blueprint41.UnitTest.Tests
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix);
+                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
                     foreach ((DateTime from, DateTime till, Dictionary<string, object> properties) actual in relationsWithProperties)
@@ -874,7 +914,7 @@ namespace Blueprint41.UnitTest.Tests
 
                         Assert.AreEqual(p.Count, actual.properties.Count);
                         foreach (var value in p)
-                            Assert.AreEqual(value.Value, actual.properties.GetValue(value.Key));
+                            Assert.AreEqual(value.Value, actual.properties!.GetValue(value.Key));
                     }
                     Transaction.Commit();
                 }
@@ -894,26 +934,30 @@ namespace Blueprint41.UnitTest.Tests
 
                 using (MockModel.BeginTransaction())
                 {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
-                    var price = StreamingServiceUids.Rates.Netflix;
-                    var properties = new Dictionary<string, object>()
+                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Assert.IsNotNull(person);
+
+                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    Assert.IsNotNull(netflix);
+
+                    decimal price = StreamingServiceUids.Rates.Netflix;
+                    Dictionary<string, object> properties = new Dictionary<string, object>()
                     {
                         { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
                     };
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix, price);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix, price);
+                    var initial = GetSubscribedToState(scenario.Initial, netflix!, price);
+                    var expected = GetSubscribedToState(scenario.Expected, netflix!, price);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
                     foreach (var state in initial)
                     {
                         foreach (var relation in state.relations)
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
+                            WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
                     }
 
-                    person.RemoveStreamingServiceSubscription(netflix, scenario.Moment);
+                    person!.RemoveStreamingServiceSubscription(netflix, scenario.Moment);
 
                     Transaction.Flush();
 
@@ -925,14 +969,15 @@ namespace Blueprint41.UnitTest.Tests
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix);
+                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
-                    foreach (var actual in relationsWithProperties.Select(item => item.properties))
+                    foreach (Dictionary<string, object>? actual in relationsWithProperties.Select(item => item.properties))
                     {
+                        Assert.IsNotNull(actual);
                         Assert.AreEqual(properties.Count, actual.Count);
                         foreach (var value in properties)
-                            Assert.AreEqual(value.Value, actual.GetValue(value.Key));
+                            Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
                     Transaction.Commit();

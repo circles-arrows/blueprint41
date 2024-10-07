@@ -24,6 +24,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                Assert.IsNotNull(linus);
 
                 List<PERSON_LIVES_IN> livesIn1 = PERSON_LIVES_IN.Where(alias => alias.Person(linus));
                 List<PERSON_LIVES_IN> livesIn2 = PERSON_LIVES_IN.Where(InNode: linus);
@@ -33,7 +34,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 List<PERSON_LIVES_IN> livesIn4 = PERSON_LIVES_IN.Where(AddressLine1: "OTHER");
 
-                PERSON_LIVES_IN livesIn5 = linus.GetCityIf(null, AddressLine1: "OTHER");
+                PERSON_LIVES_IN livesIn5 = linus!.GetCityIf(null, AddressLine1: "OTHER");
                 List<PERSON_LIVES_IN> livesIn6 = linus.CityWhere(AddressLine1: "OTHER");
                 List<PERSON_LIVES_IN> livesIn7 = linus.CityWhere(Moment: DateTime.UtcNow, AddressLine1: "OTHER");
 
@@ -45,7 +46,9 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                var rels = ReadRelationsWithProperties(linus, PERSON_LIVES_IN.Relationship, linus.City);
+                Assert.IsNotNull(linus);
+
+                var rels = ReadRelationsWithProperties(linus!, PERSON_LIVES_IN.Relationship, linus!.City);
                 Assert.That(rels.All(r => r.properties.ContainsKey("NewName")));
             }
         }
