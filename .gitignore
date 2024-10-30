@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Syncthing-specific files
+.stignore
+.stfolder
+.stversions
+
 # User-specific files
 *.suo
 *.user

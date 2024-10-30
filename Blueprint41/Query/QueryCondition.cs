@@ -1,10 +1,12 @@
-﻿using Blueprint41.Core;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Blueprint41.Core;
+using node = Blueprint41.Query.Node;
 
 namespace Blueprint41.Query
 {
@@ -51,7 +53,7 @@ namespace Blueprint41.Query
             Right = null;
         }
 
-        public QueryCondition(Blueprint41.Query.Node node, bool not = false)
+        public QueryCondition(node node, bool not = false)
         {
             Left = string.Empty;
             Operator = (not) ? Operator.NotPattern : Operator.Pattern;

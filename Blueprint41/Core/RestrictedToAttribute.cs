@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using bp41 = Blueprint41;
 
 namespace Blueprint41.Core
 {
@@ -10,7 +11,7 @@ namespace Blueprint41.Core
     {
         public RestrictedToAttribute()
         {
-            PropertyType = new PropertyType[] { Blueprint41.PropertyType.Attribute, Blueprint41.PropertyType.Collection, Blueprint41.PropertyType.Lookup };
+            PropertyType = new PropertyType[] { bp41.PropertyType.Attribute, bp41.PropertyType.Collection, bp41.PropertyType.Lookup };
         }
         public RestrictedToAttribute(params PropertyType[] propertyType)
         {

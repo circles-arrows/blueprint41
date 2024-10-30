@@ -30,7 +30,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                         if (driver is null)
                         {
                             driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password), 
-                                o =>
+                                (ConfigBuilder o) =>
                                 {
                                     o.WithFetchSize(Config.Infinite);
                                     o.WithMaxConnectionPoolSize(MAX_CONNECTION_POOL_SIZE);
