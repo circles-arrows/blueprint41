@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9EEBF9E1-477C-4C27-84BC-72BF814287E2}"
-	ProjectSection(SolutionItems) = preProject
-		design.txt = design.txt
-		Documentation\GettingStarted.txt = Documentation\GettingStarted.txt
-		ReleaseToNuget.txt = ReleaseToNuget.txt
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.Schema", "Blueprint41.Schema\Blueprint41.Schema.csproj", "{B1A89AA4-B0C8-4F00-B9FC-A020F83DEAA3}"
 EndProject
