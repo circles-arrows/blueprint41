@@ -1213,7 +1213,14 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(" == Parameter.New<string>(Param0)));\r\n\r\n            #endregion\r\n");
+            this.Write(" == Parameter.New<");
+            
+            #line 291 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.SystemReturnType));
+            
+            #line default
+            #line hidden
+            this.Write(">(Param0)));\r\n\r\n            #endregion\r\n");
             
             #line 294 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
@@ -1249,7 +1256,14 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("(string ");
+            this.Write("(");
+            
+            #line 306 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.SystemReturnType));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
             
             #line 306 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToCamelCase()));

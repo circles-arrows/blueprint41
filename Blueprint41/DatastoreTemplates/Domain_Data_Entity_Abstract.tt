@@ -286,7 +286,7 @@ if (DALModel.IsAbstract)
             #region LoadBy<#= attr.Name #>
 
             RegisterQuery(nameof(LoadBy<#= attr.Name #>), (query, alias) => query.
-                Where(alias.<#= attr.Name #> == Parameter.New<string>(Param0)));
+                Where(alias.<#= attr.Name #> == Parameter.New<<#= attr.SystemReturnType #>>(Param0)));
 
             #endregion
 <#
@@ -301,7 +301,7 @@ if (DALModel.IsAbstract)
         if (attr.PropertyType != PropertyType.Attribute || attr.IndexType != IndexType.Unique)
             continue;
 #>
-        public static <#= DALModel.ClassName #> LoadBy<#= attr.Name #>(string <#= attr.Name.ToCamelCase() #>)
+        public static <#= DALModel.ClassName #> LoadBy<#= attr.Name #>(<#= attr.SystemReturnType #> <#= attr.Name.ToCamelCase() #>)
         {
             return FromQuery(nameof(LoadBy<#= attr.Name #>), new Parameter(Param0, <#= attr.Name.ToCamelCase() #>)).FirstOrDefault();
         }
