@@ -54,7 +54,7 @@ namespace Datastore.Manipulation
         {
             AdditionalGeneratedStoredQueries();
         }
-        public static IBaseEntity LoadByUid(string uid)
+        public static IBaseEntity LoadByUid(System.String uid)
         {
             return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
         }
