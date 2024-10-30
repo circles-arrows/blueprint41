@@ -41,11 +41,10 @@ namespace <#= Settings.FullCRUDNamespace #>
     foreach (var attr in DALRelation.Properties)
     {
 #>
-            //<#= attr.Name #> = (<#= attr.OuterReturnType #>)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
+            <#= attr.Name #> = (<#= attr.OuterReturnType #>)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
 <#
     }
 #>
-            throw new NotImplementedException();
         }
         internal string _elementId { get; private set; }
 

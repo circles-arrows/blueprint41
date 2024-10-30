@@ -46,13 +46,13 @@ namespace Datastore.Manipulation
             #region LoadByName
 
             RegisterQuery(nameof(LoadByName), (query, alias) => query.
-                Where(alias.Name == Parameter.New<string>(Param0)));
+                Where(alias.Name == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             AdditionalGeneratedStoredQueries();
         }
-        public static StreamingService LoadByName(string name)
+        public static StreamingService LoadByName(System.String name)
         {
             return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
         }

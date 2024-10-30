@@ -29,8 +29,7 @@ namespace Datastore.Manipulation
             Restaurant = @in;
             City = @out;
             
-            //CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            throw new NotImplementedException();
+            CreationDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
         }
         internal string _elementId { get; private set; }
 

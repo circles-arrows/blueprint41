@@ -48,13 +48,13 @@ namespace Datastore.Manipulation
             #region LoadByTitle
 
             RegisterQuery(nameof(LoadByTitle), (query, alias) => query.
-                Where(alias.Title == Parameter.New<string>(Param0)));
+                Where(alias.Title == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             AdditionalGeneratedStoredQueries();
         }
-        public static Movie LoadByTitle(string title)
+        public static Movie LoadByTitle(System.String title)
         {
             return FromQuery(nameof(LoadByTitle), new Parameter(Param0, title)).FirstOrDefault();
         }
