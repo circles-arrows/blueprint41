@@ -503,8 +503,11 @@ namespace Blueprint41.Dynamic
         }
         private void KeySet()
         {
-            if (ShouldExecute)
-                RunningTransaction.Register(DynamicEntityType.Name, this);
+            if (ShouldExecute && GetKey() is not null)
+            {
+                PersistenceState = PersistenceState.NewAndChanged;
+                Transaction.RunningTransaction.Register(DynamicEntityType.Name, this);
+            }
         }
 
         private void LazySet()

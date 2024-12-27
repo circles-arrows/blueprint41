@@ -779,24 +779,26 @@ namespace Blueprint41.UnitTest.Tests
                 var constraints = Session.Current.Run(SHOW_CONSTRAINTS);
 
                 Constraints =
-                    constraints.Select(item => 
-                        (
-                            GetSingleItem(item.Values[SHOW_CONSTRAINTS_LABEL]),
-                            GetSingleItem(item.Values[SHOW_CONSTRAINTS_PROPERTIES]),
-                            GetConstraintType(item.Values[SHOW_CONSTRAINTS_CONSTRAINT_TYPE].As<string>())
-                        )
-                    ).ToList();
+                    constraints
+                        .Select(item => 
+                            (
+                                GetSingleItem(item[SHOW_CONSTRAINTS_LABEL]),
+                                GetSingleItem(item[SHOW_CONSTRAINTS_PROPERTIES]),
+                                GetConstraintType(item[SHOW_CONSTRAINTS_CONSTRAINT_TYPE].As<string>())
+                            )
+                        ).ToList();
 
                 var indexes = Session.Current.Run(SHOW_INDEXES);
 
                 Indexes =                   
-                    indexes.Where(item => item.Values[SHOW_INDEXES_LABELS] is not null)
-                           .Select(item =>
-                        (
-                            GetSingleItem(item.Values[SHOW_INDEXES_LABELS]),
-                            GetSingleItem(item.Values[SHOW_INDEXES_PROPERTIES])
-                        )
-                    ).ToList();
+                    indexes
+                        .Where(item => item[SHOW_INDEXES_LABELS] is not null)
+                        .Select(item =>
+                            (
+                                GetSingleItem(item[SHOW_INDEXES_LABELS]),
+                                GetSingleItem(item[SHOW_INDEXES_PROPERTIES])
+                            )
+                        ).ToList();
             }
 
             char GetConstraintType(string dbType)
@@ -826,7 +828,6 @@ namespace Blueprint41.UnitTest.Tests
             string GetSingleItem(object properties)
             {
                 object value = properties;
-                Type type = properties.GetType();
                 IEnumerable coll = properties as IEnumerable;
                 if (properties is not string && coll is not null)
                     value = coll.Cast<object>().FirstOrDefault();
