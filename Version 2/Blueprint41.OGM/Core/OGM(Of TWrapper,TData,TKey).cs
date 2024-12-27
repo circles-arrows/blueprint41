@@ -402,7 +402,11 @@ namespace Blueprint41.Core
             if (set is not null)
                 set.Invoke();
 
-            RunningTransaction.Register(Entity.Name, this);
+            if (InnerData.HasKey)
+            {
+                PersistenceState = PersistenceState.NewAndChanged;
+                RunningTransaction.Register(Entity.Name, this);
+            }
         }
 
         #region Stored Queries
