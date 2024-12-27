@@ -10,8 +10,6 @@ namespace Blueprint41.UnitTest
     {
 #if NEO4J
         public const string URI = "bolt://localhost:7687";
-#elif MEMGRAPH && (MANBOW || ROCKETKNIGHT)
-        public const string URI = "bolt://192.168.40.10:7687";
 #elif MEMGRAPH
         public const string URI = "bolt://localhost:7690";
 #endif
