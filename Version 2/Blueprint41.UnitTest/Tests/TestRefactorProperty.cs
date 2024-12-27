@@ -850,7 +850,6 @@ namespace Blueprint41.UnitTest.Tests
             string GetSingleItem(object properties)
             {
                 object? value = properties;
-                Type type = properties.GetType();
                 IEnumerable? coll = properties as IEnumerable;
                 if (properties is not string && coll is not null)
                     value = coll.Cast<object>().FirstOrDefault();
