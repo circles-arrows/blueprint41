@@ -177,9 +177,13 @@ namespace Blueprint41
         /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
         public void Execute(bool upgradeDatastore)
         {
-            if (PersistenceProvider is null)
-                throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
+            if (_persistenceProvider is null && upgradeDatastore)
+            {
+                _persistenceProvider = RegisteredModels.FirstOrDefault(item => item.GetType() == this.GetType())?.PersistenceProvider;
 
+                if (_persistenceProvider is null && upgradeDatastore)
+                    throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
+            }
             Execute(upgradeDatastore, null);
         }
 
@@ -255,27 +259,28 @@ namespace Blueprint41
                         }
                     }
 
-                    using (PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+                    if (!Parser.HasScript(this, script))
                     {
-                        if (!Parser.HasScript(script))
-                        {
-                            Parser.Log("Running script: {0}.{1}.{2} ({3})", script.Major, script.Minor, script.Patch, script.Name);
-                            Stopwatch sw = Stopwatch.StartNew();
+                        Parser.Log("Running script: {0}.{1}.{2} ({3})", script.Major, script.Minor, script.Patch, script.Name);
+                        Stopwatch sw = Stopwatch.StartNew();
 
-                            Refactor.ApplyFunctionalIds();
-                            RunScriptChecked(script);
-                            Refactor.ApplyFunctionalIds();
-
-                            Parser.CommitScript(script);
-                            anyScriptRan = true;
-                            scriptCommitted = true;
-                            sw.Stop();
-                            Parser.Log("Finished script in {0} ms.", sw.ElapsedMilliseconds);
-                        }
-                        else
+                        Refactor.ApplyFunctionalIds();
+                        using (PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                         {
                             RunScriptChecked(script);
+                            Parser.CommitScript(this, script);
+                            Transaction.Commit();
                         }
+                        Refactor.ApplyFunctionalIds();
+
+                        anyScriptRan = true;
+                        scriptCommitted = true;
+                        sw.Stop();
+                        Parser.Log("Finished script in {0} ms.", sw.ElapsedMilliseconds);
+                    }
+                    else
+                    {
+                        RunScriptChecked(script);
                     }
                 }
                 else
@@ -285,35 +290,24 @@ namespace Blueprint41
 
                 if (upgradeDatastore && scriptCommitted)
                 {
-                    using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
-                    {
-                        Parser.ForceScript(delegate ()
-                        {
-                            Refactor.ApplyConstraints();
-                        });
-                    }
-                }
-            }
-
-            if (upgradeDatastore)
-            {
-                using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
-                {
                     Parser.ForceScript(delegate ()
                     {
                         Refactor.ApplyConstraints();
                     });
                 }
+            }
 
-                using (PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+            if (upgradeDatastore)
+            {
+                Parser.ForceScript(delegate ()
                 {
-                    if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
-                    {
-                        Refactor.ApplyFunctionalIds();
-                        Parser.SetLastRun();
-                    }
+                    Refactor.ApplyConstraints();
+                });
 
-                    Transaction.Commit();
+                if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds(this))
+                {
+                    Refactor.ApplyFunctionalIds();
+                    Parser.SetLastRun(this);
                 }
             }
             SubscribeEventHandlers();
@@ -322,11 +316,8 @@ namespace Blueprint41
 
             if (!PersistenceProvider.IsVoidProvider)
             {
-                using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
-                {
-                    bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
-                    Refactor.ApplyFullTextSearchIndexes(shouldRun);
-                }
+                bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
+                Refactor.ApplyFullTextSearchIndexes(shouldRun);
             }
 
             executed = true;
@@ -622,7 +613,7 @@ namespace Blueprint41
             instance._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
             instance._persistenceProvider.Initialize();
 
-            Model._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
+            Model._persistenceProvider = instance._persistenceProvider;
 
             return instance;
         }

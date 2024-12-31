@@ -1711,7 +1711,11 @@ namespace Blueprint41.Persistence
         {
             public IAsyncSessionInfo(params string[] names) : base(names) { }
 
-            public Bookmarks LastBookmarks(object instance) => new Bookmarks(_lastBookmarks.Value.GetValue(instance));
+            public Bookmarks? LastBookmarks(object instance)
+            {
+                object? bookmark = _lastBookmarks.Value.GetValue(instance);
+                return bookmark is null ? null : new Bookmarks(bookmark);
+            }
             private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS, new string[] { "LastBookmarks", "LastBookmark" }), true);
 
             public Task<DriverTransaction> BeginTransactionAsync(object instance) => AsTask(_beginTransactionAsync1.Value.Invoke(instance), instance => new DriverTransaction(instance));

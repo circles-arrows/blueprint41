@@ -96,7 +96,7 @@ namespace Blueprint41.Refactoring.Schema
                 if (first)
                     first = false;
                 else
-                    queryBuilder.AppendLine("UNION");
+                    queryBuilder.AppendLine("UNION ALL");
 
                 if (functionalId.Format == IdFormat.Hash)
                     queryBuilder.AppendFormat(templateHash, entity.Label.Name, entity.Key.Name, functionalId.Prefix, functionalId.Prefix.Length + 6);
@@ -112,7 +112,7 @@ namespace Blueprint41.Refactoring.Schema
             }
             else
             {
-                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record["sequence"].As<int?>()).FirstOrDefault()??0;
+                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record["sequence"].As<int?>()).FirstOrDefault() ?? 0;
             }
         }
 

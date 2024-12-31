@@ -293,9 +293,8 @@ After:
         public bool IsMemgraph => (DatastoreModel.DatastoreTechnology == GDMS.Memgraph);
         internal bool IsVoidProvider => Uri is null;
 
-        public virtual string ToToken(Bookmark consistency) => string.Empty;
-
-        public virtual Bookmark FromToken(string consistencyToken) => Bookmark.NullBookmark;
+        public string[] ToToken(Bookmarks consistency) => consistency.Values;
+        public Bookmarks FromToken(string[] consistencyToken) => new Bookmarks(Driver.BOOKMARKS.From(consistencyToken));
 
         public IReadOnlyList<TypeMapping> SupportedTypeMappings => supportedTypeMappings.Value;
         private readonly Lazy<List<TypeMapping>> supportedTypeMappings;

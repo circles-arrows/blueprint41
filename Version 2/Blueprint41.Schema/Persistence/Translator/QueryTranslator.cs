@@ -745,11 +745,11 @@ namespace Blueprint41.Persistence
 
         internal virtual bool HasFullTextSearchIndexes()
         {
-            using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+            return WithStatementRunner(delegate (IStatementRunner runner)
             {
-                var result = Transaction.Run(FtiList);
+                var result = runner.Run(FtiList);
                 return result.FirstOrDefault() is not null;
-            }
+            });
         }
 
         internal abstract void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities);
@@ -793,83 +793,94 @@ namespace Blueprint41.Persistence
         //}
         internal virtual bool HasScript(DatastoreModel.UpgradeScript script)
         {
-            string query = "MATCH (version:RefactorVersion) RETURN version;";
-            var result = Transaction.Run(query);
+            return WithStatementRunner(delegate (IStatementRunner runner)
+            {
+                string query = "MATCH (version:RefactorVersion) RETURN version;";
+                var result = runner.Run(query);
 
-            driver.Record ? record = result.FirstOrDefault();
-            if (record is null)
-                return false;
+                driver.Record? record = result.FirstOrDefault();
+                if (record is null)
+                    return false;
 
-            driver.NodeResult node = record["version"].As< driver.NodeResult> ();
-            (long major, long minor, long patch) = ((long)node.Properties["Major"]!, (long)node.Properties["Minor"]!, (long)node.Properties["Patch"]!);
+                driver.NodeResult node = record["version"].As<driver.NodeResult>();
+                (long major, long minor, long patch) = ((long)node.Properties["Major"]!, (long)node.Properties["Minor"]!, (long)node.Properties["Patch"]!);
 
-            if (major < script.Major)
-                return false;
+                if (major < script.Major)
+                    return false;
 
-            if (major > script.Major)
+                if (major > script.Major)
+                    return true;
+
+                if (minor < script.Minor)
+                    return false;
+
+                if (minor > script.Minor)
+                    return true;
+
+                if (patch < script.Patch)
+                    return false;
+
                 return true;
-
-            if (minor < script.Minor)
-                return false;
-
-            if (minor > script.Minor)
-                return true;
-
-            if (patch < script.Patch)
-                return false;
-
-            return true;
+            });
         }
         internal virtual void CommitScript(DatastoreModel.UpgradeScript script)
         {
-            // write version nr
-            string create = "MERGE (n:RefactorVersion) ON CREATE SET n = $node ON MATCH SET n = $node";
-
-            Dictionary<string, object> node = new Dictionary<string, object>
+            WithStatementRunner(delegate (IStatementRunner runner)
             {
-                { "Major", script.Major },
-                { "Minor", script.Minor },
-                { "Patch", script.Patch },
-                { "LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) }
-            };
+                // write version nr
+                string create = "MERGE (n:RefactorVersion) ON CREATE SET n = $node ON MATCH SET n = $node";
 
-            Dictionary<string, object?> parameters = new Dictionary<string, object?>
-            {
-                { "node", node }
-            };
+                Dictionary<string, object> node = new Dictionary<string, object>
+                {
+                    { "Major", script.Major },
+                    { "Minor", script.Minor },
+                    { "Patch", script.Patch },
+                    { "LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) }
+                };
 
-            Transaction.Run(create, parameters);
-            Transaction.Commit();
+                Dictionary<string, object?> parameters = new Dictionary<string, object?>
+                {
+                    { "node", node }
+                };
+
+                runner.Run(create, parameters);
+            });
         }
         internal virtual bool ShouldRefreshFunctionalIds()
         {
-            string query = "MATCH (version:RefactorVersion) RETURN version.LastRun as LastRun";
-            var result = Transaction.Run(query);
+            return WithStatementRunner(delegate (IStatementRunner runner)
+            {
+                string query = "MATCH (version:RefactorVersion) RETURN version.LastRun as LastRun";
+                var result = runner.Run(query);
 
-            driver.Record? record = result.FirstOrDefault();
-            if (record is null)
-                return true;
+                driver.Record? record = result.FirstOrDefault();
+                if (record is null)
+                    return true;
 
-            DateTime? lastRun = Conversion<long?, DateTime?>.Convert(record["LastRun"].As<long?>());
-            if (lastRun is null)
-                return true;
+                DateTime? lastRun = Conversion<long?, DateTime?>.Convert(record["LastRun"].As<long?>());
+                if (lastRun is null)
+                    return true;
 
-            if (DateTime.UtcNow.Subtract(lastRun.Value).TotalHours >= 12)
-                return true;
+                if (DateTime.UtcNow.Subtract(lastRun.Value).TotalHours >= 12)
+                    return true;
 
-            return false;
+                return false;
+            });
         }
         internal virtual void SetLastRun()
         {
-            // write version nr
-            string query = "MATCH (n:RefactorVersion) SET n.LastRun = $LastRun";
-
-            Dictionary<string, object?> parameters = new Dictionary<string, object?>
+            WithStatementRunner(delegate (IStatementRunner runner)
             {
-                { "LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) }
-            };
+                // write version nr
+                string query = "MATCH (n:RefactorVersion) SET n.LastRun = $LastRun";
 
-            Transaction.Run(query, parameters);
+                Dictionary<string, object?> parameters = new Dictionary<string, object?>
+                {
+                    { "LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) }
+                };
+
+                runner.Run(query, parameters);
+            });
         }
 
         #endregion
@@ -986,6 +997,37 @@ namespace Blueprint41.Persistence
         //        _                             => throw new NotSupportedException($"Function arguments of type '{arg.GetType().Name}' are not supported.")
         //    };
         //}
+
+        protected void WithStatementRunner(Action<IStatementRunner> action)
+        {
+            IStatementRunner? runner = Transaction.Current as IStatementRunner ?? Session.Current;
+            if (runner is not null)
+            {
+                action(runner);
+            }
+            else
+            {
+                using (runner = DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
+                {
+                    action(runner);
+                }
+            }
+        }
+        protected T WithStatementRunner<T>(Func<IStatementRunner, T> action)
+        {
+            IStatementRunner? runner = Transaction.Current as IStatementRunner ?? Session.Current;
+            if (runner is not null)
+            {
+                return action(runner);
+            }
+            else
+            {
+                using (runner = DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
+                {
+                    return action(runner);
+                }
+            }
+        }
 
         #endregion
 

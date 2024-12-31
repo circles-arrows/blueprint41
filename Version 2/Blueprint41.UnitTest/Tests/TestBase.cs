@@ -1,10 +1,15 @@
-﻿using Blueprint41.Core;
-using Blueprint41.UnitTest.DataStore;
-using Blueprint41.UnitTest.Mocks;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using NUnit.Framework;
+
+using neo4j = Neo4j.Driver;
+
+using Blueprint41.Persistence;
+using Blueprint41.UnitTest.DataStore;
+using System.Diagnostics;
+
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -14,8 +19,16 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockModel model = MockModel.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE);
+            Driver.Configure<neo4j.IDriver>();
+            MockModel model = MockModel.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
+            {
+                CustomCypherLogging = delegate (string cypher, Dictionary<string, object?>? parameters, long elapsedMilliseconds, string? memberName, string? sourceFilePath, int sourceLineNumber)
+                {
+                    Debug.WriteLine(cypher);
+                }
+            });
             model.Execute(true);
+
         }
 
         [SetUp]
@@ -34,27 +47,21 @@ namespace Blueprint41.UnitTest.Tests
         [TearDown]
         public void TearDown()
         {
-            using (MockModel.BeginTransaction())
-            {
-                string reset = "Match (n) detach delete n";
-                Transaction.Run(reset);
-
-                Transaction.Commit();
-            }
-#if NEO4J
-            using (MockModel.BeginTransaction())
-            {
-                string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
-                Transaction.Run(clearSchema);
-                Transaction.Commit();
-            }
-#elif MEMGRAPH
             using (MockModel.BeginSession())
             {
+                string reset = "Match (n) detach delete n";
+                Session.Run(reset);
+            }
+
+            using (MockModel.BeginSession())
+            {
+#if NEO4J
+                string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
+#elif MEMGRAPH
                 string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
+#endif
                 Session.Run(clearSchema);
             }
-#endif
         }
     }
 }

@@ -63,25 +63,21 @@ namespace Blueprint41.Persistence
         public async Task<List<Record>> ToListAsync()
         {
             List<Record> records = new List<Record>(64);
-
             if (_instance is not null)
             {
                 while (await FetchAsync())
                     records.Add(Current);
             }
-
             return records;
         }
         public async Task<List<T>> ToListAsync<T>(Func<Record, T> selector)
         {
             List<T> records = new List<T>(64);
-
             if (_instance is not null)
             {
                 while (await FetchAsync())
                     records.Add(selector.Invoke(Current));
             }
-
             return records;
         }
 
