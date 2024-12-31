@@ -42,7 +42,7 @@ namespace Blueprint41.Refactoring.Schema
                 if (first)
                     first = false;
                 else
-                    queryBuilder.AppendLine("UNION");
+                    queryBuilder.AppendLine("UNION ALL");
 
                 if (functionalId.Format == IdFormat.Hash)
                     queryBuilder.AppendFormat(templateHash, entity.Label.Name, entity.Key.Name, functionalId.Prefix, functionalId.Prefix.Length + 6);

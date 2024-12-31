@@ -18,7 +18,7 @@ namespace Blueprint41.Persistence
         }
         internal object _instance { get; private set; }
 
-        public Bookmarks LastBookmarks => Driver.I_ASYNC_SESSION.LastBookmarks(_instance);
+        public Bookmarks? LastBookmarks => Driver.I_ASYNC_SESSION.LastBookmarks(_instance);
         public DriverTransaction BeginTransaction() => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance), "Session.BeginTransaction()");
         public DriverTransaction BeginTransaction(Action<TransactionConfigBuilder> configBuilder) => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance, configBuilder), "Session.BeginTransaction(Action<TransactionConfigBuilder> configBuilder)");
 

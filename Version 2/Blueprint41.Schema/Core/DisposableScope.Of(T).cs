@@ -79,8 +79,8 @@ namespace Blueprint41.Core
             return default;
         }
 
-        protected virtual void Initialize() { }
-        protected virtual void Cleanup() { }
+        protected abstract void Initialize();
+        protected abstract void Cleanup();
 
         ~DisposableScope()
         {

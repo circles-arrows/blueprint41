@@ -32,6 +32,23 @@ namespace Blueprint41
             PersistenceProvider = provider;
             Attach();
         }
+        protected override void Initialize()
+        {
+            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
+
+            DriverSession = PersistenceProvider.Driver.Session(c =>
+            {
+                if (PersistenceProvider.Database is not null)
+                    c.WithDatabase(PersistenceProvider.Database);
+
+                c.WithFetchSize(ConfigBuilder.Infinite);
+                c.WithDefaultAccessMode(accessMode);
+
+                if (Consistency is not null)
+                    c.WithBookmarks(Consistency);
+            });
+        }
+
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningSession.Logger?.Log(message);
 
@@ -47,9 +64,9 @@ namespace Blueprint41
                 c.WithFetchSize(ConfigBuilder.Infinite);
                 c.WithDefaultAccessMode(accessMode);
 
-                Bookmark consistency = GetConsistency();
+                Bookmarks? consistency = GetConsistency();
                 if (consistency is not null)
-                    c.WithBookmarks(new Bookmarks(consistency));
+                    c.WithBookmarks(consistency);
             });
         }
 
@@ -59,34 +76,84 @@ namespace Blueprint41
 
         #region Session Logic
 
-        public virtual Session WithConsistency(Bookmark consistency)
+        public Session WithConsistency(params Bookmarks[] consistency)
         {
-            return this;
-        }
-        public virtual Session WithConsistency(string consistencyToken)
-        {
-            return this;
-        }
-        public Session WithConsistency(params Bookmark[] consistency)
-        {
-            if (consistency is not null)
+            if (consistency.Length == 0)
+                return this;
+
+            if (Consistency is null && consistency.Length == 1)
             {
-                foreach (Bookmark item in consistency)
-                    WithConsistency(item);
+                Consistency = consistency[0];
+            }
+            else
+            {
+                HashSet<string> hashset = new HashSet<string>();
+
+                if (Consistency is not null)
+                {
+                    string[]? tokens = PersistenceProvider.ToToken(Consistency);
+                    if (tokens is not null)
+                    {
+                        foreach (string token in tokens)
+                        {
+                            if (!hashset.Contains(token))
+                                hashset.Add(token);
+                        }
+                    }
+                }
+
+                foreach (Bookmarks bookmark in consistency)
+                {
+                    string[]? tokens = PersistenceProvider.ToToken(bookmark);
+                    if (tokens is not null)
+                    {
+                        foreach (string token in tokens)
+                        {
+                            if (!hashset.Contains(token))
+                                hashset.Add(token);
+                        }
+                    }
+                }
+
+                Consistency = PersistenceProvider.FromToken(hashset.ToArray());
             }
 
             return this;
         }
         public Session WithConsistency(params string[] consistencyTokens)
         {
-            if (consistencyTokens is not null)
+            if (consistencyTokens.Length == 0)
+                return this;
+
+            HashSet<string> hashset = new HashSet<string>();
+
+            if (Consistency is not null)
             {
-                foreach (string item in consistencyTokens)
-                    WithConsistency(item);
+                string[]? tokens = PersistenceProvider.ToToken(Consistency);
+                if (tokens is not null)
+                {
+                    foreach (string token in tokens)
+                    {
+                        if (!hashset.Contains(token))
+                            hashset.Add(token);
+                    }
+                }
             }
+
+            if (consistencyTokens is not null && consistencyTokens.Length > 0)
+            {
+                foreach (string token in consistencyTokens)
+                {
+                    if (!hashset.Contains(token))
+                        hashset.Add(token);
+                }
+            }
+
+            Consistency = PersistenceProvider.FromToken(hashset.ToArray());
 
             return this;
         }
+        protected internal Bookmarks? Consistency;
 
         static public Task<ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningSession).RunAsync(cypher, memberName, sourceFilePath,sourceLineNumber);
         static public Task<ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningSession).RunAsync(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
@@ -191,7 +258,7 @@ namespace Blueprint41
             }
         }
 
-        public virtual Bookmark GetConsistency() => Bookmark.NullBookmark;
+        public Bookmarks? GetConsistency() => (DriverSession is not null) ? Driver.I_ASYNC_SESSION.LastBookmarks(DriverSession._instance) : null;
 
         #endregion
 
