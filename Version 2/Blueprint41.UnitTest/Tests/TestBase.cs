@@ -34,6 +34,8 @@ namespace Blueprint41.UnitTest.Tests
                 LogToConsole = true
             };
             model.Execute(true);
+
+            //Connect<MockModel>(true, true);
         }
 
         [TearDown]
@@ -68,7 +70,7 @@ namespace Blueprint41.UnitTest.Tests
             });
 
             model.LogToConsole = logToConsole;
-            model.Execute(execute);
+            //model.Execute(execute);
 
             return model;
         }

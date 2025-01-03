@@ -51,8 +51,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureEntitiesHaveRowVersionPropertyOrInherited()
         {
-            DatastoreModel model = new DataModelWithRowVersion();
-            model.Execute(false);
+            DatastoreModel model = Connect<DataModelWithRowVersion>(false);
 
             Assert.IsTrue(model.Entities["BaseEntityWithRowVersion"].Properties["LastModifiedOn"].IsRowVersion);
             Assert.IsTrue(model.Entities["PersonInheritedBase"].IsSubsclassOf(model.Entities["BaseEntityWithRowVersion"]));
@@ -97,10 +96,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureRowVersionPropertyIsDateTime()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                Connect<DataModelWithInvalidRowVersion>(false);
-            });
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelWithInvalidRowVersion>(false));
 
             Assert.That(exception.Message, Contains.Substring("You cannot make a non-datetime field the row version."));
         }
@@ -140,11 +136,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureRowVersionIsOnlyOnePerEntity()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DataModelWithMultipleRowVersion();
-                model.Execute(false);
-            });
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelWithMultipleRowVersion>(false));
 
             Assert.That(exception.Message, Contains.Substring("Multiple row version fields are not allowed."));
         }
@@ -232,25 +224,15 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureEntityKeyIsUnique()
         {
-            DatastoreModel model;
-
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                model = new DataModelKeyNotUnique();
-                model.Execute(false);
-            });
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelKeyNotUnique>(false));
 
             Assert.That(exception.Message, Contains.Substring("You cannot make a non-unique field the key."));
 
-            exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                model = new DataModelMultipleKey();
-                model.Execute(false);
-            });
+            exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelMultipleKey>(false));
 
             Assert.That(exception.Message, Contains.Substring("Multiple key not allowed."));
 
-            model = new DataModelKeyIsUnique();
+            var model = Connect<DataModelKeyIsUnique>(false);
             model.Execute(false);
         }
 
@@ -343,28 +325,13 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsurePropertiesAreUnique()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DataModelEntityWithSameProperties();
-                model.Execute(false);
-            });
-
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelEntityWithSameProperties>(false));
             Assert.That(exception.Message, Contains.Substring("Property with the name Name already exists on Entity Person"));
 
-            exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DataModelEntityWithSamePropertiesFromBase();
-                model.Execute(false);
-            });
-
+            exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelEntityWithSamePropertiesFromBase>(false));
             Assert.That(exception.Message, Contains.Substring("Property with the name Name already exists on base class Entity BaseEntity"));
 
-            exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DataModelEntityWithSamePropertiesFromChangedInheritance();
-                model.Execute(false);
-            });
-
+            exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelEntityWithSamePropertiesFromChangedInheritance>(false));
             Assert.That(exception.Message, Contains.Substring("Property with the name Name already exists on base class Entity BaseEntity"));
         }
         #endregion
@@ -430,8 +397,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureStaticDataAreCreated()
         {
-            DatastoreModel model = new DataModelWithStaticData();
-            model.Execute(false);
+            var model = Connect<DataModelWithStaticData>(false);
 
             Entity accountType = model.Entities["AccountType"];
 
@@ -489,11 +455,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureStaticDataAreUnique()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DataModelWithStaticDataKeyDuplicate();
-                model.Execute(false);
-            });
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelWithStaticDataKeyDuplicate>(false));
 
             Assert.That(exception.Message, Contains.Substring("A static entity with the same key already exists."));
         }
@@ -525,11 +487,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureStaticDataHaveKeys()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DataModelWithStaticDataWithoutKey();
-                model.Execute(false);
-            });
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelWithStaticDataWithoutKey>(false));
 
             Assert.That(exception.Message, Contains.Substring("No key exists of entity 'ContactStatus'"));
         }
@@ -562,11 +520,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureStaticDataHaveCorrectProperties()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DataModelWithStaticDataMissingProperty();
-                model.Execute(false);
-            });
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DataModelWithStaticDataMissingProperty>(false));
 
             Assert.That(exception.Message, Contains.Substring("The property 'Name' is not contained within entity 'ContactStatus'."));
         }
@@ -613,8 +567,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                DatastoreModel model = new DataModelStaticDataWithDeleteNode();
-                model.Execute(true);
+                DatastoreModel model = Connect<DataModelStaticDataWithDeleteNode>(true);
                 dynamic? contactStatus = model.Entities["ContactStatus"].Refactor.MatchNode("1");
             });
             
@@ -666,11 +619,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DataModelWithDeprecatedEntities model = new DataModelWithDeprecatedEntities()
-                {
-                    LogToConsole = true
-                };
-                model.Execute(true);
+                var model = Connect<DataModelWithDeprecatedEntities>(true, true);
                 Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
                 Assert.That(output.GetOutput(), Contains.Substring("Deprecate entity from Person"));
             }
@@ -749,11 +698,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntityRefactor()
-                {
-                    LogToConsole = true
-                };
-                model.Execute(true);
+                Connect<DatastoreEntityRefactor>(true, true);
             }
         }
         #endregion
@@ -798,11 +743,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreEntityRefactorConstraints model = new DatastoreEntityRefactorConstraints()
-                {
-                    LogToConsole = true
-                };
-                model.Execute(true);
+                Connect<DatastoreEntityRefactorConstraints>(true, true);
 
 #if NEO4J
                 Assert.That(output.GetOutput(), Contains.Substring("CREATE INDEX AccountType_Indexed_RangeIndex FOR (node:AccountType) ON (node.Indexed)"));
@@ -815,7 +756,7 @@ namespace Blueprint41.UnitTest.Tests
         }
 
 #if !MEMGRAPH
-        private class DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint : DatastoreModel<DatastoreEntityRefactorConstraints>
+        private class DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint : DatastoreModel<DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -862,12 +803,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint model = new DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint()
-                {
-                    LogToConsole = true
-                };
-                model.Execute(true);
-
+                Connect<DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint>(true, true);
                 Assert.That(output.GetOutput(), Contains.Substring("CREATE INDEX AccountType_Indexed_RangeIndex FOR (node:AccountType) ON (node.Indexed)"));
                 Assert.That(output.GetOutput(), Contains.Substring("CREATE CONSTRAINT AccountType_Unique_UniqueConstraint FOR (node:AccountType) REQUIRE node.Unique IS UNIQUE"));
 
@@ -962,19 +898,10 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorChangeInheritance()
         {
-            DatastoreModel model;
-
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                model = new DatastoreEntityBaseWithoutParent();
-                model.Execute(true);
-
-            });
-
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DatastoreEntityBaseWithoutParent>(true));
             Assert.That(exception.Message, Contains.Substring("Specified method is not supported."));
 
-            model = new DatastoreEntityBaseWithParent();
-            model.Execute(true);
+            var model = Connect<DatastoreEntityBaseWithParent>(true);
             Assert.AreEqual(model.Entities["Child"].Inherits?.Name, "BaseTwo");
         }
 
@@ -1021,9 +948,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorEntityResetFunctionalId()
         {
-            DatastoreModel model = new DatastoreEntityResetFunctionalId();
-            model.Execute(true);
-
+            var model = Connect<DatastoreEntityResetFunctionalId>(true);
             Assert.AreEqual(model.Entities["AccountType"].FunctionalId, model.FunctionalIds.Default);
         }
         #endregion
@@ -1078,11 +1003,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntityCopyValue()
-                {
-                    LogToConsole = true
-                };
-                model.Execute(true);
+                Connect<DatastoreEntityCopyValue>(true, true);
                 Assert.IsTrue(Regex.IsMatch(output.GetOutput(), "Copy properties from Name to CopyName for entity Account"));
             }
         }
@@ -1131,8 +1052,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntitySetDefaultValue() { LogToConsole = true };
-                model.Execute(true);
+                Connect<DatastoreEntitySetDefaultValue>(true, true);
 
                 string query = "SetDefaultConstantValue -> Account.Name = 'First Account'";
                 Assert.That(output.GetOutput(), Contains.Substring(query));
@@ -1223,8 +1143,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntitySetFunctionalId() { LogToConsole = true };
-                model.Execute(true);
+                Connect<DatastoreEntitySetFunctionalId>(true, true);
 
                 Assert.That(output.GetOutput(), Contains.Substring("Differences for Account (\"A_\" : 1) -> CreateFunctionalId"));
                 Assert.That(output.GetOutput(), Contains.Substring("Differences for ChangeAccount (\"CA_\" : 1) -> CreateFunctionalId"));
@@ -1236,6 +1155,8 @@ namespace Blueprint41.UnitTest.Tests
             {
                 DatastoreModel model = new DatastoreEntityInheritedFunctionalId();
                 model.Execute(true);
+
+                //Connect<DatastoreEntityInheritedFunctionalId>(true);
             });
 
             Assert.That(exception.Message, Contains.Substring("The entity 'Account' already inherited a functional id 'A_ (Account)', you cannot assign another one."));
