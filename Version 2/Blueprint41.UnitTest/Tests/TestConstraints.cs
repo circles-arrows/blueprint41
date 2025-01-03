@@ -36,9 +36,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new())
             {
-                MovieDataStoreModel_01 model = new () { LogToConsole = true };               
-
-                Assert.DoesNotThrow(() => model.Execute(true));
+                Assert.DoesNotThrow(() => Connect<MovieDataStoreModel_01>(true, true));
             }
         }
 
@@ -73,9 +71,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new())
             {
-                MovieDataStoreModel_02 model = new() { LogToConsole = true };
-
-                Exception ex = Assert.Throws<InvalidOperationException>(() => model.Execute(true));
+                Exception ex = Assert.Throws<InvalidOperationException>(() => Connect<MovieDataStoreModel_02>(true, true));
 
                 Assert.That(ex.InnerException is NotSupportedException);
                 Assert.AreEqual("Multiple key not allowed.", ex.InnerException?.Message);
