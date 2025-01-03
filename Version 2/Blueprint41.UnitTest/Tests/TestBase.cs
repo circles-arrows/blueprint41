@@ -20,7 +20,7 @@ namespace Blueprint41.UnitTest.Tests
         public void OneTimeSetUp()
         {
             Driver.Configure<neo4j.IDriver>();
-            Connect<MockModel>(true);
+            Connect<MockModel>();
         }
 
         [SetUp]
@@ -29,13 +29,13 @@ namespace Blueprint41.UnitTest.Tests
             TearDown();
 
             // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!
-            MockModel model = new MockModel()
-            {
-                LogToConsole = true
-            };
-            model.Execute(true);
+            //MockModel model = new MockModel()
+            //{
+            //    LogToConsole = true
+            //};
+            //model.Execute(true);
 
-            //Connect<MockModel>(true, true);
+            Connect<MockModel>(true).Execute(true);
         }
 
         [TearDown]
@@ -58,7 +58,7 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
-        protected T Connect<T>(bool execute, bool logToConsole = false)
+        protected T Connect<T>(bool logToConsole = false)
             where T : DatastoreModel<T>, new()
         {
             var model = DatastoreModel<T>.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
