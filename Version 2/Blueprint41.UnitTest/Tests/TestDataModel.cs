@@ -99,8 +99,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                DatastoreModel model = new DataModelWithInvalidRowVersion();
-                model.Execute(false);
+                Connect<DataModelWithInvalidRowVersion>(false);
             });
 
             Assert.That(exception.Message, Contains.Substring("You cannot make a non-datetime field the row version."));
@@ -684,8 +683,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureMatchNodeReturnsCorrectNode()
         {
-            DatastoreModel model = new DataModelWithStaticData();
-            model.Execute(true);
+            DatastoreModel model = Connect<DataModelWithStaticData>(true);
 
             Entity accountType = model.Entities["AccountType"];
             dynamic? account = accountType.Refactor.MatchNode("6");

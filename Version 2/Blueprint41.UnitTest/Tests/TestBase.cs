@@ -20,15 +20,7 @@ namespace Blueprint41.UnitTest.Tests
         public void OneTimeSetUp()
         {
             Driver.Configure<neo4j.IDriver>();
-            MockModel model = MockModel.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
-            {
-                CustomCypherLogging = delegate (string cypher, Dictionary<string, object?>? parameters, long elapsedMilliseconds, string? memberName, string? sourceFilePath, int sourceLineNumber)
-                {
-                    Debug.WriteLine(cypher);
-                }
-            });
-            model.Execute(true);
-
+            Connect<MockModel>(true);
         }
 
         [SetUp]
@@ -62,6 +54,18 @@ namespace Blueprint41.UnitTest.Tests
 #endif
                 Session.Run(clearSchema);
             }
+        }
+
+        protected T Connect<T>(bool execute)
+            where T : DatastoreModel<T>, new()
+        {
+            return DatastoreModel<T>.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
+            {
+                CustomCypherLogging = delegate (string cypher, Dictionary<string, object?>? parameters, long elapsedMilliseconds, string? memberName, string? sourceFilePath, int sourceLineNumber)
+                {
+                    Debug.WriteLine(cypher);
+                }
+            });
         }
     }
 }
