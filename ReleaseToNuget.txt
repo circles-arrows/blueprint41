@@ -6,12 +6,18 @@
 
 For each of the following projects: Blueprint41, Blueprint41.Neo4jDriver.v3 & Blueprint41.Neo4jDriver.v4
 
-    - Open "Properties\AssemblyInfo.cs" on project -> Set the version number: AssemblyVersion & AssemblyFileVersion
-    - In solution explorer -> Right click project -> select "Edit project file" -> Set the version number: <PackageVersion>
-    - Rebuild in release mode
-    - In solution explorer -> Right click project -> select "Pack"
-    - Find the nuget-package in the "bin/Release" folder
-    - Go to "www.nuget.org" and upload the nuget-package
+	Build:
+	- Open "Properties\AssemblyInfo.cs" on project -> Set the version number: AssemblyVersion & AssemblyFileVersion
+	- In solution explorer -> Right click project -> select "Edit project file" -> Set the version number: <PackageVersion>
+	- Rebuild in release mode
+	- In solution explorer -> Right click project -> select "Pack"
+
+	Release to NuGet:
+	- Find the nuget-package in the "bin/Release" folder
+	- Go to "www.nuget.org" and upload the nuget-package
+	
+	Release to GitHub:
+	- *************** HOW ??? ***************
 
 
 If you need to re-pack the project, go to:
