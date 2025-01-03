@@ -78,8 +78,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DataModelPropertyRename model = new DataModelPropertyRename() { LogToConsole = true };
-                model.Execute(true);
+                var model = Connect<DataModelPropertyRename>(true, true);
 
                 Assert.DoesNotThrow(() => { var a = model.Entities["Person"].Properties["FullName"]; });
                 Assert.That(output.GetOutput(), Contains.Substring("executing RenameProperty -> Rename property from Name to FullName"));
@@ -232,12 +231,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorPropertyMove()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                DataModelPropertyMove model = new DataModelPropertyMove();
-                model.Execute(true);
-
-            });
+            Assert.Throws<InvalidOperationException>(() => Connect<DataModelPropertyMove>(true));
 
             TearDown();
 
@@ -334,8 +328,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorPropertyMerge()
         {
-            DataModelPropertyMerge model = new DataModelPropertyMerge();
-            model.Execute(true);
+            Connect<DataModelPropertyMerge>(true);
         }
         #endregion
 
@@ -420,8 +413,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorPropertyConvert()
         {
-            DataModelPropertyConvert model = new DataModelPropertyConvert();
-            model.Execute(true);
+            Connect<DataModelPropertyConvert>(true);
         }
         #endregion
 
@@ -517,9 +509,8 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorPropertySetIndexTypeAndDeprecate()
         {
-            DataModelPropertySetIndexTypeAndDeprecate model = new DataModelPropertySetIndexTypeAndDeprecate();
-            model.Execute(true);
-                        
+            Connect<DataModelPropertySetIndexTypeAndDeprecate>(true);
+
             IndexAssert.None("Scene", "Name");
             IndexAssert.Unique("Scene", "Number");
             IndexAssert.Index("Genre", "Name");
@@ -598,8 +589,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorPropertyReroute()
         {
-            DataModelPropertyReroute model = new DataModelPropertyReroute();
-            model.Execute(true);
+            Connect<DataModelPropertyReroute>(true);
         }
         #endregion
 
@@ -673,8 +663,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorPropertyConvertToCollectionOrLookup()
         {
-            DataModelPropertyConvertRel model = new DataModelPropertyConvertRel();
-            model.Execute(true);
+            Connect<DataModelPropertyConvertRel>(true);
         }
         #endregion
 
@@ -753,8 +742,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DataModelPropertyMandatory model = new DataModelPropertyMandatory() { LogToConsole = true };
-                model.Execute(true);
+                Connect<DataModelPropertyMandatory>(true, true);
 
                 string consoleOutput = output.GetOutput();
                 Assert.That(consoleOutput, Contains.Substring("executing SetDefaultConstantValue -> Person.Name = 'Mr/Mrs.'"));
