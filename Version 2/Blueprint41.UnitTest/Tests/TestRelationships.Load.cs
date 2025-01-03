@@ -14,7 +14,7 @@ using ClientException = Neo4j.Driver.ClientException;
 
 namespace Blueprint41.UnitTest.Tests
 {
-    public partial class TestRelationships
+    public partial class TestRelationships : TestBase
     {
         [Test]
         public void RelationDirectLoad()

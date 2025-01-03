@@ -15,7 +15,7 @@ using DatabaseException = Neo4j.Driver.DatabaseException;
 
 namespace Blueprint41.UnitTest.Tests
 {
-    public partial class TestRelationships
+    public partial class TestRelationships : TestBase
     {
         [Test] // Asserts done
         public void RenameProperty()

@@ -11,7 +11,7 @@ using Blueprint41.UnitTest.DataStore;
 
 namespace Blueprint41.UnitTest.Tests
 {
-    public partial class TestRelationships
+    public partial class TestRelationships : TestBase
     {
         public static void Execute(Action<DatastoreModel> script)
         {

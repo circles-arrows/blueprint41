@@ -56,7 +56,7 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
-        protected T Connect<T>(bool execute)
+        protected T Connect<T>(bool execute, bool logToConsole = false)
             where T : DatastoreModel<T>, new()
         {
             var model = DatastoreModel<T>.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
@@ -67,7 +67,9 @@ namespace Blueprint41.UnitTest.Tests
                 }
             });
 
+            model.LogToConsole = logToConsole;
             model.Execute(execute);
+
             return model;
         }
     }
