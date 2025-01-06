@@ -115,9 +115,9 @@ namespace Blueprint41.Core
 
             if ((bool)canConv)
             {
-                MethodInfo convertMethodInfo = converterType.GetTypeInfo().DeclaredMethods.First(item => item.Name == "Convert");
-                PropertyInfo valuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.First(item => item.Name == "Value");
-                PropertyInfo hasValuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.First(item => item.Name == "HasValue");
+                MethodInfo convertMethodInfo = converterType.GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert")!;
+                PropertyInfo valuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.FirstOrDefault(item => item.Name == "Value")!;
+                PropertyInfo hasValuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.FirstOrDefault(item => item.Name == "HasValue")!;
 
                 ParameterExpression fromParam = Expression.Parameter(typeof(TFrom), "value");
                 ParameterExpression toParam = Expression.Parameter(typeof(TTo));
