@@ -134,7 +134,7 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
-        private class DataModelPropertyMoveToBase : DatastoreModel<DataModelPropertyMove>
+        private class DataModelPropertyMoveToBase : DatastoreModel<DataModelPropertyMoveToBase>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -181,7 +181,7 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
-        private class DataModelPropertyMoveFromBase : DatastoreModel<DataModelPropertyMove>
+        private class DataModelPropertyMoveFromBase : DatastoreModel<DataModelPropertyMoveFromBase>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -236,7 +236,10 @@ namespace Blueprint41.UnitTest.Tests
 
             TearDown();
 
-            DataModelPropertyMoveToBase modelToBase = new DataModelPropertyMoveToBase();
+            //DataModelPropertyMoveToBase modelToBase = new DataModelPropertyMoveToBase();
+            //modelToBase.Execute(true);
+
+            var modelToBase = Connect<DataModelPropertyMoveToBase>();
             modelToBase.Execute(true);
 
             Assert.DoesNotThrow(() => { var a = modelToBase.Entities["Movie"].Properties["ToMoveProperty"]; });
@@ -246,9 +249,10 @@ namespace Blueprint41.UnitTest.Tests
 
             Assert.DoesNotThrow(() =>
             {
+                //DataModelPropertyMoveFromBase modelFromBase = new DataModelPropertyMoveFromBase();
+                //modelFromBase.Execute(true);
 
-                DataModelPropertyMoveFromBase modelFromBase = new DataModelPropertyMoveFromBase();
-                modelFromBase.Execute(true);
+                Connect<DataModelPropertyMoveFromBase>().Execute(true);
             });
         }
         #endregion

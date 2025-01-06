@@ -11,19 +11,8 @@ using Blueprint41.UnitTest.DataStore;
 
 namespace Blueprint41.UnitTest.Tests
 {
-    public partial class TestRelationships : TestBase
+    public partial class TestRelationships
     {
-        public static void Execute(Action<DatastoreModel> script)
-        {
-            string name = script.Method.Name;
-
-            MockModel model = new MockModel()
-            {
-                LogToConsole = true
-            };
-            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(name));
-        }
-
         #region RenameProperty          -> PERSON_LIVES_IN.AddressLine1
 
         public static void RenameAddrLine1(DatastoreModel model)
