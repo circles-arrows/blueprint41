@@ -1116,7 +1116,7 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
-        private class DatastoreEntityInheritedFunctionalId : DatastoreModel<DatastoreEntitySetFunctionalId>
+        private class DatastoreEntityInheritedFunctionalId : DatastoreModel<DatastoreEntityInheritedFunctionalId>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -1166,10 +1166,10 @@ namespace Blueprint41.UnitTest.Tests
 
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                DatastoreModel model = new DatastoreEntityInheritedFunctionalId();
-                model.Execute(true);
+                //DatastoreModel model = new DatastoreEntityInheritedFunctionalId();
+                //model.Execute(true);
 
-                //Connect<DatastoreEntityInheritedFunctionalId>(true);
+                Connect<DatastoreEntityInheritedFunctionalId>().Execute(true);
             });
 
             Assert.That(exception.Message, Contains.Substring("The entity 'Account' already inherited a functional id 'A_ (Account)', you cannot assign another one."));
