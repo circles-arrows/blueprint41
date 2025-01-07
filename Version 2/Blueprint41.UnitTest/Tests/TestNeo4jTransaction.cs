@@ -100,7 +100,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault()!;
+                Record record = result.First();
                 Assert.IsNull(record);
             }
         }
@@ -192,7 +192,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault()!;
+                Record record = result.First();
                 Assert.IsNull(record);
             }
         }
@@ -216,7 +216,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault()!;
+                Record record = result.First();
                 Assert.IsNull(record);
             }
         }
