@@ -51,8 +51,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureEntitiesHaveRowVersionPropertyOrInherited()
         {
-            DatastoreModel model = Connect<DataModelWithRowVersion>();
-            model.Execute(false);
+            DatastoreModel model = Connect<DataModelWithRowVersion>().ExecuteModel(false);
             
             Assert.IsTrue(model.Entities["BaseEntityWithRowVersion"].Properties["LastModifiedOn"].IsRowVersion);
             Assert.IsTrue(model.Entities["PersonInheritedBase"].IsSubsclassOf(model.Entities["BaseEntityWithRowVersion"]));
@@ -234,7 +233,6 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(exception.Message, Contains.Substring("Multiple key not allowed."));
 
             Connect<DataModelKeyIsUnique>().Execute(false);
-            //model.Execute(false);
         }
 
         #endregion        
@@ -398,8 +396,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureStaticDataAreCreated()
         {
-            var model = Connect<DataModelWithStaticData>();
-            model.Execute(false);
+            var model = Connect<DataModelWithStaticData>().ExecuteModel(false);
 
             Entity accountType = model.Entities["AccountType"];
 
@@ -492,7 +489,6 @@ namespace Blueprint41.UnitTest.Tests
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
                 Connect<DataModelWithStaticDataWithoutKey>().Execute(false);
-                //model.Execute(false);
             });
 
             Assert.That(exception.Message, Contains.Substring("No key exists of entity 'ContactStatus'"));
@@ -573,8 +569,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                DatastoreModel model = Connect<DataModelStaticDataWithDeleteNode>();
-                model.Execute(true);
+                DatastoreModel model = Connect<DataModelStaticDataWithDeleteNode>().ExecuteModel(true);
                 dynamic? contactStatus = model.Entities["ContactStatus"].Refactor.MatchNode("1");
             });
             
@@ -626,9 +621,8 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                var model = Connect<DataModelWithDeprecatedEntities>(true);
-                model.Execute(true);
-
+                var model = Connect<DataModelWithDeprecatedEntities>(true).ExecuteModel(true);
+                
                 Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
                 Assert.That(output.GetOutput(), Contains.Substring("Deprecate entity from Person"));
             }
@@ -641,8 +635,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureMatchNodeReturnsCorrectNode()
         {
-            DatastoreModel model = Connect<DataModelWithStaticData>();
-            model.Execute(true);
+            DatastoreModel model = Connect<DataModelWithStaticData>().ExecuteModel(true);
 
             Entity accountType = model.Entities["AccountType"];
             dynamic? account = accountType.Refactor.MatchNode("6");
@@ -911,8 +904,8 @@ namespace Blueprint41.UnitTest.Tests
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DatastoreEntityBaseWithoutParent>(true));
             Assert.That(exception.Message, Contains.Substring("Specified method is not supported."));
 
-            var model = Connect<DatastoreEntityBaseWithParent>();
-            model.Execute(true);
+            var model = Connect<DatastoreEntityBaseWithParent>().ExecuteModel(true);
+
             Assert.AreEqual(model.Entities["Child"].Inherits?.Name, "BaseTwo");
         }
 
@@ -959,8 +952,8 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorEntityResetFunctionalId()
         {
-            var model = Connect<DatastoreEntityResetFunctionalId>();
-            model.Execute(true);
+            var model = Connect<DatastoreEntityResetFunctionalId>().ExecuteModel(true);
+
             Assert.AreEqual(model.Entities["AccountType"].FunctionalId, model.FunctionalIds.Default);
         }
         #endregion
@@ -1016,7 +1009,7 @@ namespace Blueprint41.UnitTest.Tests
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 Connect<DatastoreEntityCopyValue>(true).Execute(true);
-                //model.Execute(true);
+                
                 Assert.IsTrue(Regex.IsMatch(output.GetOutput(), "Copy properties from Name to CopyName for entity Account"));
             }
         }
