@@ -78,8 +78,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                var model = Connect<DataModelPropertyRename>(true);
-                model.Execute(true);
+                var model = Connect<DataModelPropertyRename>(true).ExecuteModel(true);                
 
                 Assert.DoesNotThrow(() => { var a = model.Entities["Person"].Properties["FullName"]; });
                 Assert.That(output.GetOutput(), Contains.Substring("executing RenameProperty -> Rename property from Name to FullName"));
@@ -236,24 +235,14 @@ namespace Blueprint41.UnitTest.Tests
 
             TearDown();
 
-            //DataModelPropertyMoveToBase modelToBase = new DataModelPropertyMoveToBase();
-            //modelToBase.Execute(true);
-
-            var modelToBase = Connect<DataModelPropertyMoveToBase>();
-            modelToBase.Execute(true);
+            var modelToBase = Connect<DataModelPropertyMoveToBase>().ExecuteModel(true);
 
             Assert.DoesNotThrow(() => { var a = modelToBase.Entities["Movie"].Properties["ToMoveProperty"]; });
             Assert.Throws<ArgumentOutOfRangeException>(() => { var a = modelToBase.Entities["Scene"].Properties["ToMoveProperty"]; });
 
             TearDown();
 
-            Assert.DoesNotThrow(() =>
-            {
-                //DataModelPropertyMoveFromBase modelFromBase = new DataModelPropertyMoveFromBase();
-                //modelFromBase.Execute(true);
-
-                Connect<DataModelPropertyMoveFromBase>().Execute(true);
-            });
+            Assert.DoesNotThrow(() => Connect<DataModelPropertyMoveFromBase>().Execute(true));
         }
         #endregion
 
