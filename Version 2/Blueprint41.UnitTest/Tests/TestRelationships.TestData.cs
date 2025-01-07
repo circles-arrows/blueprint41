@@ -813,6 +813,15 @@ namespace Blueprint41.UnitTest.Tests
                 };
         }
 
+        public void Execute(Action<DatastoreModel> script)
+        {
+            string name = script.Method.Name;
+
+            var model = Connect<MockModel>(true);
+
+            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(name));
+        }
+
         #endregion
     }
 }
