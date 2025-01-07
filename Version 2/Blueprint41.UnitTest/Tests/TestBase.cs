@@ -28,13 +28,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             TearDown();
 
-            // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!
-            //MockModel model = new MockModel()
-            //{
-            //    LogToConsole = true
-            //};
-            //model.Execute(true);
-
+            // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!         
             Connect<MockModel>(true).Execute(true);
         }
 
@@ -70,7 +64,17 @@ namespace Blueprint41.UnitTest.Tests
             });
 
             model.LogToConsole = logToConsole;
-            //model.Execute(execute);
+            
+            return model;
+        }
+    }
+
+    public static class DataStoreModelEx
+    {
+        public static T ExecuteModel<T>(this T model, bool upgradeDatastore = false)
+            where T : DatastoreModel, new()
+        {
+            model.Execute(upgradeDatastore);
 
             return model;
         }
