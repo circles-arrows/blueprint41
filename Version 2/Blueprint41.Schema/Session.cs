@@ -15,21 +15,22 @@ namespace Blueprint41
         public DriverSession? DriverSession { get; set; }
         public IQueryRunner? StatementRunner => DriverSession;
 
-        static internal Session Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        static internal Session Get(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
-            Session session = new Session(provider, readwrite, optimize, logger);
+            Session session = new Session(model, readwrite, optimize, logger);
             session.InitializeDriverAsync();
             return session;
         }
 
-        private Session(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        private Session(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
             OptimizeFor = optimize;
             ReadWriteMode = readwrite;
             //DisableForeignKeyChecks = false;
 
-            PersistenceProvider = provider;
+            Model= model;
+
             Attach();
         }
         protected override void Initialize()
@@ -252,7 +253,7 @@ namespace Blueprint41
                 Session? session = Current;
 
                 if (session is null)
-                    throw new InvalidOperationException("There is no session, you should create one first -> using (Session.Begin()) { ... }");
+                    throw new InvalidOperationException("There is no session, you should create one first -> using (DatastoreModel.BeginSession()) { ... }");
 
                 return session;
             }
@@ -264,7 +265,8 @@ namespace Blueprint41
 
         #region PersistenceProviderFactory
 
-        public PersistenceProvider PersistenceProvider { get; private set; }
+        public DatastoreModel Model { get; private set; }
+        public PersistenceProvider PersistenceProvider => Model.PersistenceProvider;
         internal NodePersistenceProvider NodePersistenceProvider => PersistenceProvider.NodePersistenceProvider;
         internal RelationshipPersistenceProvider RelationshipPersistenceProvider => PersistenceProvider.RelationshipPersistenceProvider;
 
