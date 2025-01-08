@@ -1133,7 +1133,7 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
-        private class DatastoreEntityInheritedFunctionalId : DatastoreModel<DatastoreEntitySetFunctionalId>
+        private class DatastoreEntityInheritedFunctionalId : DatastoreModel<DatastoreEntityInheritedFunctionalId>
         {
             protected override void SubscribeEventHandlers()
             {
