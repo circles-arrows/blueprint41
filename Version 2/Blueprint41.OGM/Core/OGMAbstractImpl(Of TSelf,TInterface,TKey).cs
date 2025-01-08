@@ -27,6 +27,9 @@ namespace Blueprint41.Core
 
         public static TInterface? Load(TKey key)
         {
+            if (Entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             if (Entity.Key.IndexType != IndexType.Unique)
                 throw new NotSupportedException("The key is not marked unique for the abstract base type, please load the entity via its concrete sub type instead.");
 
@@ -40,6 +43,9 @@ namespace Blueprint41.Core
             Entity? entity = Entity.Parent.GetEntity(node.Labels);
             if (entity is null)
                 return null;
+
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             object? key = null;
             if (!node.Properties.TryGetValue(entity.Key.Name, out key))
@@ -124,7 +130,7 @@ namespace Blueprint41.Core
         }
         public static List<TInterface> Search(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TInterface>(Entity, text, properties, page, pageSize, ascending, Entity.Key);
+            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TInterface>(Entity, text, properties, page, pageSize, ascending, properties);
         }
 
         public static void ForceDelete(TKey key)

@@ -491,7 +491,7 @@ namespace Blueprint41.UnitTest.Tests
                 Connect<DataModelWithStaticDataWithoutKey>().Execute(false);
             });
 
-            Assert.That(exception.Message, Contains.Substring("No key exists of entity 'ContactStatus'"));
+            Assert.That(exception.Message, Contains.Substring("No key exists for entity 'ContactStatus'"));
         }
 
         private class DataModelWithStaticDataMissingProperty : DatastoreModel<DataModelWithStaticDataMissingProperty>

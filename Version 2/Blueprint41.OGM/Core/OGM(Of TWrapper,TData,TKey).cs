@@ -53,6 +53,9 @@ namespace Blueprint41.Core
 
         internal static OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, persistence.NodeMapping mappingMode)
         {
+            if (Entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             object? key = null;
             if (!node.Properties.TryGetValue(Entity.Key.Name, out key))
                 throw new ArgumentException($"The node does not contain key '{Entity.Key.Name}' for entity '{Entity.Name}'.");
@@ -142,7 +145,7 @@ namespace Blueprint41.Core
         }
         public static List<TWrapper> Search(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties, page, pageSize, ascending, Entity.Key);
+            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties, page, pageSize, ascending, properties);
         }
 
         internal abstract void SetKey(TKey key);

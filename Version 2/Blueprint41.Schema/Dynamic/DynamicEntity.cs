@@ -435,7 +435,7 @@ namespace Blueprint41.Dynamic
         object? OGM.GetKey()
         {
             if (DynamicEntityType.Key is null)
-                throw new MissingMemberException($"No key exists of entity '{DynamicEntityType.Name}'");
+                throw new MissingMemberException($"No key exists for entity '{DynamicEntityType.Name}'");
 
             DynamicEntityValues.TryGetValue(DynamicEntityType.Key.Name, out object? key);
 

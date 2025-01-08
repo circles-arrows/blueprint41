@@ -643,6 +643,12 @@ namespace Blueprint41.UnitTest.Tests
         private void WriteRelation(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till) => WriteRelation(@in, relationship, @out, from, till, new Dictionary<string, object>());
         private void WriteRelation(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till, Dictionary<string, object> properties)
         {
+            Entity inEntity = @in.GetEntity();
+            Entity outEntity = @out.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             Dictionary<string, object> map = new Dictionary<string, object>(properties);
             map!.AddOrSet(relationship.StartDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(from));
             map!.AddOrSet(relationship.EndDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(till));
@@ -650,7 +656,7 @@ namespace Blueprint41.UnitTest.Tests
 
             string cypher = $"""
                 MATCH (in:{relationship.InEntity.Label.Name}), (out:{relationship.OutEntity.Label.Name})
-                WHERE in.{@in.GetEntity().Key.Name} = $in AND out.{@out.GetEntity().Key.Name} = $out
+                WHERE in.{inEntity.Key.Name} = $in AND out.{outEntity.Key.Name} = $out
                 CREATE (in)-[r:{relationship.Neo4JRelationshipType}]->(out)
                 SET r = $map
                 """;
@@ -667,9 +673,15 @@ namespace Blueprint41.UnitTest.Tests
 
         private List<(DateTime from, DateTime till)> ReadRelations(OGM @in, Relationship relationship, OGM @out)
         {
+            Entity inEntity = @in.GetEntity();
+            Entity outEntity = @out.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string cypher = $"""
                 MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
-                WHERE in.{@in.GetEntity().Key.Name} = $in AND out.{@out.GetEntity().Key.Name} = $out
+                WHERE in.{inEntity.Key.Name} = $in AND out.{outEntity.Key.Name} = $out
                 RETURN r.StartDate AS `From`, r.EndDate AS `Till`
                 """;
 
@@ -691,9 +703,15 @@ namespace Blueprint41.UnitTest.Tests
         }
         private List<(DateTime from, DateTime till, Dictionary<string, object> properties)> ReadRelationsWithProperties(OGM @in, Relationship relationship, OGM @out)
         {
+            Entity inEntity = @in.GetEntity();
+            Entity outEntity = @out.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string cypher = $"""
                 MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
-                WHERE in.{@in.GetEntity().Key.Name} = $in AND out.{@out.GetEntity().Key.Name} = $out
+                WHERE in.{inEntity.Key.Name} = $in AND out.{outEntity.Key.Name} = $out
                 RETURN r.StartDate AS `From`, r.EndDate AS `Till`, properties(r) AS Properties
                 """;
 
@@ -719,6 +737,9 @@ namespace Blueprint41.UnitTest.Tests
         }
         private List<(object inNodeKey, string[] inNodeLabels, object outNodeKey, string[] outNodeLabels, Dictionary<string, object> properties)> ReadAllRelations(Relationship relationship)
         {
+            if (relationship.InEntity.Key is null || relationship.OutEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string cypher = $"""
                 MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
                 RETURN  in.{relationship.InEntity.Key.Name} AS InNodeKey,
