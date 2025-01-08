@@ -17,20 +17,20 @@ namespace Blueprint41
         public DriverTransaction? DriverTransaction { get; set; }
         public IQueryRunner? StatementRunner => DriverTransaction as IQueryRunner ?? DriverSession;
 
-        static internal Transaction Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        static internal Transaction Get(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
-            Transaction transaction = new Transaction(provider, readwrite, optimize, logger);
+            Transaction transaction = new Transaction(model, readwrite, optimize, logger);
             transaction.InitializeDriver();
             return transaction;
         }
-        static internal async Task<Transaction> GetAsync(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        static internal async Task<Transaction> GetAsync(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
-            Transaction transaction = new Transaction(provider, readwrite, optimize, logger);
+            Transaction transaction = new Transaction(model, readwrite, optimize, logger);
             await transaction.InitializeDriverAsync();
             return transaction;
         }
 
-        protected Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        protected Transaction(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
             OptimizeFor = optimize;
@@ -38,7 +38,7 @@ namespace Blueprint41
             InTransaction = true;
             DisableForeignKeyChecks = false;
 
-            PersistenceProvider = provider;
+            Model = model;
 
             RaiseOnBegin();
             Attach();
@@ -498,9 +498,9 @@ namespace Blueprint41
             get
             {
                 Transaction? trans = Current;
-
+                
                 if (trans is null)
-                    throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
+                    throw new InvalidOperationException("There is no transaction, you should create one first -> using (DatastoreModel.BeginTransaction()) { ... Transaction.Commit(); }");
 
                 if (!trans.InTransaction)
                     throw new InvalidOperationException("The transaction was already committed or rolled back.");
@@ -782,7 +782,8 @@ namespace Blueprint41
 
         #region PersistenceProviderFactory
 
-        public PersistenceProvider PersistenceProvider { get; private set; }
+        public DatastoreModel Model { get; private set; }
+        public PersistenceProvider PersistenceProvider => Model.PersistenceProvider;
         internal NodePersistenceProvider NodePersistenceProvider => PersistenceProvider.NodePersistenceProvider;
         internal RelationshipPersistenceProvider RelationshipPersistenceProvider => PersistenceProvider.RelationshipPersistenceProvider;
 

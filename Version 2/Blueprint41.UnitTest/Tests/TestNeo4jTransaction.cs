@@ -25,7 +25,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
             });
 
-            Assert.That(exception.Message, Contains.Substring("There is no transaction, you should create one first -> using (MockModel.BeginTransaction()) { ... Transaction.Commit(); }"));
+            Assert.That(exception.Message, Contains.Substring("There is no transaction, you should create one first -> using (DatastoreModel.BeginTransaction()) { ... Transaction.Commit(); }"));
         }
 
         [Test]
