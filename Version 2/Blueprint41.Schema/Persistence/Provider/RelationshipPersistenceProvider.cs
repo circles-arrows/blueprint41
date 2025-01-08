@@ -54,6 +54,9 @@ namespace Blueprint41.Persistence
         public IEnumerable<CollectionItem> Load(OGM parent, Core.EntityCollectionBase target)
         {
             Entity targetEntity = target.ForeignEntity;
+            if (targetEntity.Key is null || target.ParentEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");
             string[] outNames = targetEntity.GetDbNames("out");
 
@@ -133,6 +136,8 @@ namespace Blueprint41.Persistence
                 returnClause = $" RETURN node as Parent, out as Item, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
 
             Entity targetEntity = target.ForeignEntity;
+            if (targetEntity.Key is null || target.ParentEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");
             string[] outNames = targetEntity.GetDbNames("out");
@@ -189,6 +194,9 @@ namespace Blueprint41.Persistence
 
         private Dictionary<object, List<driver.NodeResult>> Load(Entity targetEntity, IEnumerable<object> keys)
         {
+            if (targetEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string[] nodeNames = targetEntity.GetDbNames("node");
 
             List<string> fullMatch = new List<string>();
@@ -312,11 +320,17 @@ namespace Blueprint41.Persistence
         }
         protected void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
         {
+            Entity inEntity = inItem.GetEntity();
+            Entity outEntity = outItem.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
-                inItem.GetEntity().Label.Name,
-                inItem.GetEntity().Key.Name,
-                outItem.GetEntity().Label.Name,
-                outItem.GetEntity().Key.Name);
+                inEntity.Label.Name,
+                inEntity.Key.Name,
+                outEntity.Label.Name,
+                outEntity.Key.Name);
 
             string create = $"""
                 MERGE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out)
@@ -358,6 +372,9 @@ namespace Blueprint41.Persistence
 
             Entity inEntity = inItem.GetEntity();
             Entity outEntity = outItem.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             string delete = $$"""
                 MATCH (in:{{inEntity.Label.Name}} { {{inEntity.Key.Name}}: $inKey })-[rel:{{relationship.Neo4JRelationshipType}}]->(out:{{outEntity.Label.Name}} { {{outEntity.Key.Name}}: $outKey })
@@ -475,6 +492,9 @@ namespace Blueprint41.Persistence
             Entity inEntity = inItem?.GetEntity() ?? relationship.InEntity;
             Entity outEntity = outItem?.GetEntity() ?? relationship.OutEntity;
 
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string inLabel = (inItem is null) ? $"in:{inEntity.Label.Name}" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
             string outLabel = (outItem is null) ? $"out:{outEntity.Label.Name}" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
 
@@ -499,6 +519,9 @@ namespace Blueprint41.Persistence
 
             Entity inEntity = inItem?.GetEntity() ?? relationship.InEntity;
             Entity outEntity = outItem?.GetEntity() ?? relationship.OutEntity;
+            
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             string inLabel = (inItem is null) ? $"in:{inEntity.Label.Name}" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
             string outLabel = (outItem is null) ? $"out:{outEntity.Label.Name}" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
@@ -533,6 +556,12 @@ namespace Blueprint41.Persistence
 
         public void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
         {
+            Entity inEntity = inItem.GetEntity();
+            Entity outEntity = outItem.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             if (properties is not null && properties.Count > 0)
                 throw new NotImplementedException("Support for setting properties via the unmanaged relationship interface is not implemented yet.");
 
@@ -544,11 +573,11 @@ namespace Blueprint41.Persistence
             {
                 string find = string.Format(
                     "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{5} <= $endDate OR r.{5} IS NULL) AND (r.{6} > $startDate OR r.{6} IS NULL) RETURN min(COALESCE(r.{5}, $MinDateTime)) as MinStartDate, max(COALESCE(r.{6}, $MaxDateTime)) as MaxEndDate, count(r) as Count",
-                    inItem.GetEntity().Label.Name,
+                    inEntity.Label.Name,
                     relationship.Neo4JRelationshipType,
-                    outItem.GetEntity().Label.Name,
-                    inItem.GetEntity().Key.Name,
-                    outItem.GetEntity().Key.Name,
+                    outEntity.Label.Name,
+                    inEntity.Key.Name,
+                    outEntity.Key.Name,
                     relationship.StartDate,
                     relationship.EndDate);
 
@@ -579,8 +608,8 @@ namespace Blueprint41.Persistence
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
-                    inItem.GetEntity().Key.Name,
-                    outItem.GetEntity().Key.Name,
+                    inEntity.Key.Name,
+                    outEntity.Key.Name,
                     relationship.StartDate,
                     relationship.EndDate);
 
@@ -588,10 +617,10 @@ namespace Blueprint41.Persistence
             }
 
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey MATCH (out:{2}) WHERE out.{3} = $outKey",
-                inItem.GetEntity().Label.Name,
-                inItem.GetEntity().Key.Name,
-                outItem.GetEntity().Label.Name,
-                outItem.GetEntity().Key.Name);
+                inEntity.Label.Name,
+                inEntity.Key.Name,
+                outEntity.Label.Name,
+                outEntity.Key.Name);
             string create = string.Format("CREATE (in)-[outr:{0} $node]->(out)", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object> node = new Dictionary<string, object>();
@@ -617,6 +646,12 @@ namespace Blueprint41.Persistence
         }
         public void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate)
         {
+            Entity inEntity = inItem.GetEntity();
+            Entity outEntity = outItem.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);
@@ -626,11 +661,11 @@ namespace Blueprint41.Persistence
 
             string match = string.Format(
                 "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and COALESCE(r.{5}, $minDateTime) = $moment DELETE r",
-                inItem.GetEntity().Label.Name,
+                inEntity.Label.Name,
                 relationship.Neo4JRelationshipType,
-                outItem.GetEntity().Label.Name,
-                inItem.GetEntity().Key.Name,
-                outItem.GetEntity().Key.Name,
+                outEntity.Label.Name,
+                inEntity.Key.Name,
+                outEntity.Key.Name,
                 relationship.StartDate);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();

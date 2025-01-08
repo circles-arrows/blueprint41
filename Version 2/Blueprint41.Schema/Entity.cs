@@ -309,14 +309,14 @@ namespace Blueprint41
         /// <summary>
         /// The definition for the property that represents the unique key
         /// </summary>
-        public EntityProperty Key
+        public EntityProperty? Key
         {
             get
             {
                 if (Parent.IsUpgraded)
-                    return key.Value ?? throw new NotSupportedException("No key has been defined for this entity.");
+                    return key.Value;
 
-                return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey) ?? throw new NotSupportedException("No key has been defined for this entity.");
+                return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey);
             }
         }
         private Lazy<EntityProperty?> key;

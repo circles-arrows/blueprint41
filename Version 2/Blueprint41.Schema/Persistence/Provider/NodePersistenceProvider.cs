@@ -30,15 +30,19 @@ namespace Blueprint41.Persistence
 
         public void Load(OGM item, bool locked = false)
         {
+            Entity entity = item.GetEntity();
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             Transaction trans = Transaction.RunningTransaction;
 
             string returnStatement = (locked) ? " WITH COLLECT(node) AS nodes CALL apoc.lock.nodes(nodes) RETURN HEAD(nodes) AS node" : " RETURN node";
-            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
+            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key", entity.Label.Name, entity.Key.Name);
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
             Dictionary<string, object?>? customState = null;
-            var args = item.GetEntity().RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
+            var args = entity.RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
             var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
 
@@ -56,7 +60,7 @@ namespace Blueprint41.Persistence
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.ElementId, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
+            args = entity.RaiseOnNodeLoaded(trans, args, loaded.ElementId, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
 
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
             {
@@ -70,6 +74,9 @@ namespace Blueprint41.Persistence
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
+
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             string match;
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
@@ -101,6 +108,9 @@ namespace Blueprint41.Persistence
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
+            
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             string match;
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
@@ -132,6 +142,9 @@ namespace Blueprint41.Persistence
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
+
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             string labels = string.Join(":", entity.GetBaseTypesAndSelf().Where(x => !x.IsVirtual).Select(x => x.Label.Name));
 
@@ -196,6 +209,9 @@ namespace Blueprint41.Persistence
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
+
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
 
             string match;
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
@@ -341,6 +357,9 @@ namespace Blueprint41.Persistence
         internal List<T> Load<T>(Entity entity, NodeEventArgs args, Persistence.ResultCursor result, Transaction trans)
             where T : class, OGM
         {
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();
 
             List<T> items = new List<T>();
@@ -405,6 +424,9 @@ namespace Blueprint41.Persistence
         internal List<T> Search<T>(Entity entity, string text, Property[] fullTextProperties, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
             where T : class, OGM
         {
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             Transaction trans = Transaction.RunningTransaction;
             HashSet<string> keys = new HashSet<string>()
             {
@@ -481,6 +503,11 @@ namespace Blueprint41.Persistence
 
         public bool RelationshipExists(EntityProperty foreignProperty, OGM item)
         {
+            Entity entity = item.GetEntity();
+
+            if (entity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
             string pattern;
             if (foreignProperty.Direction == DirectionEnum.In)
                 pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
@@ -489,8 +516,8 @@ namespace Blueprint41.Persistence
 
             string match = string.Format(
                 pattern,
-                item.GetEntity().Label.Name,
-                item.GetEntity().Key.Name,
+                entity.Label.Name,
+                entity.Key.Name,
                 foreignProperty.Relationship?.Neo4JRelationshipType,
                 foreignProperty.Parent.Label.Name);
 
