@@ -901,7 +901,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorChangeInheritance()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DatastoreEntityBaseWithoutParent>(true));
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => Connect<DatastoreEntityBaseWithoutParent>().Execute(true));
             Assert.That(exception.Message, Contains.Substring("Specified method is not supported."));
 
             var model = Connect<DatastoreEntityBaseWithParent>().ExecuteModel(true);
@@ -1050,6 +1050,7 @@ namespace Blueprint41.UnitTest.Tests
                 });
 
                 Assert.That(exception.Message, Contains.Substring("The field 'Label' was not present on entity 'Account'."));
+
             }
         }
 
