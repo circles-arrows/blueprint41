@@ -87,7 +87,7 @@ namespace Blueprint41.Query
                 if (getEntityMethod is not null)
                     entity = getEntityMethod.Invoke(field.Result, null) as Entity;
 
-                MethodInfo? method = (entity is null) ? null : entity!.RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(Node), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                MethodInfo? method = (entity is null) ? null : entity!.RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
                 MapMethod = (method is null) ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
 
                 if (entity is null)
