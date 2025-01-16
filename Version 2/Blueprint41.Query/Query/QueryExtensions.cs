@@ -141,8 +141,14 @@ namespace Blueprint41.Query
             if (parameter.HasValue && !state.Values.Contains(parameter))
                 state.Values.Add(parameter);
 
+            if (parameter.Name == null)
+            {
+                parameter.Name = $"param{state.paramSeq}";
+                state.paramSeq++;
+            }
+
             state.Text.Append("$");
-            state.Text.Append(parameter.Name ?? $"param{state.paramSeq++}");
+            state.Text.Append(parameter.Name);
         }
         internal static void Compile(this QueryTranslator self, QueryCondition condition, CompileState state)
         {

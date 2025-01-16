@@ -81,6 +81,7 @@ namespace Blueprint41
             // Normal parameters
             Name = name;
             Type = type;
+            IsConstant = false;
             Value = null;
             HasValue = false;
 
@@ -92,6 +93,7 @@ namespace Blueprint41
             // Constants or Optional parameters (used in Query) or actual value (used during Execution)
             Name = name;
             Type = type;
+            IsConstant = (name == null);
             Value = KeyParameter.MaterializeValue(Type, value);
             HasValue = true;
         }
@@ -200,12 +202,12 @@ namespace Blueprint41
             return new Parameter(null!, value, type);
         }
 
-        public string Name { get; private set; }
+        public string Name { get; internal set; }
         public object? Value { get; private set; }
         public bool HasValue { get; private set; }
 
         public Type? Type { get; private set; }
-        public bool IsConstant => (Name is null);
+        public bool IsConstant { get; private set; }
 
         internal void Compile(CompileState state)
         {
