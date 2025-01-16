@@ -77,7 +77,7 @@ namespace Blueprint41.Refactoring.Schema
 
             foreach (var command in commands)
             {
-                Parser.Log(command);
+                Parent.Entity.Parent.Parser.Log(command);
             }
 
             return commands;

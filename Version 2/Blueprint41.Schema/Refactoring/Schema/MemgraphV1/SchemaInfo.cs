@@ -39,7 +39,7 @@ namespace Blueprint41.Refactoring.Schema
             {
                 foreach (var diff in GetFunctionalIdDifferences())
                 {
-                    Parser.Log(diff.ToString());
+                    DatastoreModel.Parser.Log(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
                         Session.Run(query);
@@ -57,7 +57,7 @@ namespace Blueprint41.Refactoring.Schema
                     {
                         foreach (var cql in action.ToCypher())
                         {
-                            Parser.Log(cql);
+                            DatastoreModel.Parser.Log(cql);
                             Session.Run(cql);
                         }
                     }

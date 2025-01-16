@@ -20,7 +20,7 @@ namespace Blueprint41.Refactoring.Schema
                     if (!string.IsNullOrEmpty(command))
                     {
                         commands.Add(command);
-                        Parser.Log(command);
+                        Parent.Entity.Parent.Parser.Log(command);
                     }
                 }
             }

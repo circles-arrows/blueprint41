@@ -287,7 +287,7 @@ namespace Blueprint41.Refactoring.Templates
         }
         #endregion
 
-        protected void Log(string message, params object[] args) => Parser.Log(message, args);
+        protected void Log(string message, params object[] args) => DatastoreModel.Parser.Log(message, args);
 
         internal DatastoreModel DatastoreModel { get; set; }
     }
@@ -310,7 +310,7 @@ namespace Blueprint41.Refactoring.Templates
         {
             long retval = 0;
 
-            if (!Parser.ShouldExecute)
+            if (!DatastoreModel.Parser.ShouldExecute)
                 return 0;
 
             if (withTransaction)
@@ -345,7 +345,7 @@ namespace Blueprint41.Refactoring.Templates
         }
         public void RunBatched()
         {
-            if (!Parser.ShouldExecute)
+            if (!DatastoreModel.Parser.ShouldExecute)
                 return;
 
             driver.Counters counters;
@@ -366,7 +366,7 @@ namespace Blueprint41.Refactoring.Templates
 
         private driver.ResultCursor Execute()
         {
-            if (!Parser.ShouldExecute)
+            if (!DatastoreModel.Parser.ShouldExecute)
                 return new driver.ResultCursor();
 
             string cypher = TransformText();

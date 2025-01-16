@@ -5,11 +5,18 @@ using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Refactoring
 {
-    internal static class Parser
+    internal class Parser
     {
+        internal Parser(DatastoreModel model)
+        {
+            Model = model;
+        }
+
+        private readonly DatastoreModel Model;
+
         #region Parser Logic
 
-        private static driver.ResultCursor PrivateExecute(IStatementRunner runner, string cypher, Dictionary<string, object?>? parameters)
+        private driver.ResultCursor PrivateExecute(IStatementRunner runner, string cypher, Dictionary<string, object?>? parameters)
         {
             if (parameters is null || parameters.Count == 0)
                 return runner.Run(cypher);
@@ -17,14 +24,14 @@ namespace Blueprint41.Refactoring
                 return runner.Run(cypher, parameters);
         }
 
-        internal static void Execute(DatastoreModel model, string cypher, Dictionary<string, object?>? parameters, bool withTransaction = true, Action<driver.ResultCursor>? logic = null)
+        internal void Execute(string cypher, Dictionary<string, object?>? parameters, bool withTransaction = true, Action<driver.ResultCursor>? logic = null)
         {
             if (!ShouldExecute)
                 return;
 
             if (withTransaction)
             {
-                using (IStatementRunner runner = model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+                using (IStatementRunner runner = Model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                 {
                     driver.ResultCursor result = PrivateExecute(runner, cypher, parameters);
                     logic?.Invoke(result);
@@ -33,14 +40,14 @@ namespace Blueprint41.Refactoring
             }
             else
             {
-                using (IStatementRunner runner = model.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
+                using (IStatementRunner runner = Model.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
                     driver.ResultCursor result = PrivateExecute(runner, cypher, parameters);
                     logic?.Invoke(result);
                 }
             }
         }
-        internal static void ExecuteBatched(DatastoreModel model, string cypher, Dictionary<string, object?>? parameters)
+        internal void ExecuteBatched(string cypher, Dictionary<string, object?>? parameters)
         {
             if (!ShouldExecute)
                 return;
@@ -48,9 +55,9 @@ namespace Blueprint41.Refactoring
             driver.Counters counters;
             do
             {
-                using (IStatementRunner runner = model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+                using (IStatementRunner runner = Model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                 {
-                    driver.ResultCursor result = Parser.PrivateExecute(runner, cypher, parameters);
+                    driver.ResultCursor result = PrivateExecute(runner, cypher, parameters);
                     Transaction.Commit();
 
                     counters = result.Statistics();
@@ -59,10 +66,10 @@ namespace Blueprint41.Refactoring
             while (counters.ContainsUpdates);
         }
 
-        internal static bool LogToDebugger { get; set; } = true;
-        internal static bool LogToConsole { get; set; } = false;
+        internal bool LogToDebugger { get; set; } = true;
+        internal bool LogToConsole { get; set; } = false;
 
-        internal static void Log(string message, params object[] args)
+        internal void Log(string message, params object[] args)
         {
             if (LogToDebugger)
                 Debug.WriteLine(message, args);
@@ -75,16 +82,16 @@ namespace Blueprint41.Refactoring
 
         #region Neo4j Access Logic
 
-        public static bool HasScript(DatastoreModel model, DatastoreModel.UpgradeScript script)
+        public bool HasScript(DatastoreModel.UpgradeScript script)
         {
-            return WithStatementRunner(model, delegate (IStatementRunner runner)
+            return WithStatementRunner(delegate (IStatementRunner runner)
             {
                 // the HasScriptPrivate method doesn't set hasScript = true
                 hasScript = runner.PersistenceProvider.Translator.HasScript(script);
                 return hasScript;
             });
         }
-        internal static void ForceScript(Action action)
+        internal void ForceScript(Action action)
         {
             bool tmp = hasScript;
             hasScript = false;
@@ -97,21 +104,21 @@ namespace Blueprint41.Refactoring
                 hasScript = tmp;
             }
         }
-        public static void CommitScript(DatastoreModel model, DatastoreModel.UpgradeScript script)
+        public void CommitScript(DatastoreModel.UpgradeScript script)
         {
-            WithStatementRunner(model, delegate (IStatementRunner runner)
+            WithStatementRunner(delegate (IStatementRunner runner)
             {
                 runner.PersistenceProvider.Translator.CommitScript(script);
                 hasScript = true;
             });
         }
 
-        private static bool hasScript = true;
-        internal static bool ShouldExecute { get { return !hasScript; } }
+        private bool hasScript = true;
+        internal bool ShouldExecute { get { return !hasScript; } }
 
-        internal static bool ShouldRefreshFunctionalIds(DatastoreModel model)
+        internal bool ShouldRefreshFunctionalIds()
         {
-            return WithStatementRunner(model, delegate (IStatementRunner runner)
+            return WithStatementRunner(delegate (IStatementRunner runner)
             {
                 bool shouldRefresh = runner.PersistenceProvider.Translator.ShouldRefreshFunctionalIds();
                 hasScript = !shouldRefresh;
@@ -120,16 +127,16 @@ namespace Blueprint41.Refactoring
         }
 
 
-        public static void SetLastRun(DatastoreModel model)
+        public void SetLastRun()
         {
-            WithStatementRunner(model, delegate (IStatementRunner runner)
+            WithStatementRunner(delegate (IStatementRunner runner)
             {
                 runner.PersistenceProvider.Translator.SetLastRun();
                 hasScript = true;
             });
         }
 
-        private static void WithStatementRunner(DatastoreModel model, Action<IStatementRunner> action)
+        private void WithStatementRunner(Action<IStatementRunner> action)
         {
             IStatementRunner? runner = Transaction.Current as IStatementRunner ?? Session.Current;
             if (runner is not null)
@@ -138,13 +145,13 @@ namespace Blueprint41.Refactoring
             }
             else
             {
-                using (runner = model.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
+                using (runner = Model.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
                     action(runner);
                 }
             }
         }
-        private static T WithStatementRunner<T>(DatastoreModel model, Func<IStatementRunner, T> action)
+        private T WithStatementRunner<T>(Func<IStatementRunner, T> action)
         {
             IStatementRunner? runner = Transaction.Current as IStatementRunner ?? Session.Current;
             if (runner is not null)
@@ -153,7 +160,7 @@ namespace Blueprint41.Refactoring
             }
             else
             {
-                using (runner = model.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
+                using (runner = Model.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
                     return action(runner);
                 }

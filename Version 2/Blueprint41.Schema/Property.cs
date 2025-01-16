@@ -415,7 +415,7 @@ namespace Blueprint41
         private void RemoveIndexesAndContraints()
         {
             Parent.Parent.EnsureSchemaMigration();
-            if (!Parser.ShouldExecute)
+            if (!Parent.Parent.Parser.ShouldExecute)
                 return;
 
             Parent.Parent.PersistenceProvider.SchemaInfo.RemoveIndexesAndContraints(this);
@@ -490,7 +490,7 @@ namespace Blueprint41
             string right = (Direction == DirectionEnum.In) ? "->" : "-";
             string cypher = $"MATCH (anchor:{original.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} MERGE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
 
-            Parser.Execute(Parent.Parent, cypher, null);
+            Parent.Parent.Parser.Execute(cypher, null);
 
             Entity? inEntity = Relationship.InEntity;
             Property? inProperty = Relationship.InProperty;
@@ -594,7 +594,7 @@ namespace Blueprint41
             if (PropertyType != PropertyType.Attribute || SystemReturnType != typeof(string))
                 throw new NotSupportedException("Only string properties can be converted to compressed string.");
 
-            if (Parser.ShouldExecute)
+            if (Parent.Parent.Parser.ShouldExecute)
             {
 
                 foreach (IEntity iEntity in Parent.GetConcreteClasses())
@@ -641,7 +641,7 @@ namespace Blueprint41
                     {
                         list = new List<object>();
 
-                        Parser.Execute(Parent.Parent, cypherRead, null, true, async delegate(Persistence.ResultCursor result)
+                        Parent.Parent.Parser.Execute(cypherRead, null, true, async delegate(Persistence.ResultCursor result)
                         {
                             foreach (Persistence.Record item in await result.ToListAsync())
                             {
@@ -660,7 +660,7 @@ namespace Blueprint41
                             Dictionary<string, object?> batch = new Dictionary<string, object?>();
                             batch.Add("Batch", list);
 
-                            Parser.Execute(Parent.Parent, cypherWrite, batch, true);
+                            Parent.Parent.Parser.Execute(cypherWrite, batch, true);
                         }
 #pragma warning restore S2583 // Conditionally executed code should be reachable
                     }
@@ -841,12 +841,12 @@ namespace Blueprint41
 
             Nullable = false;
 
-            if (Parser.ShouldExecute)
+            if (Parent.Parent.Parser.ShouldExecute)
             {
                 if (Parent is Entity entity)
                 {
                     string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
-                    Parser.Execute(Parent.Parent, cypher, null, true, delegate(ResultCursor result)
+                    Parent.Parent.Parser.Execute(cypher, null, true, delegate(ResultCursor result)
                     {
                         Record? record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;
@@ -858,7 +858,7 @@ namespace Blueprint41
                 else if (Parent is Relationship relationship)
                 {
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
-                    Parser.Execute(Parent.Parent, cypher, null, true, delegate (Persistence.ResultCursor result)
+                    Parent.Parent.Parser.Execute(cypher, null, true, delegate (Persistence.ResultCursor result)
                     {
                         Record? record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;

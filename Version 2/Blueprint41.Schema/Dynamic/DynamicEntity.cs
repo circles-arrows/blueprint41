@@ -743,7 +743,7 @@ namespace Blueprint41.Dynamic
             if (instance is not null)
                 return instance;
 
-            DynamicEntity item = new DynamicEntity(transaction, entity, Parser.ShouldExecute);
+            DynamicEntity item = new DynamicEntity(transaction, entity, entity.Parent.Parser.ShouldExecute);
             ((OGM)item).SetKey(key);
 
             return item;
@@ -751,7 +751,7 @@ namespace Blueprint41.Dynamic
         public static void Delete(Transaction transaction, Entity entity, object key)
         {
             DynamicEntity? item = Load(transaction, entity, key);
-            if (item is null || (Parser.ShouldExecute && entity.ContainsStaticData))
+            if (item is null || (entity.Parent.Parser.ShouldExecute && entity.ContainsStaticData))
                 return;
 
             item.Delete();

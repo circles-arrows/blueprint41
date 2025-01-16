@@ -70,7 +70,7 @@ namespace Blueprint41.Refactoring.Schema
 
         public IReadOnlyList<string> Labels            { get; protected set; } = null!;
         public IReadOnlyList<string> RelationshipTypes { get; protected set; } = null!;
-        protected DatastoreModel DatastoreModel;
+        protected readonly DatastoreModel DatastoreModel;
 
         public IReadOnlyList<ApplyConstraintEntity> GetConstraintDifferences()
         {
@@ -157,7 +157,7 @@ namespace Blueprint41.Refactoring.Schema
             {
                 foreach (var diff in GetFunctionalIdDifferences())
                 {
-                    Parser.Log(diff.ToString());
+                    DatastoreModel.Parser.Log(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
                         Transaction.Run(query);
@@ -176,7 +176,7 @@ namespace Blueprint41.Refactoring.Schema
                     {
                         foreach (var cql in action.ToCypher())
                         {
-                            Parser.Log(cql);
+                            DatastoreModel.Parser.Log(cql);
                             Session.Run(cql);
                         }
                     }
@@ -198,7 +198,7 @@ namespace Blueprint41.Refactoring.Schema
                     {
                         foreach (string query in action.ToCypher())
                         {
-                            Parser.Execute(DatastoreModel, query, null, !DatastoreModel.PersistenceProvider.IsMemgraph);
+                            DatastoreModel.Parser.Execute(query, null, !DatastoreModel.PersistenceProvider.IsMemgraph);
                         }
                     }
                 }

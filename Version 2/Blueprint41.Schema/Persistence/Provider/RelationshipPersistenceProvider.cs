@@ -16,17 +16,17 @@ namespace Blueprint41.Persistence
     {
         internal RelationshipPersistenceProvider(DatastoreModel datastoreModel)
         {
-            PersistenceProvider = datastoreModel.PersistenceProvider;
+            DatastoreModel = datastoreModel;
 
             HasApocMapRemoveKeys = new Lazy<bool>(() => HasFunction("apoc.map.removeKeys"));
 
             bool HasFunction(string name)
             {
-                return PersistenceProvider?.HasFunction(name) ?? false;
+                return DatastoreModel.PersistenceProvider?.HasFunction(name) ?? false;
             }
         }
 
-        public PersistenceProvider PersistenceProvider { get; private set; }
+        internal DatastoreModel DatastoreModel { get; private set; }
 
         private void Checks(Relationship relationship, OGM? inItem, OGM? outItem)
         {
@@ -287,7 +287,7 @@ namespace Blueprint41.Persistence
                         }, EventOptions.SupressEvents);
                     }
                     else
-                        item = new DynamicEntity(Transaction.Current, targetEntity, Parser.ShouldExecute);
+                        item = new DynamicEntity(Transaction.Current, targetEntity, DatastoreModel.Parser.ShouldExecute);
 
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item!.SetData(node.Properties);

@@ -614,7 +614,7 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            if (!Parser.ShouldExecute)
+            if (!Parent.Parser.ShouldExecute)
                 return;
 
             dynamic tmp = new ExpandoObject();
@@ -656,7 +656,7 @@ namespace Blueprint41
             if (target is null)
                 throw new NotSupportedException(string.Format("The target property '{0}' was not found on entity '{1}', you cannot copy data outside of the entity with this refactor action.", targetProperty, Name));
 
-            if (!Parser.ShouldExecute)
+            if (!Parent.Parser.ShouldExecute)
                 return;
 
             foreach (Entity subClass in GetConcreteClasses())
@@ -677,7 +677,7 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            if (!Parser.ShouldExecute)
+            if (!Parent.Parser.ShouldExecute)
                 return;
 
             foreach (Entity baseClass in this.GetBaseTypes())
@@ -701,7 +701,7 @@ namespace Blueprint41
         {
             //Parent.EnsureSchemaMigration();
 
-            DynamicEntity entity = new DynamicEntity(Transaction.Current, this, Parser.ShouldExecute, node);
+            DynamicEntity entity = new DynamicEntity(Transaction.Current, this, Parent.Parser.ShouldExecute, node);
 
             object? key = entity.GetKey();
             if (key is null)
@@ -743,7 +743,7 @@ namespace Blueprint41
             if (!staticData.TryGetValue(key, out value))
                 throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be loaded here.");
 
-            if (Parser.ShouldExecute)
+            if (Parent.Parser.ShouldExecute)
                 return DynamicEntity.Load(Transaction.RunningTransaction, this, key);
             else
                 return value;
@@ -772,7 +772,7 @@ namespace Blueprint41
             if (!staticData.Remove(key))
                 throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be deleted here.");
 
-            if (Parser.ShouldExecute)
+            if (Parent.Parser.ShouldExecute)
                 DynamicEntity.Delete(Transaction.RunningTransaction, this, key);
         }
 
@@ -873,7 +873,7 @@ namespace Blueprint41
             foreach (Entity subclass in this.GetSubclasses())
                 subclass.functionalId = null;
 
-            if (algorithm == ApplyAlgorithm.DoNotApply || !Parser.ShouldExecute)
+            if (algorithm == ApplyAlgorithm.DoNotApply || !Parent.Parser.ShouldExecute)
                 return;
 
             foreach (Entity baseClass in this.GetConcreteClasses())
@@ -1702,7 +1702,7 @@ namespace Blueprint41
         internal void ForceDelete(object key)
         {
             OGM? item = Load(key);
-            if (item is null || (Parser.ShouldExecute && ContainsStaticData))
+            if (item is null || (Parent.Parser.ShouldExecute && ContainsStaticData))
                 return;
 
             item.Delete(true);
@@ -1710,7 +1710,7 @@ namespace Blueprint41
         internal void Delete(object key)
         {
             OGM? item = Load(key);
-            if (item is null || (Parser.ShouldExecute && ContainsStaticData))
+            if (item is null || (Parent.Parser.ShouldExecute && ContainsStaticData))
                 return;
 
             item.Delete(false);

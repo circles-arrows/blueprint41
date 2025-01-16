@@ -1,0 +1,4 @@
+Blueprint41.Schema -> TypeConversion -> Conversion(Of TFrom, TTo).cs -> Line: 154
+Changed from:	(fromIsNullable) ? (Expression)Expression.Not(Expression.Property(fromParam, hasValuePropertyInfo)) :
+Changed to:		(fromIsNullable) ? (Expression)Expression.Not(Expression.Property(fromParam, hasValuePropertyInfo!)) :
+

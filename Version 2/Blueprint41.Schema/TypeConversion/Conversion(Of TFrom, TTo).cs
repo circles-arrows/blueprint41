@@ -151,7 +151,7 @@ namespace Blueprint41.Core
                     LambdaExpression expression = Expression.Lambda<Func<TFrom, TTo>>(
                             Expression.Block(typeof(TTo), new[] { returnValue },
                                     Expression.IfThenElse(
-                                            (fromIsNullable) ? (Expression)Expression.Not(Expression.Property(fromParam, hasValuePropertyInfo)) :
+                                            (fromIsNullable) ? (Expression)Expression.Not(Expression.Property(fromParam, hasValuePropertyInfo!)) :
                                                                (Expression)Expression.Equal(fromParam, Expression.Constant(null)),
                                             thenExpr,
                                             Expression.Assign(returnValue, elseExpr)

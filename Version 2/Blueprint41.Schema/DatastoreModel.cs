@@ -23,6 +23,7 @@ namespace Blueprint41
     {
         protected DatastoreModel()
         {
+            Parser = new Parser(this);
             Entities = new EntityCollection(this);
             Relations = new RelationshipCollection(this);
             Interfaces = new InterfaceCollection(this);
@@ -52,6 +53,8 @@ namespace Blueprint41
         internal protected PersistenceProvider? _persistenceProvider = null;
 
         public abstract GDMS DatastoreTechnology { get; }
+        internal Parser Parser { get; private set; } // TODO: Initialize
+
 
         /// <summary>
         /// All entities in the data-store
@@ -259,7 +262,7 @@ namespace Blueprint41
                         }
                     }
 
-                    if (!Parser.HasScript(this, script))
+                    if (!Parser.HasScript(script))
                     {
                         Parser.Log("Running script: {0}.{1}.{2} ({3})", script.Major, script.Minor, script.Patch, script.Name);
                         Stopwatch sw = Stopwatch.StartNew();
@@ -268,7 +271,7 @@ namespace Blueprint41
                         using (PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                         {
                             RunScriptChecked(script);
-                            Parser.CommitScript(this, script);
+                            Parser.CommitScript(script);
                             Transaction.Commit();
                         }
                         Refactor.ApplyFunctionalIds();
@@ -304,10 +307,10 @@ namespace Blueprint41
                     Refactor.ApplyConstraints();
                 });
 
-                if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds(this))
+                if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
                 {
                     Refactor.ApplyFunctionalIds();
-                    Parser.SetLastRun(this);
+                    Parser.SetLastRun();
                 }
             }
             SubscribeEventHandlers();
@@ -503,7 +506,7 @@ namespace Blueprint41
 
                 Model.datamigration = true;
 
-                if (script is not null && Parser.ShouldExecute)
+                if (script is not null && Model.Parser.ShouldExecute)
                 {
                     using (Model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                     {
