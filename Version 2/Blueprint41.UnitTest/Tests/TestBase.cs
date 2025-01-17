@@ -20,16 +20,20 @@ namespace Blueprint41.UnitTest.Tests
         public void OneTimeSetUp()
         {
             Driver.Configure<neo4j.IDriver>();
-            Connect<MockModel>();
+            //Connect<MockModel>();
+            //TearDown();
         }
 
         [SetUp]
-        public void Setup()
+        public virtual void Setup()
         {
-            TearDown();
+            //TearDown();
 
             // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!         
-            Connect<MockModel>(true).Execute(true);
+            var model = Connect<MockModel>(true);
+
+            TearDown();
+            model.Execute(true);
         }
 
         [TearDown]

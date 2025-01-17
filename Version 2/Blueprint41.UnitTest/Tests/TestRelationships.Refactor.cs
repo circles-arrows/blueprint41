@@ -207,8 +207,8 @@ namespace Blueprint41.UnitTest.Tests
         public void SetIndexTypeToUnique()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            //var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as driver.Neo4jPersistenceProvider;
-            //if (persistenceProvider is null || !persistenceProvider.VersionGreaterOrEqual(5, 7))
+            var persistenceProvider = MockModel.Model.PersistenceProvider;
+            if (persistenceProvider is null || !persistenceProvider.VersionGreaterOrEqual(5, 7))
                 throw new NotSupportedException("Run this test on Neo4j 5.7 or greater.");
 
             SetupTestDataSet();

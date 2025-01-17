@@ -91,6 +91,14 @@ namespace Blueprint41
         /// </summary>
         public static List<DatastoreModel> RegisteredModels { get; } = new List<DatastoreModel>();
 
+        public bool IsExecuting
+        {
+            get
+            {
+                return isExecuting;
+            }
+        }
+
         /// <summary>
         /// True when all scripts have been executed
         /// </summary>
@@ -616,11 +624,19 @@ namespace Blueprint41
             instance._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
             instance._persistenceProvider.Initialize();
 
-            Model._persistenceProvider = instance._persistenceProvider;
+            if (model is not null)
+                model._persistenceProvider = instance._persistenceProvider;
+            else
+                model = instance;
+
+            provider ??= instance._persistenceProvider;
+
+            //Model._persistenceProvider = instance._persistenceProvider;
 
             return instance;
         }
 
+        private static PersistenceProvider? provider = null;
         private static TSelf? model = null;
 
         /// <summary>
@@ -644,6 +660,10 @@ namespace Blueprint41
                         }
                     }
                 }
+            }
+            else if (!model.IsExecuting && !model.HasExecuted)
+            {
+                model.Execute(false);
             }
             return model;
         }

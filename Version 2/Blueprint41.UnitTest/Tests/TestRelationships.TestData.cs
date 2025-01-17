@@ -9,6 +9,7 @@ using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
+using neo4j = Neo4j.Driver;
 using Datastore.Manipulation;
 
 using NUnit.Framework;
@@ -23,9 +24,9 @@ namespace Blueprint41.UnitTest.Tests
     {
         #region Initialize Test Class
 
-        [SetUp]
-        public void Setup2()
+        public override void Setup()
         {
+            base.Setup();
             DatabaseUids = Uids.SetupDb();
         }
 

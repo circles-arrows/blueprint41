@@ -808,7 +808,7 @@ namespace Blueprint41.UnitTest.Tests
             char GetConstraintType(string dbType)
             {
 #if NEO4J
-                if (dbType.Contains("NODE_PROPERTY_EXISTENCE"))
+                if (dbType.Contains("NODE_PROPERTY_EXISTENCE") || dbType.Contains("RELATIONSHIP_PROPERTY_EXISTENCE"))
                     return MANDATORY;
                 else if (dbType.Contains("UNIQUENESS"))
                     return UNIQUE;
