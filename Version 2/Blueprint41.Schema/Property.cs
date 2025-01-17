@@ -641,9 +641,9 @@ namespace Blueprint41
                     {
                         list = new List<object>();
 
-                        Parent.Parent.Parser.Execute(cypherRead, null, true, async delegate(Persistence.ResultCursor result)
+                        Parent.Parent.Parser.Execute(cypherRead, null, true, delegate(Persistence.ResultCursor result)
                         {
-                            foreach (Persistence.Record item in await result.ToListAsync())
+                            foreach (Persistence.Record item in result.ToList())
                             {
                                 string text = item["Text"]!.As<string>();
 

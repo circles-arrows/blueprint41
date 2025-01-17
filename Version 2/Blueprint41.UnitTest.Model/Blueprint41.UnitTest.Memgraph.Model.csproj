@@ -11,7 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Driver\Blueprint41.Driver.csproj" />
     <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Neo4j.Driver" Version="5.24.0" />
   </ItemGroup>
 
 </Project>

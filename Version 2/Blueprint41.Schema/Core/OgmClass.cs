@@ -23,7 +23,7 @@ namespace Blueprint41.Core
         {
             Transaction? transaction = Transaction.Current;
 
-            if (!GetEntity().Parent.IsUpgraded)
+            if (!GetEntity().Parent.HasExecuted)
                 throw new InvalidOperationException("You cannot use entity inside the upgrade script.");
 
             if (transaction?.InTransaction ?? false)
@@ -73,6 +73,7 @@ namespace Blueprint41.Core
         protected abstract void SetChanged();
         protected abstract void SetData(IReadOnlyDictionary<string, object?> data);
         protected internal virtual void SetKey(object key) => throw new NotImplementedException();
+
         protected abstract void SetRowVersion(DateTime? value);
         protected abstract void ValidateDelete();
         protected abstract void ValidateSave();

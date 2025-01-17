@@ -26,7 +26,12 @@ namespace Blueprint41.UnitTest.Tests
 
         public override void Setup()
         {
-            base.Setup();
+            var model = Connect<MockModel>(true);
+
+            TearDown();
+
+            model.Execute(true);
+            
             DatabaseUids = Uids.SetupDb();
         }
 

@@ -379,6 +379,10 @@ namespace Blueprint41.Core
 
             return data.GetKey();
         }
+        protected internal override void SetKey(object key)
+        {
+            InnerData.SetKey(key);
+        }
 
         protected override IDictionary<string, object?> GetData()
         {

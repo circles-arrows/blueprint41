@@ -16,6 +16,8 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void TestOptimize()
         {
+            Connect<MockModel>(true).Execute(true);
+
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 string? key = null;

@@ -24,6 +24,15 @@ namespace Blueprint41.UnitTest.Tests
     [TestFixture]
     public class TestGeneratedClasses : TestBase
     {
+        public override void Setup()
+        {
+            var model = Connect<MockModel>(true);
+
+            TearDown();
+            model.Execute(true);
+        }
+
+
         [Test]
         public void OGMImplCRUD()
         {

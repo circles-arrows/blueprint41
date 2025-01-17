@@ -40,20 +40,10 @@ namespace Blueprint41
         /// <summary>
         /// The persistence provider registered with this data-store
         /// </summary>
-        public PersistenceProvider PersistenceProvider
-        {
-            get
-            {
-                if (_persistenceProvider is null)
-                    _persistenceProvider = new PersistenceProvider(this, null, null, null,null);
-
-                return _persistenceProvider;
-            }
-        }
-        internal protected PersistenceProvider? _persistenceProvider = null;
+        public abstract PersistenceProvider PersistenceProvider { get; }
 
         public abstract GDMS DatastoreTechnology { get; }
-        internal Parser Parser { get; private set; } // TODO: Initialize
+        internal Parser Parser { get; private set; }
 
 
         /// <summary>
@@ -188,13 +178,13 @@ namespace Blueprint41
         /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
         public void Execute(bool upgradeDatastore)
         {
-            if (_persistenceProvider is null && upgradeDatastore)
-            {
-                _persistenceProvider = RegisteredModels.FirstOrDefault(item => item.GetType() == this.GetType())?.PersistenceProvider;
+            //if (PersistenceProvider is null && upgradeDatastore)
+            //{
+            //    PersistenceProvider = RegisteredModels.FirstOrDefault(item => item.GetType() == this.GetType())?.PersistenceProvider;
 
-                if (_persistenceProvider is null && upgradeDatastore)
-                    throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
-            }
+            //    if (PersistenceProvider is null && upgradeDatastore)
+            //        throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
+            //}
             Execute(upgradeDatastore, null);
         }
 
@@ -206,8 +196,8 @@ namespace Blueprint41
         void IDatastoreUnitTesting.Execute(bool upgradeDatastore, MethodInfo? unitTestScript) => Execute(upgradeDatastore, unitTestScript);
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript)
         {
-            if (PersistenceProvider is null)
-                throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
+            //if (PersistenceProvider is null)
+            //    throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
 
             if (isExecuting)
                 throw new InvalidOperationException("It is not allowed to call the 'Execute' method from within an upgrade script.");
@@ -275,14 +265,16 @@ namespace Blueprint41
                         Parser.Log("Running script: {0}.{1}.{2} ({3})", script.Major, script.Minor, script.Patch, script.Name);
                         Stopwatch sw = Stopwatch.StartNew();
 
-                        Refactor.ApplyFunctionalIds();
+                        
                         using (PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                         {
+                            Refactor.ApplyFunctionalIds();
                             RunScriptChecked(script);
+                            Refactor.ApplyFunctionalIds();
                             Parser.CommitScript(script);
                             Transaction.Commit();
                         }
-                        Refactor.ApplyFunctionalIds();
+                        
 
                         anyScriptRan = true;
                         scriptCommitted = true;
@@ -620,23 +612,36 @@ namespace Blueprint41
     {
         public static TSelf Connect(Uri uri, AuthToken authToken, string? database = null, AdvancedConfig? advancedConfig = null)
         {
+            _uri            = uri;
+            _authToken      = authToken;
+            _database       = database;
+            _advancedConfig = advancedConfig;
+
             TSelf instance = new TSelf();
-            instance._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
-            instance._persistenceProvider.Initialize();
-
-            if (model is not null)
-                model._persistenceProvider = instance._persistenceProvider;
-            else
-                model = instance;
-
-            provider ??= instance._persistenceProvider;
-
-            //Model._persistenceProvider = instance._persistenceProvider;
+            instance.PersistenceProvider.Initialize();
 
             return instance;
         }
 
-        private static PersistenceProvider? provider = null;
+        public override PersistenceProvider PersistenceProvider
+        {
+            get
+            {
+                if (_persistenceProvider is null)
+                    _persistenceProvider = new PersistenceProvider(this, _uri, _authToken, _database, _advancedConfig);
+
+                return _persistenceProvider;
+            }
+        }
+        private PersistenceProvider? _persistenceProvider = null;
+
+#pragma warning disable S2743
+        private static Uri?             _uri            = null;
+        private static AuthToken?       _authToken      = null;
+        private static string?          _database       = null;
+        private static AdvancedConfig?  _advancedConfig = null;
+#pragma warning restore S2743
+
         private static TSelf? model = null;
 
         /// <summary>
@@ -656,6 +661,7 @@ namespace Blueprint41
                         if (model is null)
                         {
                             model = new TSelf();
+                            model.PersistenceProvider.Initialize();
                             model.Execute(false);
                         }
                     }

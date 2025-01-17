@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Blueprint41.Persistence;
+using Blueprint41.UnitTest.Mocks;
+
 namespace Blueprint41.UnitTest.DataStore
 {
     public class MockModel : DatastoreModel<MockModel>
@@ -122,6 +125,25 @@ namespace Blueprint41.UnitTest.DataStore
 
              */
         }
+
+        public override PersistenceProvider PersistenceProvider
+        {
+            get
+            {
+                if (_mockPersistenceProvider is null)
+                {
+                    _mockPersistenceProvider = new MockNeo4jPersistenceProvider(
+                            base.PersistenceProvider.DatastoreModel,
+                            base.PersistenceProvider.Uri,
+                            base.PersistenceProvider.AuthToken,
+                            base.PersistenceProvider.Database,
+                            base.PersistenceProvider.AdvancedConfig
+                        );
+                }
+                return _mockPersistenceProvider;
+            }
+        }
+        private MockNeo4jPersistenceProvider? _mockPersistenceProvider = null;
     }
 
     public enum RatingComponent
