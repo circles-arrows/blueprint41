@@ -409,7 +409,9 @@ namespace Blueprint41
         /// Get the schema info for the data-store
         /// </summary>
         /// <returns>The schema info</returns>
-        SchemaInfo IDatastoreUnitTesting.GetSchemaInfo() => PersistenceProvider.GetSchemaInfo();
+        SchemaInfo IDatastoreUnitTesting.GetSchemaInfo() => GetSchemaInfo();
+        internal abstract SchemaInfo GetSchemaInfo();
+        internal abstract void InvalidateSchemaInfo();
 
         /// <summary>
         /// The refactor actions
@@ -427,7 +429,7 @@ namespace Blueprint41
             //if (!Parser.ShouldExecute) 
             //    return;
             if (PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value)
-                PersistenceProvider.GetSchemaInfo().UpdateFunctionalIds();
+                GetSchemaInfo().UpdateFunctionalIds();
         }
 
         /// <summary>
@@ -439,8 +441,8 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
-            PersistenceProvider.GetSchemaInfo().UpdateConstraints();
-            PersistenceProvider.AfterScript();
+            GetSchemaInfo().UpdateConstraints();
+            InvalidateSchemaInfo();
         }
 
         /// <summary>
@@ -632,11 +634,27 @@ namespace Blueprint41
         }
         private PersistenceProvider? _persistenceProvider = null;
 
+        internal override SchemaInfo GetSchemaInfo()
+        {
+            if (_schemaInfo is null)
+                _schemaInfo = PersistenceProvider.GetSchemaInfo();
+
+            return _schemaInfo;
+        }
+        internal override void InvalidateSchemaInfo()
+        {
+            _schemaInfo = null;
+        }
+
 #pragma warning disable S2743
+
+        private static SchemaInfo? _schemaInfo = null;
+
         private static Uri?             _uri            = null;
         private static AuthToken?       _authToken      = null;
         private static string?          _database       = null;
         private static AdvancedConfig?  _advancedConfig = null;
+
 #pragma warning restore S2743
 
         private static TSelf? model = null;

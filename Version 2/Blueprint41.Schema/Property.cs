@@ -418,7 +418,7 @@ namespace Blueprint41
             if (!Parent.Parent.Parser.ShouldExecute)
                 return;
 
-            Parent.Parent.PersistenceProvider.GetSchemaInfo().RemoveIndexesAndContraints(this);
+            Parent.Parent.GetSchemaInfo().RemoveIndexesAndContraints(this);
         }
 
         /// <summary>

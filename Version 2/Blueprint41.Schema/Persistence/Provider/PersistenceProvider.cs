@@ -511,12 +511,6 @@ After:
             }
             throw new NotSupportedException();
         }
-        internal void AfterScript()
-        {
-            // TODO: If we go cache SchemaInfo a little better...
-            //       Take into account to also invalidate the
-            //       cache when this method is called!
-        }
 
         internal virtual QueryTranslator Translator => GetOrInit(ref _translator, delegate ()
         {
