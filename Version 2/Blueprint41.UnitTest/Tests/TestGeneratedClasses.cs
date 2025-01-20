@@ -351,6 +351,10 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void OGMImplQuery()
         {
+            // Exception will throw in line 424 -> Person.LoadWhere(compiled);
+            // In the NodePersistenceProvider.Load in line 368 -> var node = record["node"]?.As<driver.NodeResult>();
+            // the field of the record is not name "node"
+
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))

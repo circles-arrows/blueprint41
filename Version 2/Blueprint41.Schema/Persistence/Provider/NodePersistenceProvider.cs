@@ -365,8 +365,7 @@ namespace Blueprint41.Persistence
             List<T> items = new List<T>();
             foreach (var record in result.ToList())
             {
-                //var node = record["node"]?.As<driver.NodeResult>();
-                var node = record[0]?.As<driver.NodeResult>();
+                var node = record["node"]?.As<driver.NodeResult>();
                 if (node is null)
                     continue;
 
