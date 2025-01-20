@@ -85,6 +85,13 @@ namespace Blueprint41.Refactoring.Schema
             if (isKey)
                 indexType = IndexType.None;
 
+            // This MUST go before the switch!!!!
+            if (indexInfo is not null && indexInfo.State != "ONLINE")
+            {
+                commands.Add((ApplyConstraintAction.DeleteIndex, indexInfo.Name));
+                indexInfo = null;
+            }
+
             switch (indexType)
             {
                 case IndexType.None:

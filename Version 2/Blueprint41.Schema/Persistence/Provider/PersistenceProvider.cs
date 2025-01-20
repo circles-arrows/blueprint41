@@ -496,7 +496,7 @@ After:
         });
         private protected RefactorTemplates? _templates = null;
 
-        internal virtual SchemaInfo SchemaInfo => GetOrInit(ref _schemaInfo, delegate ()
+        internal virtual SchemaInfo GetSchemaInfo() 
         {
             if (IsNeo4j)
             {
@@ -510,13 +510,13 @@ After:
                 return new SchemaInfo_MemgraphV1(DatastoreModel);
             }
             throw new NotSupportedException();
-        });
+        }
         internal void AfterScript()
         {
-            _schemaInfo = null;
-            _ = SchemaInfo;
+            // TODO: If we go cache SchemaInfo a little better...
+            //       Take into account to also invalidate the
+            //       cache when this method is called!
         }
-        private protected SchemaInfo? _schemaInfo = null;
 
         internal virtual QueryTranslator Translator => GetOrInit(ref _translator, delegate ()
         {

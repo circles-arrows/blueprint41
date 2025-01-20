@@ -168,7 +168,7 @@ namespace Blueprint41.Refactoring.Schema
         }
         internal virtual void UpdateConstraints()
         {
-            using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
+            using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
                 foreach (var diff in GetConstraintDifferences())
                 {
@@ -177,10 +177,11 @@ namespace Blueprint41.Refactoring.Schema
                         foreach (var cql in action.ToCypher())
                         {
                             DatastoreModel.Parser.Log(cql);
-                            Session.Run(cql);
+                            Transaction.Run(cql);
                         }
                     }
                 }
+                Transaction.Commit();
             }
         }
 
@@ -216,8 +217,11 @@ namespace Blueprint41.Refactoring.Schema
 
         internal virtual List<(ApplyConstraintAction, string?)> ComputeCommands(IEntity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
         {
+            //bool isFailedUnique = entity.IsVirtual ? false : constraints.Any(item => item.State != "ONLINE" && item.IsUnique);
+            bool isFailedIndex = entity.IsVirtual ? false : indexes.Any(item => item.State != "ONLINE" && item.IsIndexed);
+
             bool isUnique = entity.IsVirtual ? false : constraints.Any(item => item.IsUnique);
-            bool isIndexed = entity.IsVirtual ? false : indexes.Any(item => item.IsIndexed);
+            bool isIndexed = entity.IsVirtual ? false : (!isFailedIndex && indexes.Any(item => item.IsIndexed));
             bool isMandatory = entity.IsVirtual ? false : constraints.Any(item => item.IsMandatory);
 
             string? uniqueConstraintName = constraints.FirstOrDefault(item => item.IsUnique)?.Name;
@@ -228,6 +232,10 @@ namespace Blueprint41.Refactoring.Schema
 
             if (entity.IsAbstract && indexType == IndexType.Unique)
                 indexType = IndexType.Indexed;
+
+            // This MUST go before the switch!!!!
+            if (isFailedIndex)
+                commands.Add((ApplyConstraintAction.DeleteIndex, indexName));
 
             switch (indexType)
             {

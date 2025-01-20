@@ -178,13 +178,6 @@ namespace Blueprint41
         /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
         public void Execute(bool upgradeDatastore)
         {
-            //if (PersistenceProvider is null && upgradeDatastore)
-            //{
-            //    PersistenceProvider = RegisteredModels.FirstOrDefault(item => item.GetType() == this.GetType())?.PersistenceProvider;
-
-            //    if (PersistenceProvider is null && upgradeDatastore)
-            //        throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
-            //}
             Execute(upgradeDatastore, null);
         }
 
@@ -196,9 +189,6 @@ namespace Blueprint41
         void IDatastoreUnitTesting.Execute(bool upgradeDatastore, MethodInfo? unitTestScript) => Execute(upgradeDatastore, unitTestScript);
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript)
         {
-            //if (PersistenceProvider is null)
-            //    throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
-
             if (isExecuting)
                 throw new InvalidOperationException("It is not allowed to call the 'Execute' method from within an upgrade script.");
 
@@ -419,7 +409,7 @@ namespace Blueprint41
         /// Get the schema info for the data-store
         /// </summary>
         /// <returns>The schema info</returns>
-        SchemaInfo IDatastoreUnitTesting.GetSchemaInfo() => PersistenceProvider.SchemaInfo;
+        SchemaInfo IDatastoreUnitTesting.GetSchemaInfo() => PersistenceProvider.GetSchemaInfo();
 
         /// <summary>
         /// The refactor actions
@@ -437,7 +427,7 @@ namespace Blueprint41
             //if (!Parser.ShouldExecute) 
             //    return;
             if (PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value)
-                PersistenceProvider.SchemaInfo.UpdateFunctionalIds();
+                PersistenceProvider.GetSchemaInfo().UpdateFunctionalIds();
         }
 
         /// <summary>
@@ -449,7 +439,7 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
-            PersistenceProvider.SchemaInfo.UpdateConstraints();
+            PersistenceProvider.GetSchemaInfo().UpdateConstraints();
             PersistenceProvider.AfterScript();
         }
 
@@ -610,17 +600,24 @@ namespace Blueprint41
     public abstract class DatastoreModel<TSelf> : DatastoreModel
         where TSelf : DatastoreModel<TSelf>, new()
     {
+        public DatastoreModel()
+        {
+            PersistenceProvider.Initialize();
+        }
         public static TSelf Connect(Uri uri, AuthToken authToken, string? database = null, AdvancedConfig? advancedConfig = null)
         {
+            if (_uri is not null || _authToken is not null || _database is not null)
+            {
+                if (_uri?.AbsoluteUri != uri.AbsoluteUri || _authToken?.ToJson() != authToken.ToJson() || _database != database)
+                    throw new InvalidOperationException($"You can only connect the data-model once. Please use 'new {typeof(TSelf).Name}();' instead.");
+            }
+
             _uri            = uri;
             _authToken      = authToken;
             _database       = database;
             _advancedConfig = advancedConfig;
 
-            TSelf instance = new TSelf();
-            instance.PersistenceProvider.Initialize();
-
-            return instance;
+            return new TSelf();
         }
 
         public override PersistenceProvider PersistenceProvider
@@ -629,7 +626,7 @@ namespace Blueprint41
             {
                 if (_persistenceProvider is null)
                     _persistenceProvider = new PersistenceProvider(this, _uri, _authToken, _database, _advancedConfig);
-
+ 
                 return _persistenceProvider;
             }
         }
