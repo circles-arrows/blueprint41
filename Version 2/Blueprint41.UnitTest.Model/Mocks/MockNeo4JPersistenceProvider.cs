@@ -52,7 +52,7 @@ namespace Blueprint41.UnitTest.Mocks
         protected override void InitializeDriver()
         {
             DriverSession = Swap(InitializeDriverSession());
-            DriverTransaction = Swap(DriverSession.BeginTransaction());
+            DriverTransaction = Swap(DriverTransaction ?? DriverSession.BeginTransaction());
         }
 
         protected override async Task InitializeDriverAsync()

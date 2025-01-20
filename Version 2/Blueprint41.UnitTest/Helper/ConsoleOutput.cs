@@ -157,7 +157,7 @@ namespace Blueprint41.UnitTest.Helper
             bool one = false;
             foreach (string line in lines)
             {
-                if (output.Contains(lineEndings.Replace(line, "\n")))
+                if (output.Contains(lineEndings.Replace(line, "\r\n")))
                     one = true;
             }
 
