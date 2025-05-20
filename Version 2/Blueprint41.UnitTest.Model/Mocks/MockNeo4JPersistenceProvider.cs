@@ -8,13 +8,14 @@ using Blueprint41.Core;
 using Blueprint41.Persistence;
 using Blueprint41.Config;
 
-using driver = Neo4j.Driver; 
+using driver = Neo4j.Driver;
+using Blueprint41.Events;
 
 namespace Blueprint41.UnitTest.Mocks
 {
     public class MockNeo4jPersistenceProvider : PersistenceProvider
     {
-        internal protected MockNeo4jPersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null) 
+        internal MockNeo4jPersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null) 
             : base(model, uri, authToken, database, advancedConfig)
         {
         }
@@ -31,7 +32,7 @@ namespace Blueprint41.UnitTest.Mocks
 
     public class MockNeo4jTransaction : Transaction
     {
-        protected MockNeo4jTransaction(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        private MockNeo4jTransaction(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
             : base(model, readwrite, optimize, logger)
         {
         }
@@ -39,26 +40,57 @@ namespace Blueprint41.UnitTest.Mocks
         static internal Transaction Get(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             MockNeo4jTransaction transaction = new MockNeo4jTransaction(model, readwrite, optimize, logger);
-            transaction.InitializeDriver();
+            transaction.Attach();
+            transaction.TransactionDate = DateTime.UtcNow;
+            transaction.FireEvents = EventOptions.AllEvents;
+
             return transaction;
         }
         static internal async Task<Transaction> GetAsync(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             MockNeo4jTransaction transaction = new MockNeo4jTransaction(model, readwrite, optimize, logger);
-            await transaction.InitializeDriverAsync();
+            await transaction.AttachAsync().ConfigureAwait(false);
+            transaction.TransactionDate = DateTime.UtcNow;
+            transaction.FireEvents = EventOptions.AllEvents;
+
             return transaction;
         }
 
-        protected override void InitializeDriver()
+        protected override void Initialize()
         {
-            DriverSession = Swap(InitializeDriverSession());
-            DriverTransaction = Swap(DriverTransaction ?? DriverSession.BeginTransaction());
-        }
+            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
 
-        protected override async Task InitializeDriverAsync()
+            DriverSession = Swap(PersistenceProvider.Driver.Session(c =>
+            {
+                if (PersistenceProvider.Database is not null)
+                    c.WithDatabase(PersistenceProvider.Database);
+
+                c.WithFetchSize(ConfigBuilder.Infinite);
+                c.WithDefaultAccessMode(accessMode);
+
+                if (Consistency is not null)
+                    c.WithBookmarks(Consistency);
+            }));
+
+            DriverTransaction = Swap(DriverSession!.BeginTransaction());
+        }
+        protected override async Task InitializeAsync()
         {
-            DriverSession = Swap(InitializeDriverSession());
-            DriverTransaction = Swap(await DriverSession.BeginTransactionAsync().ConfigureAwait(false));
+            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
+
+            DriverSession = Swap(PersistenceProvider.Driver.Session(c =>
+            {
+                if (PersistenceProvider.Database is not null)
+                    c.WithDatabase(PersistenceProvider.Database);
+
+                c.WithFetchSize(ConfigBuilder.Infinite);
+                c.WithDefaultAccessMode(accessMode);
+
+                if (Consistency is not null)
+                    c.WithBookmarks(Consistency);
+            }));
+
+            DriverTransaction = Swap(await DriverSession!.BeginTransactionAsync().ConfigureAwait(false));
         }
 
         private DriverSession Swap(DriverSession session)

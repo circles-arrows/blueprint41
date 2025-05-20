@@ -18,20 +18,26 @@ namespace Blueprint41
         static internal Session Get(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Session session = new Session(model, readwrite, optimize, logger);
-            session.InitializeDriverAsync();
+            session.Attach();
+            session.TransactionDate = DateTime.UtcNow;
+
             return session;
         }
+        static internal async Task<Session> GetAsync(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        {
+            Session session = new Session(model, readwrite, optimize, logger);
+            await session.AttachAsync().ConfigureAwait(false);
+            session.TransactionDate = DateTime.UtcNow;
 
+            return session;
+        }
         private Session(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
             OptimizeFor = optimize;
             ReadWriteMode = readwrite;
-            //DisableForeignKeyChecks = false;
 
-            Model= model;
-
-            Attach();
+            Model = model;
         }
         protected override void Initialize()
         {
@@ -49,27 +55,14 @@ namespace Blueprint41
                     c.WithBookmarks(Consistency);
             });
         }
+        protected override Task InitializeAsync()
+        {
+            Initialize();
+            return Task.CompletedTask;
+        }
 
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningSession.Logger?.Log(message);
-
-        protected virtual void InitializeDriverAsync()
-        {
-            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
-
-            DriverSession = PersistenceProvider.Driver.Session(c =>
-            {
-                if (PersistenceProvider.Database is not null)
-                    c.WithDatabase(PersistenceProvider.Database);
-
-                c.WithFetchSize(ConfigBuilder.Infinite);
-                c.WithDefaultAccessMode(accessMode);
-
-                Bookmarks? consistency = GetConsistency();
-                if (consistency is not null)
-                    c.WithBookmarks(consistency);
-            });
-        }
 
         public DateTime TransactionDate { get; private set; }
         public OptimizeFor OptimizeFor { get; private set; }
@@ -272,7 +265,17 @@ namespace Blueprint41
 
         #endregion
 
-        protected override void Cleanup() => CloseSession();
-        protected virtual void CloseSession() { }
+        protected override void Cleanup()
+        {
+            DriverSession? s = DriverSession;
+            if (s is not null)
+                s.Dispose();
+        }
+        protected override async Task CleanupAsync()
+        {
+            DriverSession? s = DriverSession;
+            if (s is not null)
+                await s.DisposeAsync();
+        }
     }
 }

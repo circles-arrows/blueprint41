@@ -20,16 +20,21 @@ namespace Blueprint41
         static internal Transaction Get(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Transaction transaction = new Transaction(model, readwrite, optimize, logger);
-            transaction.InitializeDriver();
+            transaction.Attach();
+            transaction.TransactionDate = DateTime.UtcNow;
+            transaction.FireEvents = EventOptions.AllEvents;
+
             return transaction;
         }
         static internal async Task<Transaction> GetAsync(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Transaction transaction = new Transaction(model, readwrite, optimize, logger);
-            await transaction.InitializeDriverAsync();
+            await transaction.AttachAsync().ConfigureAwait(false);
+            transaction.TransactionDate = DateTime.UtcNow;
+            transaction.FireEvents = EventOptions.AllEvents;
+
             return transaction;
         }
-
         protected Transaction(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
@@ -41,10 +46,8 @@ namespace Blueprint41
             Model = model;
 
             RaiseOnBegin();
-            Attach();
-            TransactionDate = DateTime.UtcNow;
-            FireEvents = EventOptions.AllEvents;
         }
+
         protected override void Initialize()
         {
             AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
@@ -60,29 +63,14 @@ namespace Blueprint41
                 if (Consistency is not null)
                     c.WithBookmarks(Consistency);
             });
-
-            DriverTransaction = Driver.RunBlocking(() => DriverSession.BeginTransactionAsync(), "Begin Transaction");
+            
+            DriverTransaction = DriverSession!.BeginTransaction();
         }
-
-        private protected TransactionLogger? Logger { get; private set; }
-        public static void Log(string message) => RunningTransaction.Logger?.Log(message);
-
-        protected virtual void InitializeDriver()
-        {
-            DriverSession = InitializeDriverSession();
-            DriverTransaction = DriverSession.BeginTransaction();
-        }
-        protected virtual async Task InitializeDriverAsync()
-        {
-            DriverSession = InitializeDriverSession();
-            DriverTransaction = await DriverSession.BeginTransactionAsync().ConfigureAwait(false);
-        }
-
-        protected virtual DriverSession InitializeDriverSession()
+        protected override async Task InitializeAsync()
         {
             AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
 
-            return PersistenceProvider.Driver.Session(c =>
+            DriverSession = PersistenceProvider.Driver.Session(c =>
             {
                 if (PersistenceProvider.Database is not null)
                     c.WithDatabase(PersistenceProvider.Database);
@@ -93,7 +81,12 @@ namespace Blueprint41
                 if (Consistency is not null)
                     c.WithBookmarks(Consistency);
             });
+            
+            DriverTransaction = await DriverSession!.BeginTransactionAsync().ConfigureAwait(false);
         }
+
+        private protected TransactionLogger? Logger { get; private set; }
+        public static void Log(string message) => RunningTransaction.Logger?.Log(message);
 
         #region Transaction Logic
 
@@ -510,7 +503,7 @@ namespace Blueprint41
         }
 
         public bool InTransaction { get; private set; }
-        public DateTime TransactionDate { get; private set; }
+        public DateTime TransactionDate { get; protected set; }
         public OptimizeFor OptimizeFor { get; private set; }
         public ReadWriteMode ReadWriteMode { get; private set; }
 
@@ -536,8 +529,6 @@ namespace Blueprint41
                 t.Commit();
 
             RaiseOnCommit();
-
-            CloseSession();
         }
         protected void RollbackInternal()
         {
@@ -547,30 +538,38 @@ namespace Blueprint41
             DriverTransaction? t = DriverTransaction;
             if (t is not null)
                 t.Rollback();
-
-            CloseSession();
         }
         protected void RetryInternal()
         {
             RollbackInternal();
             Initialize();
         }
-        private void CloseSession()
-        {
-            DriverSession? s = DriverSession;
-            if (s is not null)
-                s.Close();
-
-            Driver.TaskScheduler.ClearHistory();
-
-            DriverTransaction = null;
-            DriverSession = null;
-        }
 
         protected override void Cleanup()
         {
             if (InTransaction)
                 Rollback();
+
+            DriverTransaction? t = DriverTransaction;
+            if (t is not null)
+                t.Dispose();
+
+            DriverSession? s = DriverSession;
+            if (s is not null)
+                s.Dispose();
+        }
+        protected override async Task CleanupAsync()
+        {
+            if (InTransaction)
+                Rollback();
+
+            DriverTransaction? t = DriverTransaction;
+            if (t is not null)
+                await t.DisposeAsync();
+
+            DriverSession? s = DriverSession;
+            if (s is not null)
+                await s.DisposeAsync();
         }
 
         #endregion
@@ -827,7 +826,7 @@ namespace Blueprint41
 
             return result;
         }
-        public EventOptions FireEvents { get; private set; }
+        public EventOptions FireEvents { get; protected set; }
 
         internal bool FireEntityEvents { get { return (FireEvents & EventOptions.EntityEvents) == EventOptions.EntityEvents; } }
         internal bool FireGraphEvents { get { return (FireEvents & EventOptions.GraphEvents) == EventOptions.GraphEvents; } }

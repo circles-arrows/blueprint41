@@ -28,6 +28,26 @@ namespace Blueprint41.Core
 
             return (T)this;
         }
+        protected async Task<T> AttachAsync()
+        {
+            isDisposed = true;
+            isInitialized = false;
+
+            await InitializeAsync().ConfigureAwait(false);
+            isInitialized = true;
+
+            if (current is null)
+                current = new AsyncLocal<Stack<T>?>();
+
+            if (current.Value is null)
+                current.Value = new Stack<T>();
+
+            current.Value.Push((T)this);
+
+            isDisposed = false;
+
+            return (T)this;
+        }
 
 
         public static T? Current
@@ -48,14 +68,14 @@ namespace Blueprint41.Core
 
         public void Dispose()
         {
-            if (!isDisposed)
+            try
             {
-                try
-                {
-                    if (isInitialized)
-                        Cleanup();
-                }
-                finally
+                if (isInitialized)
+                    Cleanup();
+            }
+            finally
+            {
+                if (!isDisposed)
                 {
                     if (current.Value is not null)
                     {
@@ -73,14 +93,38 @@ namespace Blueprint41.Core
                 }
             }
         }
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            Dispose();
-            return default;
+            try
+            {
+                if (isInitialized)
+                    await CleanupAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                if (!isDisposed)
+                {
+                    if (current.Value is not null)
+                    {
+                        if (current.Value.Count > 0)
+                            current.Value.Pop();
+
+                        if (current.Value.Count == 0)
+                            current.Value = null;
+                    }
+
+                    if (!IsDebug.Value)
+                        GC.SuppressFinalize(this);
+
+                    isDisposed = true;
+                }
+            }
         }
 
         protected abstract void Initialize();
+        protected abstract Task InitializeAsync();
         protected abstract void Cleanup();
+        protected abstract Task CleanupAsync();
 
         ~DisposableScope()
         {

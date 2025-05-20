@@ -33,7 +33,5 @@ namespace Blueprint41.Persistence
 
         public void Dispose() => ((IDisposable)_instance).Dispose();
         public ValueTask DisposeAsync() => ((IAsyncDisposable)_instance).DisposeAsync();
-
-        internal void Close() => Driver.RunBlocking(async () => await DisposeAsync().ConfigureAwait(false), "Close Session");
     }
 }

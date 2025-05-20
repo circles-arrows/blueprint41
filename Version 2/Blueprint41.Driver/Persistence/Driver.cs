@@ -23,6 +23,7 @@ namespace Blueprint41.Persistence
         }
         internal object _instance { get; private set; }
 
+        public static Driver Get(Uri uri, AuthToken authToken) => Get(uri, authToken, o => { });
         public static Driver Get(Uri uri, AuthToken authToken, Action<ConfigBuilder> configBuilder)
         {
             return GRAPH_DATABASE.Driver(uri, authToken, configBuilder);
@@ -2014,6 +2015,10 @@ namespace Blueprint41.Persistence
 
         #region TaskScheduler
 
+        internal static void RunBlocking(Func<ValueTask> work, string description) => TaskScheduler.RunBlocking(() => work.Invoke().AsTask(), description);
+        internal static TResult RunBlocking<TResult>(Func<ValueTask<TResult>> work, string description) => TaskScheduler.RunBlocking(() => work.Invoke().AsTask(), description);
+
+
         internal static void RunBlocking(Func<Task> work, string description) => TaskScheduler.RunBlocking(work, description);
         internal static TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => TaskScheduler.RunBlocking(work, description);
         internal static CustomTaskScheduler TaskScheduler
@@ -2041,7 +2046,7 @@ namespace Blueprint41.Persistence
 
         #endregion
 
-        public void Dispose() => ((IDisposable)_instance).Dispose();
+        public void Dispose() => Driver.RunBlocking(DisposeAsync, "Driver.Dispose()");
         public ValueTask DisposeAsync() => ((IAsyncDisposable)_instance).DisposeAsync();
     }
 }
