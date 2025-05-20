@@ -727,7 +727,11 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Entities["Person"].Properties["Name"].Refactor.MakeMandatory("Mr/Mrs.");
                 Relations["MOVIE_HAS"].InProperty?.Refactor.MakeMandatory("Action");
-                Relations["LIKES"].InProperty?.Refactor.MakeMandatory(Entities["Genre"].Refactor.MatchNode("8"));
+
+                dynamic? genre8 = Entities["Genre"].Refactor.MatchNode("8");
+                Assert.NotNull(genre8);
+
+                Relations["LIKES"].InProperty?.Refactor.MakeMandatory(genre8);
             }
         }
 

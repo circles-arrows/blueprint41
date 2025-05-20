@@ -58,6 +58,13 @@ namespace Datastore.Manipulation
 
             #endregion
 
+            #region LoadByUid
+
+            RegisterQuery(nameof(LoadByUid), (query, alias) => query.
+                Where(alias.Uid == Parameter.New<System.String>(Param0)));
+
+            #endregion
+
             AdditionalGeneratedStoredQueries();
         }
         public static Rating LoadByCode(System.String code)
@@ -67,6 +74,10 @@ namespace Datastore.Manipulation
         public static Rating LoadByName(System.String name)
         {
             return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
+        }
+        public static Rating LoadByUid(System.String uid)
+        {
+            return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 

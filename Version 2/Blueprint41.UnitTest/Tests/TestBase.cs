@@ -16,49 +16,50 @@ namespace Blueprint41.UnitTest.Tests
     [TestFixture]
     public abstract class TestBase
     {
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        private static Lazy<Driver> _driver = new Lazy<Driver>(delegate()
         {
             Driver.Configure<neo4j.IDriver>();
-            //Connect<MockModel>();
-            //TearDown();
+            return Driver.Get(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD));
+
+        }, true);
+        private DriverSession GetSession()
+        {
+            return _driver.Value.Session(o => { o.WithDatabase(DatabaseConnectionSettings.DATA_BASE); });
         }
 
         [SetUp]
         public virtual void Setup()
         {
-            //TearDown();
-
             // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!         
-            var model = Connect<MockModel>( );
-
-            TearDown();
-            //model.Execute(true);
+            var model = Connect<MockModel>();
+            model.Execute(true);
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (MockModel.BeginSession())
+            using (DriverSession session = GetSession())
             {
                 string reset = "Match (n) detach delete n";
-                Session.Run(reset);
+                session.Run(reset);
             }
 
-            using (MockModel.BeginSession())
+            using (DriverSession session = GetSession())
             {
 #if NEO4J
                 string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
 #elif MEMGRAPH
                 string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
 #endif
-                Session.Run(clearSchema);
+                session.Run(clearSchema);
             }
         }
 
-        protected T Connect<T>(bool logToConsole = false)
+        protected T Connect<T>(bool logToConsole = false, bool teardown = true)
             where T : DatastoreModel<T>, new()
         {
+            if (teardown)
+                TearDown();
             var model = DatastoreModel<T>.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
             {
                 CustomCypherLogging = delegate (string cypher, Dictionary<string, object?>? parameters, long elapsedMilliseconds, string? memberName, string? sourceFilePath, int sourceLineNumber)

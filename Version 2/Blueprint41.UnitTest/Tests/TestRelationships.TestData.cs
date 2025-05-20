@@ -26,12 +26,8 @@ namespace Blueprint41.UnitTest.Tests
 
         public override void Setup()
         {
-            var model = Connect<MockModel>(true);
+            base.Setup();
 
-            TearDown();
-
-            model.Execute(true);
-            
             DatabaseUids = Uids.SetupDb();
         }
 
@@ -844,7 +840,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             string name = script.Method.Name;
 
-            var model = Connect<MockModel>(true);
+            var model = Connect<MockModel>(true, false);
 
             ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(name));
         }

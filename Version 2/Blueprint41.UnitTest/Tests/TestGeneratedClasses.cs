@@ -26,9 +26,10 @@ namespace Blueprint41.UnitTest.Tests
     {
         public override void Setup()
         {
-            var model = Connect<MockModel>(true);
-
             TearDown();
+
+            // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!         
+            var model = Connect<MockModel>(true);
             model.Execute(true);
         }
 

@@ -1184,7 +1184,7 @@ if (DALModel.IsAbstract)
             
             #line 281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
-        foreach (Property attr in DALModel.Properties)
+        foreach (Property attr in DALModel.GetPropertiesOfBaseTypesAndSelf())
         {
             if (attr.PropertyType != PropertyType.Attribute || attr.IndexType != IndexType.Unique)
                 continue;
@@ -1234,7 +1234,7 @@ if (DALModel.IsAbstract)
             
             #line 300 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
-    foreach (Property attr in DALModel.Properties)
+    foreach (Property attr in DALModel.GetPropertiesOfBaseTypesAndSelf())
     {
         if (attr.PropertyType != PropertyType.Attribute || attr.IndexType != IndexType.Unique)
             continue;
