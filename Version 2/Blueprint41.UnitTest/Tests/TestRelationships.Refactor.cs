@@ -218,7 +218,7 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
 
 #if NEO4J
-            var ex = Assert.Throws<AggregateException>(() => Execute(UniqueAddrLine1));
+            var ex = Assert.Throws<Neo4j.Driver.DatabaseException>(() => Execute(UniqueAddrLine1));
 #if NET5_0_OR_GREATER
             Assert.That(ex.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
 #else
