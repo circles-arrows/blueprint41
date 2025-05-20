@@ -74,25 +74,19 @@ namespace Blueprint41.Core
 
         protected CustomTask CreateTask(Task task)
         {
-            return history.TryGetOrAdd(task, delegate (Task key)
+            List<CustomTask>? antecedents = task.GetAntecedentTasks()?.Select(CreateTask).ToList();
+            if (antecedents is null)
             {
-                List<CustomTask>? antecedents = key.GetAntecedentTasks()?.Select(item => CreateTask(item)).ToList();
-                if (antecedents is null)
-                {
-                    Task? antecedent = task.GetAntecedentTask();
-                    if (antecedent is not null)
-                        antecedents = new List<CustomTask>() { CreateTask(antecedent) };
-                }
+                Task? antecedent = task.GetAntecedentTask();
+                if (antecedent is not null)
+                    antecedents = new List<CustomTask>() { CreateTask(antecedent) };
+            }
 
-                if (CustomTask.Current is null)
-                {
-                    return new CustomTask(key, taskDescription.Value, antecedents);
-                }
-                else
-                {
-                    return new CustomTask(CustomTask.Current, task, antecedents);
-                }
-            });
+            CustomTask customTask = new CustomTask(task, taskDescription.Value, antecedents);
+
+            history.AddOrUpdate(task, customTask);
+
+            return customTask;
         }
 
         protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)

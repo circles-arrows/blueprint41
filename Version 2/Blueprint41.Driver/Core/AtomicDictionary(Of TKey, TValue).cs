@@ -165,13 +165,13 @@ namespace Blueprint41.Core
         public bool ContainsKey(TKey key) => Read(dict => dict.ContainsKey(key));
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => Read(dict => dict.CopyTo(array, arrayIndex));
         public void Add(TKey key, TValue value) => Write(dict => dict.Add(key, value));
-        public void Add(KeyValuePair<TKey, TValue> item) => Write(dict => dict.Add(item));
-        public void Add(IEnumerable<KeyValuePair<TKey, TValue>> items)
+        public void Add(KeyValuePair<TKey, TValue> item) => Write(dict => AddIfNotExists(dict, item.Key, item.Value));
+        public void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> items)
         {
             Write(dict =>
             {
                 foreach (KeyValuePair<TKey, TValue> item in items)
-                    AddIfNotExists(dict, item);
+                    AddIfNotExists(dict, item.Key, item.Value);
             });
         }
         public bool Remove(TKey key) => Write(dict => dict.Remove(key));
@@ -233,27 +233,27 @@ namespace Blueprint41.Core
                 return value;
             });
         }
-        public TValue TryGetOrAdd(TKey key, Func<TKey, IEnumerable<KeyValuePair<TKey, TValue>>> valueFactory)
+        public void AddOrUpdate(TKey key, TValue value)
         {
-            return ReadOptionalWrite(delegate (IDictionary<TKey, TValue> dictRead, out bool executeWrite)
+            Write(dict => 
             {
-                executeWrite = !dictRead.TryGetValue(key, out TValue value);
-                return value;
-
-            }, delegate (IDictionary<TKey, TValue> dictWrite)
-            {
-                IEnumerable<KeyValuePair<TKey, TValue>> values = valueFactory.Invoke(key);
-                foreach (var item in values)
-                    dictWrite.Add(item.Key, item.Value);
-
-                return dictWrite[key];
+                if (!AddIfNotExists(dict, key, value))
+                    dict[key] = value;
             });
         }
 
-        private void AddIfNotExists(IDictionary<TKey, TValue> dict, KeyValuePair<TKey, TValue> kvp)
+        private bool AddIfNotExists(IDictionary<TKey, TValue> dict, TKey key, TValue value)
         {
-            if (!dict.ContainsKey(kvp.Key))
-                dict.Add(kvp.Key, kvp.Value);
+#if NETFRAMEWORK
+            if (!dict.ContainsKey(key))
+            {
+                dict.Add(key, value);
+                return true;
+            }
+            return false;
+#else
+            return dict.TryAdd(key, value);
+#endif
         }
 
         public KeyValuePair<TKey, TValue>[] ToArray() => Read(dict => dict.ToArray());
