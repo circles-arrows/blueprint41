@@ -260,6 +260,7 @@ namespace Blueprint41
                         {
                             Refactor.ApplyFunctionalIds();
                             RunScriptChecked(script);
+                            InvalidateSchemaInfo();
                             Refactor.ApplyFunctionalIds();
                             Parser.CommitScript(script);
                             Transaction.Commit();

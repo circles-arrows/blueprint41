@@ -153,22 +153,22 @@ namespace Blueprint41.Refactoring.Schema
         }
         internal virtual void UpdateFunctionalIds()
         {
-            using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+            using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
             {
                 foreach (var diff in GetFunctionalIdDifferences())
                 {
                     DatastoreModel.Parser.Log(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
-                        Transaction.Run(query);
+                        Session.Run(query);
                     }
                 }
-                Transaction.Commit();
+                //Transaction.Commit();
             }
         }
         internal virtual void UpdateConstraints()
         {
-            using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+            using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
             {
                 foreach (var diff in GetConstraintDifferences())
                 {
@@ -177,11 +177,11 @@ namespace Blueprint41.Refactoring.Schema
                         foreach (var cql in action.ToCypher())
                         {
                             DatastoreModel.Parser.Log(cql);
-                            Transaction.Run(cql);
+                            Session.Run(cql);
                         }
                     }
                 }
-                Transaction.Commit();
+                //Transaction.Commit();
             }
         }
 
