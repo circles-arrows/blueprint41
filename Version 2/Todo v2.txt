@@ -4,4 +4,4 @@ Changed to:		(fromIsNullable) ? (Expression)Expression.Not(Expression.Property(f
 
 
 
->docker run --name MEMGRAPH -p 7690:7687 -e MEMGRAPH="--storage-enable-schema-metadata=True" memgraph/memgraph-mage:latest
+docker run --name MEMGRAPH -p 7690:7687 -e MEMGRAPH="--storage-enable-schema-metadata=True" memgraph/memgraph-mage:latest
