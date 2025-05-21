@@ -14,6 +14,27 @@ namespace Blueprint41.Persistence
 
         #region Compile Functions
 
+        public override string FnFunctionalIdNextHash => throw new NotSupportedException("Memgraph does not support the FunctionalId plug-in as of writing.");
+        public override string FnFunctionalIdNextNumeric => throw new NotSupportedException("Memgraph does not support the FunctionalId plug-in as of writing.");
+        public override string CallFunctionalIdNextHash => throw new NotSupportedException("Memgraph does not support the FunctionalId plug-in as of writing.");
+        public override string CallFunctionalIdNextNumeric => throw new NotSupportedException("Memgraph does not support the FunctionalId plug-in as of writing.");
+
+        public override string FnApocCreateUuid => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string CallMageCreateUuid => "CALL uuid_generator.get() YIELD uuid AS key";
+        public override string CallApocCreateUuid => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocCollFlatten => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocCollSort => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocCollSortNodes => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocCollPairs => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocCollPairsMin => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocCollUnion => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocCollUnionAll => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocMapSortedProperties => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocJsonPath(int count) => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocUtilSHA1(int count) => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+        public override string FnApocUtilMD5(int count) => throw new NotSupportedException("Memgraph does not support the APOC specific functions as of writing.");
+
+
         // Element ID is not a string on Memgraph, this might cause performance issues with updating relationship properties...
         public override string FnElementId => "toString(Id({0}))";
         public override string TestCompressedString(string alias, string field) => throw new NotSupportedException("CompressedString is not supported on Memgraph, since ByteArray is not supported on Memgraph. See: https://memgraph.com/docs/client-libraries/java");

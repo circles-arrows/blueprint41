@@ -373,14 +373,29 @@ namespace Blueprint41.Query
                     });
                     break;
                 case PartType.UsingIndex:
-                    state.Text.Append("USING INDEX ");
-                    query.ForEach(query.Fields, state.Text, "\r\nUSING INDEX ", item =>
-                    {
-                        if (item.Alias is null || item.Alias.Node is null)
-                            return;
 
-                        state.Text.Append(string.Format("{0}:{1}({2})", item.Alias.AliasName, item.Alias.Node.Neo4jLabel, item.FieldName));
-                    });
+                    if (self.PersistenceProvider.IsMemgraph)
+                    {
+                        state.Text.Append("USING INDEX ");
+                        query.ForEach(query.Fields, state.Text, ",", item =>
+                        {
+                            if (item.Alias is null || item.Alias.Node is null)
+                                return;
+
+                            state.Text.Append(string.Format(":{0}({1})", item.Alias.Node.Neo4jLabel, item.FieldName));
+                        });
+                    }
+                    else
+                    {
+                        state.Text.Append("USING INDEX ");
+                        query.ForEach(query.Fields, state.Text, "\r\nUSING INDEX ", item =>
+                        {
+                            if (item.Alias is null || item.Alias.Node is null)
+                                return;
+
+                            state.Text.Append(string.Format("{0}:{1}({2})", item.Alias.AliasName, item.Alias.Node.Neo4jLabel, item.FieldName));
+                        });
+                    }
                     break;
                 case PartType.OrderBy:
                     state.Text.Append("ORDER BY ");
@@ -493,6 +508,25 @@ namespace Blueprint41.Query
 
         internal static void OrderQueryParts(this QueryTranslator self, LinkedList<q.Query> parts)
         {
+            if (self.PersistenceProvider.IsMemgraph)
+            {
+                var usingIndexParts = parts.Where(p => p.Type == PartType.UsingIndex).ToList();
+                var otherParts = parts.Where(p => p.Type != PartType.UsingIndex).ToList();
+
+                parts.Clear();
+
+                if (usingIndexParts.Any())
+                {
+                    var combinedFields = usingIndexParts.SelectMany(part => part.Fields).Distinct().ToArray();
+                    usingIndexParts[0].SetFields(combinedFields);
+                    parts.AddLast(usingIndexParts[0]);
+                }
+
+                foreach (var part in otherParts)
+                {
+                    parts.AddLast(part);
+                }
+            }
         }
         internal static void SearchTranslation(this QueryTranslator self, q.Query query, CompileState state)
         {

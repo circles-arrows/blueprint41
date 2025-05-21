@@ -513,9 +513,12 @@ namespace Blueprint41
 
         protected void ApplyFunctionalIds()
         {
-            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item => item is not null))
+            if (PersistenceProvider.IsNeo4j && PersistenceProvider.HasProcedure("blueprint41.functionalid.current"))
             {
-                ApplyFunctionalId(functionalId);
+                foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item => item is not null))
+                {
+                    ApplyFunctionalId(functionalId);
+                }
             }
         }
 

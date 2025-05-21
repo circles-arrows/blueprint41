@@ -662,6 +662,7 @@ namespace Blueprint41.Persistence
         public virtual string TestCompressedString(string alias, string field) => $"[x IN {alias}.`{field}` | x] <> {alias}.`{field}`";
 
         public virtual string FnApocCreateUuid => "apoc.create.uuid()";
+        public virtual string CallMageCreateUuid => throw new NotSupportedException("Neo4j does not support the Mage specific functions as of writing.");
         public virtual string CallApocCreateUuid => "WITH apoc.create.uuid() as key";
         public virtual string FnApocCollFlatten => "apoc.coll.flatten({base})";
         public virtual string FnApocCollSort => "apoc.coll.sort({base})";

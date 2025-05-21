@@ -254,12 +254,23 @@ namespace Blueprint41.Persistence
         {
             QueryTranslator t = PersistenceProvider.Translator;
 
-            if (functionalId.Guid == Guid.Empty)
-                return t.CallApocCreateUuid;
-            if (functionalId.Format == IdFormat.Hash)
-                return string.Format(t.CallFunctionalIdNextHash, functionalId.Label);
+            if (PersistenceProvider.IsNeo4j)
+            {
+                if (functionalId.Guid == Guid.Empty)
+                    return t.CallApocCreateUuid;
+                if (functionalId.Format == IdFormat.Hash)
+                    return string.Format(t.CallFunctionalIdNextHash, functionalId.Label);
+                else
+                    return string.Format(t.CallFunctionalIdNextNumeric, functionalId.Label);
+            }
+            else if (PersistenceProvider.IsMemgraph)
+            {
+                return t.CallMageCreateUuid;
+            }
             else
-                return string.Format(t.CallFunctionalIdNextNumeric, functionalId.Label);
+            {
+                throw new NotSupportedException("Target database system does not support FunctionalIds.");
+            }
         }
 
         public List<T> LoadWhere<T>(Entity entity, string conditions, IParameter[]? parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
