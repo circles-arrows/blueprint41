@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.Persistence;
 
@@ -23,8 +23,13 @@ namespace Blueprint41.Refactoring.Schema
             string? label = record["label"]?.ToString();
             Entity = !string.IsNullOrEmpty(label) ? new List<string>() { label! } : default!;
 
-            string? field = record["property"]?.ToString();
-            Field = !string.IsNullOrEmpty(field) ? new List<string>() { field! } : default!;
+            List<object>? field = record["property"] as List<object>;
+            if (field is null)
+                field = new List<object> { record["property"].As<string>() };
+            if (field[0] is null)
+                field = null;
+
+            Field = field is null ? default! : field.Cast<string>().ToList();
         }
     }
 }

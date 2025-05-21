@@ -2,3 +2,6 @@ Blueprint41.Schema -> TypeConversion -> Conversion(Of TFrom, TTo).cs -> Line: 15
 Changed from:	(fromIsNullable) ? (Expression)Expression.Not(Expression.Property(fromParam, hasValuePropertyInfo)) :
 Changed to:		(fromIsNullable) ? (Expression)Expression.Not(Expression.Property(fromParam, hasValuePropertyInfo!)) :
 
+
+
+>docker run --name MEMGRAPH -p 7690:7687 -e MEMGRAPH="--storage-enable-schema-metadata=True" memgraph/memgraph-mage:latest

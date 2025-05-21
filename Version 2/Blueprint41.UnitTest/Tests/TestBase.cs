@@ -24,7 +24,10 @@ namespace Blueprint41.UnitTest.Tests
         }, true);
         private DriverSession GetSession()
         {
-            return _driver.Value.Session(o => { o.WithDatabase(DatabaseConnectionSettings.DATA_BASE); });
+            if (DatabaseConnectionSettings.DATA_BASE is null)
+                return _driver.Value.Session();
+
+            return _driver.Value.Session(o => { o.WithDatabase(DatabaseConnectionSettings.DATA_BASE!); });
         }
 
         [SetUp]

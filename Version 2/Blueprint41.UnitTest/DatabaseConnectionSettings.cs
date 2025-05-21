@@ -10,13 +10,17 @@ namespace Blueprint41.UnitTest
     {
 #if NEO4J
         public const string URI = "bolt://localhost:7687";
-#elif MEMGRAPH
-        public const string URI = "bolt://localhost:7690";
-#endif
 
         public const string USER_NAME = "neo4j";
         public const string PASSWORD = "neoneoneo";
-        public const string DATA_BASE = "unittest";
+        public const string? DATA_BASE = "unittest";
+#elif MEMGRAPH
+        public const string URI = "bolt://localhost:7690";
+
+        public const string USER_NAME = "";
+        public const string PASSWORD = "";
+        public const string? DATA_BASE = null;
+#endif
 
 #if NEO4J
         public const GDMS DatastoreTechnology = GDMS.Neo4j;

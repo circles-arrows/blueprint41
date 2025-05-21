@@ -42,8 +42,21 @@ namespace Blueprint41.DatastoreTemplates
                         Assembly assembly = Assembly.LoadFile(filePath);
 #pragma warning restore S3885 // "Assembly.Load" should be used
 
-                        foreach (Type type in assembly.GetTypes().Where(type => typeof(GeneratorBase).IsAssignableFrom(type)))
-                            templateCache.Add(type.Name, type);
+                        Type?[] types;
+                        try
+                        {
+                            types = assembly.GetTypes();
+                        }
+                        catch (ReflectionTypeLoadException ex)
+                        {
+                            types = ex.Types;
+                        }
+
+                        foreach (Type? type in types.Where(type => typeof(GeneratorBase).IsAssignableFrom(type)))
+                        {
+                            if (type is not null)
+                                templateCache.Add(type.Name, type);
+                        }
                     }
                 }
 
