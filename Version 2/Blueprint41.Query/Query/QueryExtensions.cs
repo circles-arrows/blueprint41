@@ -510,14 +510,14 @@ namespace Blueprint41.Query
         {
             if (self.PersistenceProvider.IsMemgraph)
             {
-                var usingIndexParts = parts.Where(p => p.Type == PartType.UsingIndex).ToList();
-                var otherParts = parts.Where(p => p.Type != PartType.UsingIndex).ToList();
+                List<Query> usingIndexParts = parts.Where(p => p.Type == PartType.UsingIndex).ToList();
+                List<Query> otherParts = parts.Where(p => p.Type != PartType.UsingIndex).ToList();
 
                 parts.Clear();
 
                 if (usingIndexParts.Any())
                 {
-                    var combinedFields = usingIndexParts.SelectMany(part => part.Fields).Distinct().ToArray();
+                    FieldResult[] combinedFields = usingIndexParts.Where(part => part.Fields is not null).SelectMany(part => part.Fields!).Distinct().ToArray();
                     usingIndexParts[0].SetFields(combinedFields);
                     parts.AddLast(usingIndexParts[0]);
                 }
