@@ -23,7 +23,8 @@ namespace UnitTest.Generation
             Generator.Execute<MockModel>(
                 new GeneratorSettings(
                     folder,
-                    "Datastore"
+                    "Datastore",
+                    EntityFlavor.Both
                 )
             );
         }

@@ -21,125 +21,147 @@ namespace Blueprint41.DatastoreTemplates
 
             GeneratorResult generatorResult = new();
 
-            #region Entities and Nodes
-
-            foreach (var entity in model.Entities.Where(item => item.IsAbstract))
+            foreach (GeneratorFlavorSettings flavor in settings)
             {
-                GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Abstract");
-                if (t4 is not null)
+
+                #region Entities and Nodes
+
+                foreach (var entity in model.Entities.Where(item => item.IsAbstract))
                 {
-                    t4.Settings = settings;
-                    t4.DALModel = entity;
-                    t4.Datastore = model;
-                    string content = t4.TransformText();
-                    generatorResult.EntityResult.Add(entity.Name, content);
+                    GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Abstract");
+                    if (t4 is not null)
+                    {
+                        t4.Settings = flavor;
+                        t4.DALModel = entity;
+                        t4.Datastore = model;
+                        string content = t4.TransformText();
+                        generatorResult.EntityResult.Add(entity.Name, content);
+                    }
+
+                    GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
+                    if (node is not null)
+                    {
+                        node.Settings = flavor;
+                        node.DALModel = entity;
+                        node.Datastore = model;
+                        string nodeContent = node.TransformText();
+                        generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                    }
+                }
+                foreach (var entity in model.Entities.Where(item => !item.IsAbstract))
+                {
+                    GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity");
+                    if (t4 is not null)
+                    {
+                        t4.Settings = flavor;
+                        t4.DALModel = entity;
+                        t4.Datastore = model;
+                        string content = t4.TransformText();
+                        generatorResult.EntityResult.Add(entity.Name, content);
+                    }
+
+                    GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
+                    if (node is not null)
+                    {
+                        node.Settings = flavor;
+                        node.DALModel = entity;
+                        node.Datastore = model;
+                        string nodeContent = node.TransformText();
+                        generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                    }
                 }
 
-                GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
-                if (node is not null)
-                {
-                    node.Settings = settings;
-                    node.DALModel = entity;
-                    node.Datastore = model;
-                    string nodeContent = node.TransformText();
-                    generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
-                }
-            }
-            foreach (var entity in model.Entities.Where(item => !item.IsAbstract))
-            {
-                GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity");
-                if (t4 is not null)
-                {
-                    t4.Settings = settings;
-                    t4.DALModel = entity;
-                    t4.Datastore = model;
-                    string content = t4.TransformText();
-                    generatorResult.EntityResult.Add(entity.Name, content);
-                }
+                #endregion
 
-                GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
-                if (node is not null)
+                #region Relationships
+
+                foreach (var relation in model.Relations)
                 {
-                    node.Settings = settings;
-                    node.DALModel = entity;
-                    node.Datastore = model;
-                    string nodeContent = node.TransformText();
-                    generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
-                }
-            }
+                    GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Relation");
+                    if (t4 is not null)
+                    {
+                        t4.Settings = flavor;
+                        t4.DALRelation = relation;
+                        t4.Datastore = model;
+                        string content = t4.TransformText();
+                        generatorResult.EntityResult.Add(relation.Name, content);
+                    }
 
-            #endregion
-
-            #region Relationships
-
-            foreach (var relation in model.Relations)
-            {
-                GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Relation");
-                if (t4 is not null)
-                {
-                    t4.Settings = settings;
-                    t4.DALRelation = relation;
-                    t4.Datastore = model;
-                    string content = t4.TransformText();
-                    generatorResult.EntityResult.Add(relation.Name, content);
+                    GeneratorBase? relationship_template = GeneratorBase.Get("Domain_Data_Relationship");
+                    if (relationship_template is not null)
+                    {
+                        relationship_template.Settings = flavor;
+                        relationship_template.DALRelation = relation;
+                        relationship_template.Datastore = model;
+                        string relContent = relationship_template.TransformText();
+                        generatorResult.RelationshipResult.Add(relation.Name, relContent);
+                    }
                 }
 
-                GeneratorBase? relationship_template = GeneratorBase.Get("Domain_Data_Relationship");
-                if (relationship_template is not null)
+                #endregion
+
+                #region Register
+
+                GeneratorBase? register = GeneratorBase.Get("Domain_Data_Register");
+                if (register is not null)
                 {
-                    relationship_template.Settings = settings;
-                    relationship_template.DALRelation = relation;
-                    relationship_template.Datastore = model;
-                    string relContent = relationship_template.TransformText();
-                    generatorResult.RelationshipResult.Add(relation.Name, relContent);
+                    register.Settings = flavor;
+                    register.DALModel = null;
+                    register.Datastore = model;
+                    string registerContent = register.TransformText();
+                    generatorResult.EntityResult.Add("_Register", registerContent);
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Register
+                #region GraphEvents
 
-            GeneratorBase? register = GeneratorBase.Get("Domain_Data_Register");
-            if (register is not null)
-            {
-                register.Settings = settings;
-                register.DALModel = null;
-                register.Datastore = model;
-                string registerContent = register.TransformText();
-                generatorResult.EntityResult.Add("_Register", registerContent);
-            }
+                GeneratorBase? ge = GeneratorBase.Get("Domain_Data_GraphEvents");
+                if (ge is not null)
+                {
+                    ge.Settings = flavor;
+                    ge.DALModel = null;
+                    ge.Datastore = model;
+                    string geContent = ge.TransformText();
+                    generatorResult.EntityResult.Add("_GraphEvents", geContent);
+                }
 
-            #endregion
+                #endregion
 
-            #region GraphEvents
+                if (!string.IsNullOrEmpty(settings.ProjectFolder))
+                {
+                    // create Entities, Nodes and Relationship
 
-            GeneratorBase? ge = GeneratorBase.Get("Domain_Data_GraphEvents");
-            if (ge is not null)
-            {
-                ge.Settings = settings;
-                ge.DALModel = null;
-                ge.Datastore = model;
-                string geContent = ge.TransformText();
-                generatorResult.EntityResult.Add("_GraphEvents", geContent);
-            }
+                    Dictionary<string, Dictionary<string, string>> folders = new Dictionary<string, Dictionary<string, string>>();
 
-            #endregion
+                    if (!string.IsNullOrEmpty(flavor.EntitiesFolder))
+                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.EntitiesFolder), generatorResult.EntityResult);
 
-            if (!string.IsNullOrEmpty(settings.ProjectFolder))
-            {
-                // create Entities, Nodes and Relationship
+                    if (!string.IsNullOrEmpty(flavor.NodesFolder))
+                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.NodesFolder), generatorResult.NodeResult);
 
-                if (!string.IsNullOrEmpty(settings.EntitiesFolder))
-                    CreateFilesFromDictionary(generatorResult.EntityResult, Path.Combine(settings.ProjectFolder, settings.EntitiesFolder));
+                    if (!string.IsNullOrEmpty(flavor.RelationshipsFolder))
+                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.RelationshipsFolder), generatorResult.RelationshipResult);
 
-                if (!string.IsNullOrEmpty(settings.NodesFolder))
-                    CreateFilesFromDictionary(generatorResult.NodeResult, Path.Combine(settings.ProjectFolder, settings.NodesFolder));
-
-                if (!string.IsNullOrEmpty(settings.RelationshipsFolder))
-                    CreateFilesFromDictionary(generatorResult.RelationshipResult, Path.Combine(settings.ProjectFolder, settings.RelationshipsFolder));
+                    foreach (KeyValuePair<string, Dictionary<string, string>> pair in folders)
+                        CreateFilesFromDictionary(pair.Value, pair.Key);
+                }
             }
 
             return generatorResult;
+
+            void AddToFolder(Dictionary<string, Dictionary<string, string>> folders, string folder, Dictionary<string, string> content)
+            {
+                if (folders.TryGetValue(folder, out var files))
+                {
+                    foreach (var pair in content)
+                        files.Add(pair.Key, pair.Value);
+                }
+                else
+                {
+                    folders.Add(folder, content);
+                }
+            }
         }
         private static void CreateFilesFromDictionary(Dictionary<string, string> dictionary, string path)
         {

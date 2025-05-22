@@ -72,7 +72,7 @@ namespace Blueprint41.DatastoreTemplates
         public DatastoreModel? Datastore { get; set; }
         public IReadOnlyList<TypeMapping> SupportedTypeMappings => Datastore?.PersistenceProvider?.SupportedTypeMappings ?? throw new InvalidOperationException("");
 
-        public GeneratorSettings? Settings { get; set; }
+        public GeneratorFlavorSettings? Settings { get; set; }
 
         public void Log(string text, params object[] arguments)
         {
