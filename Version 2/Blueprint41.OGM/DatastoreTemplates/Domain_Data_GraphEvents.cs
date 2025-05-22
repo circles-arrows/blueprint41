@@ -32,6 +32,8 @@ namespace Blueprint41.DatastoreTemplates
             this.Write(@"#nullable disable
 #pragma warning disable S101 // Types should be named in PascalCase
 #pragma warning disable CS8981 // Names should not be lower type only
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+#pragma warning disable VSSpell001 // Spell Check
 
 using System;
 
@@ -42,7 +44,7 @@ using Blueprint41.DatastoreTemplates;
 
 namespace ");
             
-            #line 17 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 19 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullCRUDNamespace));
             
             #line default
@@ -50,7 +52,7 @@ namespace ");
             this.Write("\r\n{\r\n    public static class GraphEvents\r\n    {\r\n        public static class Node" +
                     "s\r\n        {\r\n");
             
-            #line 23 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 25 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
 List<string> nodeEvents = new List<string>();
 nodeEvents.Add("OnNodeLoading");
@@ -71,28 +73,28 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             #line hidden
             this.Write("            public static class ");
             
-            #line 38 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 40 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("\r\n            {\r\n                public static readonly Entity Entity = ");
             
-            #line 40 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 42 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
             this.Write(".Model.Entities[\"");
             
-            #line 40 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 42 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("\"];\r\n\r\n");
             
-            #line 42 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 44 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
     foreach (var evnt in nodeEvents)
     {
@@ -103,14 +105,14 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             #line hidden
             this.Write("                #region ");
             
-            #line 47 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 49 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n                private static bool ");
             
-            #line 49 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 51 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -118,28 +120,28 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("IsRegistered = false;\r\n\r\n                private static event EventHandler<Entity" +
                     ", ");
             
-            #line 51 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 53 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 51 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 53 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(";\r\n                public static event EventHandler<Entity, ");
             
-            #line 52 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 54 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 52 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 54 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
@@ -148,7 +150,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
                     "            lock (Entity)\r\n                        {\r\n                          " +
                     "  if (!");
             
-            #line 58 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 60 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -156,21 +158,21 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("IsRegistered)\r\n                            {\r\n                                Ent" +
                     "ity.Events.");
             
-            #line 60 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 62 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" += ");
             
-            #line 60 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 62 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                                ");
             
-            #line 61 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 63 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -178,7 +180,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("IsRegistered = true;\r\n                            }\r\n                            " +
                     "");
             
-            #line 63 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 65 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -187,21 +189,21 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
                     " remove\r\n                    {\r\n                        lock (Entity)\r\n         " +
                     "               {\r\n                            ");
             
-            #line 70 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 72 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n                            if (");
             
-            #line 71 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 73 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" is null && ");
             
-            #line 71 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 73 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -209,21 +211,21 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("IsRegistered)\r\n                            {\r\n                                Ent" +
                     "ity.Events.");
             
-            #line 73 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 75 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
-            #line 73 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 75 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                                ");
             
-            #line 74 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 76 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -232,28 +234,28 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
                     "                    }\r\n                }\r\n\r\n                private static void " +
                     "");
             
-            #line 80 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 82 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy(object sender, ");
             
-            #line 80 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 82 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write(" args)\r\n                {\r\n                    EventHandler<Entity, ");
             
-            #line 82 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 84 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write("> handler = ");
             
-            #line 82 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 84 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -262,7 +264,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
                     "Invoke((Entity)sender, args);\r\n                }\r\n\r\n                #endregion\r\n" +
                     "");
             
-            #line 88 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 90 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
     }  
 
@@ -271,7 +273,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             #line hidden
             this.Write("            }\r\n");
             
-            #line 92 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 94 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
 }
 
@@ -280,7 +282,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             #line hidden
             this.Write("        }\r\n        public static class Relationships\r\n        {\r\n");
             
-            #line 98 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 100 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
 List<string> relationEvents = new List<string>();
 relationEvents.Add("OnRelationCreate");
@@ -296,7 +298,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             #line hidden
             this.Write("            public static class ");
             
-            #line 108 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 110 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
@@ -304,21 +306,21 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("\r\n            {\r\n                public static readonly Relationship Relationship" +
                     " = ");
             
-            #line 110 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 112 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
             this.Write(".Model.Relations[\"");
             
-            #line 110 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 112 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("\"];\r\n\r\n");
             
-            #line 112 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 114 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
     foreach (var evnt in relationEvents)
     {
@@ -329,14 +331,14 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             #line hidden
             this.Write("                #region ");
             
-            #line 117 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 119 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n                private static bool ");
             
-            #line 119 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 121 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -344,28 +346,28 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("IsRegistered = false;\r\n\r\n                private static event EventHandler<Relati" +
                     "onship, ");
             
-            #line 121 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 123 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 121 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 123 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(";\r\n                public static event EventHandler<Relationship, ");
             
-            #line 122 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 124 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 122 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 124 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
@@ -374,7 +376,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
                     "            lock (Relationship)\r\n                        {\r\n                    " +
                     "        if (!");
             
-            #line 128 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 130 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -382,21 +384,21 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("IsRegistered)\r\n                            {\r\n                                Rel" +
                     "ationship.Events.");
             
-            #line 130 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 132 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" += ");
             
-            #line 130 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 132 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                                ");
             
-            #line 131 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 133 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -404,7 +406,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("IsRegistered = true;\r\n                            }\r\n                            " +
                     "");
             
-            #line 133 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 135 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -413,21 +415,21 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
                     " remove\r\n                    {\r\n                        lock (Relationship)\r\n   " +
                     "                     {\r\n                            ");
             
-            #line 140 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 142 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n                            if (");
             
-            #line 141 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 143 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" is null && ");
             
-            #line 141 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 143 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -435,21 +437,21 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("IsRegistered)\r\n                            {\r\n                                Rel" +
                     "ationship.Events.");
             
-            #line 143 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 145 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
-            #line 143 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 145 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                                ");
             
-            #line 144 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 146 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -458,28 +460,28 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
                     "                    }\r\n                }\r\n\r\n                private static void " +
                     "");
             
-            #line 150 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 152 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy(object sender, ");
             
-            #line 150 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 152 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write(" args)\r\n                {\r\n                    EventHandler<Relationship, ");
             
-            #line 152 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 154 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventargs));
             
             #line default
             #line hidden
             this.Write("> handler = ");
             
-            #line 152 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 154 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -488,7 +490,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
                     "Invoke((Relationship)sender, args);\r\n                }\r\n\r\n                #endre" +
                     "gion\r\n");
             
-            #line 158 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 160 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
     }  
 
@@ -497,7 +499,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             #line hidden
             this.Write("            }\r\n");
             
-            #line 162 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
+            #line 164 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
 }
 
