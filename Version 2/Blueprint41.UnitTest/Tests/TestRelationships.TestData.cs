@@ -10,7 +10,7 @@ using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
 using neo4j = Neo4j.Driver;
-using Datastore.Manipulation;
+using Datastore.Manipulation.Sync;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;

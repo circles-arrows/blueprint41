@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0018: Inline variable declaration
+csharp_style_inlined_variable_declaration = false

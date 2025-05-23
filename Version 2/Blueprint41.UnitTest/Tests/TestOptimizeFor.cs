@@ -6,7 +6,7 @@ using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
-using Datastore.Manipulation;
+using Datastore.Manipulation.Sync;
 
 namespace Blueprint41.UnitTest.Tests
 {

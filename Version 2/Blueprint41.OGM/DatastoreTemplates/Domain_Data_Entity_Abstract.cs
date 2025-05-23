@@ -30,8 +30,7 @@ namespace Blueprint41.DatastoreTemplates
         /// </summary>
         public override string TransformText()
         {
-            this.Write(@" 
-#nullable disable
+            this.Write(@"#nullable disable
 #pragma warning disable S101 // Types should be named in PascalCase
 #pragma warning disable CS8981 // Names should not be lower type only
 #pragma warning disable IDE0130 // Namespace does not match folder structure

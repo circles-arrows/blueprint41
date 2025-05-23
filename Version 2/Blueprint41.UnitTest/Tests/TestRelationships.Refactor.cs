@@ -7,7 +7,7 @@ using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.UnitTest.DataStore;
 
-using Datastore.Manipulation;
+using Datastore.Manipulation.Sync;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using ClientException = Neo4j.Driver.ClientException;

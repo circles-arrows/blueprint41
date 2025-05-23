@@ -10,7 +10,7 @@ namespace Blueprint41.DatastoreTemplates
 {
     public static class Generator
     {
-        private const string FileExtension = ".cs";
+        private const string FILE_EXTENSION = ".cs";
         public static GeneratorResult Execute<T>(GeneratorSettings settings)
             where T : DatastoreModel<T>, new()
         {
@@ -152,15 +152,15 @@ namespace Blueprint41.DatastoreTemplates
 
             void AddToFolder(Dictionary<string, Dictionary<string, string>> folders, string folder, Dictionary<string, string> content)
             {
-                if (folders.TryGetValue(folder, out var files))
+                Dictionary<string, string>? files;
+                if (!folders.TryGetValue(folder, out files))
                 {
-                    foreach (var pair in content)
-                        files.Add(pair.Key, pair.Value);
+                    files = new Dictionary<string, string>();
+                    folders.Add(folder, files);
                 }
-                else
-                {
-                    folders.Add(folder, content);
-                }
+
+                foreach (var pair in content)
+                    files.Add(pair.Key, pair.Value);
             }
         }
         private static void CreateFilesFromDictionary(Dictionary<string, string> dictionary, string path)
@@ -180,14 +180,14 @@ namespace Blueprint41.DatastoreTemplates
 
         private static void DeleteUnmatchedFiles(string path, ICollection<string> validFileNames)
         {
-            var existingFiles = Directory.GetFiles(path, "*" + FileExtension)
+            var existingFiles = Directory.GetFiles(path, "*" + FILE_EXTENSION)
                 .Select(Path.GetFileNameWithoutExtension)
                 .ToList();
 
             var filesToDelete = existingFiles.Except(validFileNames);
             foreach (var fileToDelete in filesToDelete)
             {
-                File.Delete(Path.Combine(path, fileToDelete + FileExtension));
+                File.Delete(Path.Combine(path, fileToDelete + FILE_EXTENSION));
             }
         }
 
@@ -195,7 +195,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             foreach (var fileEntry in filesContent)
             {
-                string filePath = Path.Combine(path, fileEntry.Key + FileExtension);
+                string filePath = Path.Combine(path, fileEntry.Key + FILE_EXTENSION);
                 File.WriteAllText(filePath, fileEntry.Value, new UTF8Encoding(false));
             }
         }
