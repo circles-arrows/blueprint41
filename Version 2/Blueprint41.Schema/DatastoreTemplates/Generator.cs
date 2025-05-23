@@ -28,46 +28,46 @@ namespace Blueprint41.DatastoreTemplates
 
                 foreach (var entity in model.Entities.Where(item => item.IsAbstract))
                 {
-                    GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Abstract");
+                    GeneratorBase? t4 = GeneratorBase.Get(flavor.Flavor, "Domain_Data_Entity_Abstract");
                     if (t4 is not null)
                     {
                         t4.Settings = flavor;
                         t4.DALModel = entity;
                         t4.Datastore = model;
                         string content = t4.TransformText();
-                        generatorResult.EntityResult.Add(entity.Name, content);
+                        generatorResult.EntityResult.Add(flavor.Flavor, entity.Name, content);
                     }
 
-                    GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
+                    GeneratorBase? node = GeneratorBase.Get(flavor.Flavor, "Domain_Data_Node");
                     if (node is not null)
                     {
                         node.Settings = flavor;
                         node.DALModel = entity;
                         node.Datastore = model;
                         string nodeContent = node.TransformText();
-                        generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                        generatorResult.NodeResult.Add(flavor.Flavor, $"{entity.Name}Node", nodeContent);
                     }
                 }
                 foreach (var entity in model.Entities.Where(item => !item.IsAbstract))
                 {
-                    GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity");
+                    GeneratorBase? t4 = GeneratorBase.Get(flavor.Flavor, "Domain_Data_Entity");
                     if (t4 is not null)
                     {
                         t4.Settings = flavor;
                         t4.DALModel = entity;
                         t4.Datastore = model;
                         string content = t4.TransformText();
-                        generatorResult.EntityResult.Add(entity.Name, content);
+                        generatorResult.EntityResult.Add(flavor.Flavor, entity.Name, content);
                     }
 
-                    GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
+                    GeneratorBase? node = GeneratorBase.Get(flavor.Flavor, "Domain_Data_Node");
                     if (node is not null)
                     {
                         node.Settings = flavor;
                         node.DALModel = entity;
                         node.Datastore = model;
                         string nodeContent = node.TransformText();
-                        generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                        generatorResult.NodeResult.Add(flavor.Flavor, $"{entity.Name}Node", nodeContent);
                     }
                 }
 
@@ -77,24 +77,24 @@ namespace Blueprint41.DatastoreTemplates
 
                 foreach (var relation in model.Relations)
                 {
-                    GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Relation");
+                    GeneratorBase? t4 = GeneratorBase.Get(flavor.Flavor, "Domain_Data_Entity_Relation");
                     if (t4 is not null)
                     {
                         t4.Settings = flavor;
                         t4.DALRelation = relation;
                         t4.Datastore = model;
                         string content = t4.TransformText();
-                        generatorResult.EntityResult.Add(relation.Name, content);
+                        generatorResult.EntityResult.Add(flavor.Flavor, relation.Name, content);
                     }
 
-                    GeneratorBase? relationship_template = GeneratorBase.Get("Domain_Data_Relationship");
+                    GeneratorBase? relationship_template = GeneratorBase.Get(flavor.Flavor, "Domain_Data_Relationship");
                     if (relationship_template is not null)
                     {
                         relationship_template.Settings = flavor;
                         relationship_template.DALRelation = relation;
                         relationship_template.Datastore = model;
                         string relContent = relationship_template.TransformText();
-                        generatorResult.RelationshipResult.Add(relation.Name, relContent);
+                        generatorResult.RelationshipResult.Add(flavor.Flavor, relation.Name, relContent);
                     }
                 }
 
@@ -102,28 +102,28 @@ namespace Blueprint41.DatastoreTemplates
 
                 #region Register
 
-                GeneratorBase? register = GeneratorBase.Get("Domain_Data_Register");
+                GeneratorBase? register = GeneratorBase.Get(flavor.Flavor, "Domain_Data_Register");
                 if (register is not null)
                 {
                     register.Settings = flavor;
                     register.DALModel = null;
                     register.Datastore = model;
                     string registerContent = register.TransformText();
-                    generatorResult.EntityResult.Add("_Register", registerContent);
+                    generatorResult.EntityResult.Add(flavor.Flavor, "_Register", registerContent);
                 }
 
                 #endregion
 
                 #region GraphEvents
 
-                GeneratorBase? ge = GeneratorBase.Get("Domain_Data_GraphEvents");
+                GeneratorBase? ge = GeneratorBase.Get(flavor.Flavor, "Domain_Data_GraphEvents");
                 if (ge is not null)
                 {
                     ge.Settings = flavor;
                     ge.DALModel = null;
                     ge.Datastore = model;
                     string geContent = ge.TransformText();
-                    generatorResult.EntityResult.Add("_GraphEvents", geContent);
+                    generatorResult.EntityResult.Add(flavor.Flavor, "_GraphEvents", geContent);
                 }
 
                 #endregion
@@ -135,13 +135,13 @@ namespace Blueprint41.DatastoreTemplates
                     Dictionary<string, Dictionary<string, string>> folders = new Dictionary<string, Dictionary<string, string>>();
 
                     if (!string.IsNullOrEmpty(flavor.EntitiesFolder))
-                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.EntitiesFolder), generatorResult.EntityResult);
+                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.EntitiesFolder),      generatorResult.EntityResult.Items(flavor.Flavor));
 
                     if (!string.IsNullOrEmpty(flavor.NodesFolder))
-                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.NodesFolder), generatorResult.NodeResult);
+                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.NodesFolder),         generatorResult.NodeResult.Items(flavor.Flavor));
 
                     if (!string.IsNullOrEmpty(flavor.RelationshipsFolder))
-                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.RelationshipsFolder), generatorResult.RelationshipResult);
+                        AddToFolder(folders, Path.Combine(settings.ProjectFolder, flavor.RelationshipsFolder), generatorResult.RelationshipResult.Items(flavor.Flavor));
 
                     foreach (KeyValuePair<string, Dictionary<string, string>> pair in folders)
                         CreateFilesFromDictionary(pair.Value, pair.Key);
@@ -150,7 +150,7 @@ namespace Blueprint41.DatastoreTemplates
 
             return generatorResult;
 
-            void AddToFolder(Dictionary<string, Dictionary<string, string>> folders, string folder, Dictionary<string, string> content)
+            void AddToFolder(Dictionary<string, Dictionary<string, string>> folders, string folder, IEnumerable<KeyValuePair<string, string>> content)
             {
                 Dictionary<string, string>? files;
                 if (!folders.TryGetValue(folder, out files))

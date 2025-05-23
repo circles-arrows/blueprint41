@@ -68,12 +68,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="DatastoreTemplates\Domain_Data_Node.cs">
+    <Compile Update="DatastoreTemplates\Async\Domain_Data_Node.cs">
       <DependentUpon>Domain_Data_Node.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Relationship.cs">
+    <Compile Update="DatastoreTemplates\Async\Domain_Data_Relationship.cs">
+      <DependentUpon>Domain_Data_Relationship.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_Node.cs">
+      <DependentUpon>Domain_Data_Node.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_Relationship.cs">
       <DependentUpon>Domain_Data_Relationship.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -81,11 +91,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DatastoreTemplates\Domain_Data_Node.tt">
+    <None Update="DatastoreTemplates\Async\Domain_Data_Node.tt">
       <LastGenOutput>Domain_Data_Node.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="DatastoreTemplates\Domain_Data_Relationship.tt">
+    <None Update="DatastoreTemplates\Async\Domain_Data_Relationship.tt">
+      <LastGenOutput>Domain_Data_Relationship.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Blocking\Domain_Data_Node.tt">
+      <LastGenOutput>Domain_Data_Node.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Blocking\Domain_Data_Relationship.tt">
       <LastGenOutput>Domain_Data_Relationship.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>

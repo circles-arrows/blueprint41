@@ -68,27 +68,52 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="DatastoreTemplates\Domain_Data_Entity.cs">
+    <Compile Update="DatastoreTemplates\Async\Domain_Data_Entity.cs">
       <DependentUpon>Domain_Data_Entity.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Abstract.cs">
+    <Compile Update="DatastoreTemplates\Async\Domain_Data_Entity_Abstract.cs">
       <DependentUpon>Domain_Data_Entity_Abstract.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Relation.cs">
+    <Compile Update="DatastoreTemplates\Async\Domain_Data_Entity_Relation.cs">
       <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_GraphEvents.cs">
+    <Compile Update="DatastoreTemplates\Async\Domain_Data_GraphEvents.cs">
       <DependentUpon>Domain_Data_GraphEvents.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Register.cs">
+    <Compile Update="DatastoreTemplates\Async\Domain_Data_Register.cs">
+      <DependentUpon>Domain_Data_Register.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_Entity.cs">
+      <DependentUpon>Domain_Data_Entity.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_Entity_Abstract.cs">
+      <DependentUpon>Domain_Data_Entity_Abstract.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_Entity_Relation.cs">
+      <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_GraphEvents.cs">
+      <DependentUpon>Domain_Data_GraphEvents.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_Register.cs">
       <DependentUpon>Domain_Data_Register.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -96,23 +121,43 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DatastoreTemplates\Domain_Data_Entity.tt">
+    <None Update="DatastoreTemplates\Async\Domain_Data_Entity.tt">
       <LastGenOutput>Domain_Data_Entity.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="DatastoreTemplates\Domain_Data_Entity_Abstract.tt">
+    <None Update="DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt">
       <LastGenOutput>Domain_Data_Entity_Abstract.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="DatastoreTemplates\Domain_Data_Entity_Relation.tt">
+    <None Update="DatastoreTemplates\Async\Domain_Data_Entity_Relation.tt">
       <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="DatastoreTemplates\Domain_Data_GraphEvents.tt">
+    <None Update="DatastoreTemplates\Async\Domain_Data_GraphEvents.tt">
       <LastGenOutput>Domain_Data_GraphEvents.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="DatastoreTemplates\Domain_Data_Register.tt">
+    <None Update="DatastoreTemplates\Async\Domain_Data_Register.tt">
+      <LastGenOutput>Domain_Data_Register.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Blocking\Domain_Data_Entity.tt">
+      <LastGenOutput>Domain_Data_Entity.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Blocking\Domain_Data_Entity_Abstract.tt">
+      <LastGenOutput>Domain_Data_Entity_Abstract.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Blocking\Domain_Data_Entity_Relation.tt">
+      <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Blocking\Domain_Data_GraphEvents.tt">
+      <LastGenOutput>Domain_Data_GraphEvents.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Blocking\Domain_Data_Register.tt">
       <LastGenOutput>Domain_Data_Register.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>

@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+﻿<#@ template language="C#" inherits="GeneratorBaseBlocking" visibility="public" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Blueprint41.Core" #>

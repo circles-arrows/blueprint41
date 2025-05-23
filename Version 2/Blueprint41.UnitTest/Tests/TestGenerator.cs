@@ -83,9 +83,9 @@ namespace Blueprint41.UnitTest.Tests
 
             Assert.IsNotNull(settings.Blocking);
 
-            FileExists(result.EntityResult, Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
-            FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
-            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.Blocking.NodesFolder));
+            FileExists(result.EntityResult.Items(EntityFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
+            FileExists(result.RelationshipResult.Items(EntityFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
+            FileExists(result.NodeResult.Items(EntityFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
         }
 
         [Test]
@@ -95,9 +95,9 @@ namespace Blueprint41.UnitTest.Tests
 
             Assert.NotNull(settings.Blocking);
 
-            FileExists(result.EntityResult, Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
-            FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
-            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.Blocking.NodesFolder));
+            FileExists(result.EntityResult.Items(EntityFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
+            FileExists(result.RelationshipResult.Items(EntityFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
+            FileExists(result.NodeResult.Items(EntityFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Blueprint41.UnitTest.Tests
             Assert.NotNull(settings.Blocking);
 
             // The person entity is deprecated so it should be excluded in the entity result
-            bool exist = result.EntityResult.Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
+            bool exist = result.EntityResult.Items(EntityFlavor.Blocking).Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
             Assert.IsFalse(exist);
 
             string entityPath = Path.Combine(Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder), "PersonEntity.cs");
@@ -142,9 +142,9 @@ namespace Blueprint41.UnitTest.Tests
                 Directory.Delete(dirPath);
         }
 
-        private void FileExists(Dictionary<string, string> dictionary, string path)
+        private void FileExists(IEnumerable<KeyValuePair<string, string>> files, string path)
         {
-            foreach (KeyValuePair<string, string> item in dictionary)
+            foreach (KeyValuePair<string, string> item in files)
             {
                 string entityPath = Path.Combine(path, item.Key + ".cs");
                 Assert.IsTrue(File.Exists(entityPath));

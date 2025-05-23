@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+﻿<#@ template language="C#" inherits="GeneratorBaseBlocking" visibility="public" #>
 <#@ output extension=".cs" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>

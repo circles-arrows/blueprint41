@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+﻿<#@ template language="C#" inherits="GeneratorBaseAsync" visibility="public" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #>
@@ -9,6 +9,8 @@
 #pragma warning disable CS8981 // Names should not be lower type only
 #pragma warning disable IDE0130 // Namespace does not match folder structure
 #pragma warning disable VSSpell001 // Spell Check
+
+// ASYNC
 
 using System;
 using System.Collections.Generic;

@@ -13,12 +13,19 @@ namespace Blueprint41.DatastoreTemplates
 {
     public abstract partial class GeneratorBase
     {
-        public static GeneratorBase? Get(string templateName)
+        public static GeneratorBase? Get(EntityFlavor flavor, string templateName)
         {
             if (templateCache.Count == 0)
                 InitTemplateCache();
 
-            if (templateCache.TryGetValue(templateName, out Type? generator))
+            Dictionary<string, Type>? flavorCache;
+            if (!templateCache.TryGetValue(flavor, out flavorCache))
+            {
+                flavorCache = new Dictionary<string, Type>();
+                templateCache.Add(flavor, flavorCache);
+            }
+
+            if (flavorCache.TryGetValue(templateName, out Type? generator))
                 return (GeneratorBase?)Activator.CreateInstance(generator);
 
             return null;
@@ -55,7 +62,20 @@ namespace Blueprint41.DatastoreTemplates
                         foreach (Type? type in types.Where(type => typeof(GeneratorBase).IsAssignableFrom(type)))
                         {
                             if (type is not null)
-                                templateCache.Add(type.Name, type);
+                            {
+                                GeneratorBase? template = (GeneratorBase?)Activator.CreateInstance(type);
+                                if (template is null)
+                                    continue;
+
+                                Dictionary<string, Type>? flavorCache;
+                                if (!templateCache.TryGetValue(template.Flavor, out flavorCache))
+                                {
+                                    flavorCache = new Dictionary<string, Type>();
+                                    templateCache.Add(template.Flavor, flavorCache);
+                                }
+
+                                flavorCache.Add(type.Name, type);
+                            }
                         }
                     }
                 }
@@ -64,7 +84,7 @@ namespace Blueprint41.DatastoreTemplates
                     throw new InvalidOperationException("Templates missing. You should add a reference to at least 'Blueprint41.OGM', 'Blueprint41.Query' or both.");
             }
         }
-        private static readonly Dictionary<string, Type> templateCache = new Dictionary<string, Type>();
+        private static readonly Dictionary<EntityFlavor, Dictionary<string, Type>> templateCache = new Dictionary<EntityFlavor, Dictionary<string, Type>>();
 
         public abstract string TransformText();
         public Entity? DALModel { get; set; }
@@ -230,5 +250,16 @@ namespace Blueprint41.DatastoreTemplates
                     return "MiscResult";
             }
         }
+
+        protected abstract EntityFlavor Flavor { get; }
+    }
+
+    public abstract partial class GeneratorBaseBlocking : GeneratorBase
+    {
+        protected override EntityFlavor Flavor => EntityFlavor.Blocking;
+    }
+    public abstract partial class GeneratorBaseAsync : GeneratorBase
+    {
+        protected override EntityFlavor Flavor => EntityFlavor.Async;
     }
 }
