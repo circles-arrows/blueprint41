@@ -51,14 +51,14 @@ using Blueprint41.DatastoreTemplates;
 using q = ");
             
             #line 27 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
+            this.Write(this.ToStringHelper.ToStringWithCulture(AnySettings.FullQueryNamespace));
             
             #line default
             #line hidden
             this.Write(";\r\nusing node = ");
             
             #line 28 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
+            this.Write(this.ToStringHelper.ToStringWithCulture(AnySettings.FullQueryNamespace));
             
             #line default
             #line hidden

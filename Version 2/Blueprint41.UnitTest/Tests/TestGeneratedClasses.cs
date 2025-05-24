@@ -13,11 +13,11 @@ using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
 using Datastore.Manipulation.Sync;
-using Datastore.Query.Sync;
+using Datastore.Query;
 
 using NUnit.Framework;
 
-using node = Datastore.Query.Sync.Node;
+using node = Datastore.Query.Node;
 
 namespace Blueprint41.UnitTest.Tests
 {

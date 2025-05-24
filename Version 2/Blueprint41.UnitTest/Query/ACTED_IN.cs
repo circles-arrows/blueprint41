@@ -11,7 +11,7 @@ using Blueprint41;
 using Blueprint41.Query;
 using Blueprint41.Events;
 
-namespace Datastore.Query.Sync
+namespace Datastore.Query
 {
 public partial class ACTED_IN_REL : RELATIONSHIP, IFromIn_ACTED_IN_REL, IFromOut_ACTED_IN_REL    {
         public override string NEO4J_TYPE

@@ -24,11 +24,12 @@ namespace Blueprint41.DatastoreTemplates
         {
             _blocking = new Dictionary<string, string>();
             _async    = new Dictionary<string, string>();
+            _any      = new Dictionary<string, string>();
         }
 
-        public void Add(EntityFlavor flavor, string key, string value)
+        public void Add(EntityFlavor? flavor, string key, string value)
         {
-            switch (flavor)
+            switch (flavor ?? EntityFlavor.Both)
             {
                 case EntityFlavor.Blocking:
                     _blocking.Add(key, value);
@@ -36,21 +37,38 @@ namespace Blueprint41.DatastoreTemplates
                 case EntityFlavor.Async:
                     _async.Add(key, value);
                     break;
+                case EntityFlavor.Both:
+                    _any.Add(key, value);
+                    break;
+                default:
+                    throw new NotSupportedException($"Adding generated code for flavor '{flavor}' is not supported.");
+            }
+        }
+        public bool ContainsFile(EntityFlavor? flavor, string key)
+        {
+            switch (flavor ?? EntityFlavor.Both)
+            {
+                case EntityFlavor.Blocking:
+                    return _blocking.ContainsKey(key);
+                case EntityFlavor.Async:
+                    return _async.ContainsKey(key);
+                case EntityFlavor.Both:
+                    return _any.ContainsKey(key);
                 default:
                     throw new NotSupportedException($"Adding generated code for flavor '{flavor}' is not supported.");
             }
         }
 
-        public IReadOnlyDictionary<string, string> Items(EntityFlavor flavor)
+        public IReadOnlyDictionary<string, string> Items(EntityFlavor? flavor)
         {
-            switch (flavor)
+            switch (flavor ?? EntityFlavor.Both)
             {
                 case EntityFlavor.Blocking:
                     return _blocking;
-                    break;
                 case EntityFlavor.Async:
                     return _async;
-                    break;
+                case EntityFlavor.Both:
+                    return _any;
                 default:
                     throw new NotSupportedException($"Enumerating generated code for flavor '{flavor}' is not supported.");
             }
@@ -58,5 +76,6 @@ namespace Blueprint41.DatastoreTemplates
 
         private readonly Dictionary<string, string> _blocking;
         private readonly Dictionary<string, string> _async;
+        private readonly Dictionary<string, string> _any;
     }
 }

@@ -23,8 +23,8 @@ using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
-using q = <#= Settings.FullQueryNamespace #>;
-using node = <#= Settings.FullQueryNamespace #>.Node;
+using q = <#= AnySettings.FullQueryNamespace #>;
+using node = <#= AnySettings.FullQueryNamespace #>.Node;
 
 namespace <#= Settings.FullCRUDNamespace #>
 {

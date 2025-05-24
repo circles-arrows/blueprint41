@@ -13,8 +13,8 @@ using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
-using q = Datastore.Query.Sync;
-using node = Datastore.Query.Sync.Node;
+using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation.Sync
 {

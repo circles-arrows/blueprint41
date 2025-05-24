@@ -4,8 +4,6 @@
 #pragma warning disable IDE0130 // Namespace does not match folder structure
 #pragma warning disable VSSpell001 // Spell Check
 
-// ASYNC
-
 using System;
 using System.Collections.Generic;
 
@@ -15,9 +13,9 @@ using Blueprint41.Events;
 using Blueprint41.Persistence;
 using Blueprint41.Query;
 
-using m = Datastore.Manipulation.Async;
+using m = Datastore.Manipulation;
 
-namespace Datastore.Query.Async
+namespace Datastore.Query
 {
     public partial class Node
     {
@@ -42,13 +40,22 @@ namespace Datastore.Query.Async
 
         protected override Entity GetEntity()
         {
-            return m.Person.Entity;
+            if (entity is null)
+            {
+                lock (typeof(PersonNode))
+                {
+                    if (entity is null)
+                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"];
+                }
+            }
+            return entity;
         }
+        private static Entity entity = null;
         public FunctionalId FunctionalId
         {
             get
             {
-                return m.Person.Entity.FunctionalId;
+                return GetEntity().FunctionalId;
             }
         }
 

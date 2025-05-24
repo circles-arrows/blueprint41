@@ -11,7 +11,7 @@ using Blueprint41;
 using Blueprint41.Query;
 using Blueprint41.Events;
 
-namespace Datastore.Query.Sync
+namespace Datastore.Query
 {
 public partial class WATCHED_MOVIE_REL : RELATIONSHIP, IFromIn_WATCHED_MOVIE_REL, IFromOut_WATCHED_MOVIE_REL    {
         public override string NEO4J_TYPE

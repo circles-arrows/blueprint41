@@ -13,9 +13,9 @@ using Blueprint41.Events;
 using Blueprint41.Persistence;
 using Blueprint41.Query;
 
-using m = Datastore.Manipulation.Sync;
+using m = Datastore.Manipulation;
 
-namespace Datastore.Query.Sync
+namespace Datastore.Query
 {
     public partial class Node
     {
@@ -40,13 +40,22 @@ namespace Datastore.Query.Sync
 
         protected override Entity GetEntity()
         {
-            return m.Restaurant.Entity;
+            if (entity is null)
+            {
+                lock (typeof(RestaurantNode))
+                {
+                    if (entity is null)
+                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"];
+                }
+            }
+            return entity;
         }
+        private static Entity entity = null;
         public FunctionalId FunctionalId
         {
             get
             {
-                return m.Restaurant.Entity.FunctionalId;
+                return GetEntity().FunctionalId;
             }
         }
 

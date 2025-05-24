@@ -13,16 +13,16 @@ namespace Blueprint41.DatastoreTemplates
 {
     public abstract partial class GeneratorBase
     {
-        public static GeneratorBase? Get(EntityFlavor flavor, string templateName)
+        public static GeneratorBase? Get(EntityFlavor? flavor, string templateName)
         {
             if (templateCache.Count == 0)
                 InitTemplateCache();
 
             Dictionary<string, Type>? flavorCache;
-            if (!templateCache.TryGetValue(flavor, out flavorCache))
+            if (!templateCache.TryGetValue(flavor ?? EntityFlavor.Both, out flavorCache))
             {
                 flavorCache = new Dictionary<string, Type>();
-                templateCache.Add(flavor, flavorCache);
+                templateCache.Add(flavor ?? EntityFlavor.Both, flavorCache);
             }
 
             if (flavorCache.TryGetValue(templateName, out Type? generator))
@@ -68,10 +68,10 @@ namespace Blueprint41.DatastoreTemplates
                                     continue;
 
                                 Dictionary<string, Type>? flavorCache;
-                                if (!templateCache.TryGetValue(template.Flavor, out flavorCache))
+                                if (!templateCache.TryGetValue(template.Flavor ?? EntityFlavor.Both, out flavorCache))
                                 {
                                     flavorCache = new Dictionary<string, Type>();
-                                    templateCache.Add(template.Flavor, flavorCache);
+                                    templateCache.Add(template.Flavor ?? EntityFlavor.Both, flavorCache);
                                 }
 
                                 flavorCache.Add(type.Name, type);
@@ -92,7 +92,23 @@ namespace Blueprint41.DatastoreTemplates
         public DatastoreModel? Datastore { get; set; }
         public IReadOnlyList<TypeMapping> SupportedTypeMappings => Datastore?.PersistenceProvider?.SupportedTypeMappings ?? throw new InvalidOperationException("");
 
-        public GeneratorFlavorSettings? Settings { get; set; }
+        public GeneratorFlavorSettings? Settings
+        {
+            get => _settings;
+            set
+            {
+                _settings = value;
+
+                BlockingSettings = value?.Parent.Blocking;
+                AsyncSettings    = value?.Parent.Async;
+                AnySettings      = value?.Parent.Any;
+            }
+        }
+        private GeneratorFlavorSettings? _settings;
+
+        public GeneratorFlavorSettings? BlockingSettings { get; set; }
+        public GeneratorFlavorSettings? AsyncSettings { get; set; }
+        public GeneratorFlavorSettings? AnySettings { get; set; }
 
         public void Log(string text, params object[] arguments)
         {
@@ -251,15 +267,15 @@ namespace Blueprint41.DatastoreTemplates
             }
         }
 
-        protected abstract EntityFlavor Flavor { get; }
+        protected virtual EntityFlavor? Flavor => null;
     }
 
-    public abstract partial class GeneratorBaseBlocking : GeneratorBase
+    public abstract class GeneratorBaseBlocking : GeneratorBase
     {
-        protected override EntityFlavor Flavor => EntityFlavor.Blocking;
+        protected override EntityFlavor? Flavor => EntityFlavor.Blocking;
     }
-    public abstract partial class GeneratorBaseAsync : GeneratorBase
+    public abstract class GeneratorBaseAsync : GeneratorBase
     {
-        protected override EntityFlavor Flavor => EntityFlavor.Async;
+        protected override EntityFlavor? Flavor => EntityFlavor.Async;
     }
 }

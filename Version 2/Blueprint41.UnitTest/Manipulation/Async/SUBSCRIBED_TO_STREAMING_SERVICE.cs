@@ -16,8 +16,8 @@ using Blueprint41.Events;
 using Blueprint41.Query;
 using Blueprint41.Persistence;
 using Blueprint41.DatastoreTemplates;
-using q = Datastore.Query.Async;
-using node = Datastore.Query.Async.Node;
+using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation.Async
 {

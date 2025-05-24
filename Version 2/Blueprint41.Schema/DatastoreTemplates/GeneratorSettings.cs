@@ -19,10 +19,11 @@ namespace Blueprint41.DatastoreTemplates
 
             Blocking = flavor.HasFlag(EntityFlavor.Blocking) ? new GeneratorFlavorSettings(this, EntityFlavor.Blocking, BLOCKING) : null;
             Async    = flavor.HasFlag(EntityFlavor.Async)    ? new GeneratorFlavorSettings(this, EntityFlavor.Async,    ASYNC)    : null;
+            Any      = new GeneratorFlavorSettings(this);
 
             settings = new Lazy<IReadOnlyList<GeneratorFlavorSettings>>(delegate ()
             {
-                return new List<GeneratorFlavorSettings?> { Blocking, Async }.Where(item => item is not null).ToArray()!;
+                return new List<GeneratorFlavorSettings?> { Blocking, Async, Any }.Where(item => item is not null).ToArray()!;
 
             }, true);
         }
@@ -31,6 +32,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             Blocking?.SetNamespaces(Amend(crudNamespace, BLOCKING), Amend(queryNamespace, BLOCKING));
             Async?.   SetNamespaces(Amend(crudNamespace, ASYNC),    Amend(queryNamespace, ASYNC));
+            Any?.     SetNamespaces(crudNamespace, queryNamespace);
 
             return this;
 
@@ -46,6 +48,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             Blocking?.SetFolders(Amend(entitiesFolder, BLOCKING), Amend(nodesFolder, BLOCKING), Amend(relationshipsFolder, BLOCKING));
             Async?.   SetFolders(Amend(entitiesFolder, ASYNC),    Amend(nodesFolder, ASYNC),    Amend(relationshipsFolder, ASYNC));
+            Any?.     SetFolders(entitiesFolder, nodesFolder, relationshipsFolder);
 
             return this;
 
@@ -63,6 +66,7 @@ namespace Blueprint41.DatastoreTemplates
 
         public GeneratorFlavorSettings? Blocking { get; }
         public GeneratorFlavorSettings? Async { get; }
+        public GeneratorFlavorSettings? Any { get; }
 
         public IEnumerator<GeneratorFlavorSettings> GetEnumerator()
         {
@@ -78,6 +82,19 @@ namespace Blueprint41.DatastoreTemplates
 
     public class GeneratorFlavorSettings
     {
+        internal GeneratorFlavorSettings(GeneratorSettings parent)
+        {
+            Parent = parent;
+
+            CRUDNamespace  = "Manipulation";
+            QueryNamespace = "Query";
+
+            EntitiesFolder      = "Manipulation";
+            NodesFolder         = "Query";
+            RelationshipsFolder = "Query";
+
+            Flavor = null;
+        }
         internal GeneratorFlavorSettings(GeneratorSettings parent, EntityFlavor flavor, string postfix)
         {
             Parent = parent;
@@ -116,8 +133,8 @@ namespace Blueprint41.DatastoreTemplates
             return this;
         }
 
-        private GeneratorSettings Parent { get; }
-        public EntityFlavor Flavor { get; }
+        internal GeneratorSettings Parent { get; }
+        public EntityFlavor? Flavor { get; }
 
         public string ProjectFolder => Parent.ProjectFolder;
         public string ProjectNamespace => Parent.ProjectNamespace;

@@ -49,7 +49,7 @@ using Blueprint41.DatastoreTemplates;
 using q = ");
             
             #line 25 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
+            this.Write(this.ToStringHelper.ToStringWithCulture(AnySettings.FullQueryNamespace));
             
             #line default
             #line hidden

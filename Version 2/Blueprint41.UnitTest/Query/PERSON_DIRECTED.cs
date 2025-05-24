@@ -4,8 +4,6 @@
 #pragma warning disable IDE0130 // Namespace does not match folder structure
 #pragma warning disable VSSpell001 // Spell Check
 
-// ASYNC
-
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +11,7 @@ using Blueprint41;
 using Blueprint41.Query;
 using Blueprint41.Events;
 
-namespace Datastore.Query.Async
+namespace Datastore.Query
 {
 public partial class PERSON_DIRECTED_REL : RELATIONSHIP, IFromIn_PERSON_DIRECTED_REL, IFromOut_PERSON_DIRECTED_REL    {
         public override string NEO4J_TYPE
