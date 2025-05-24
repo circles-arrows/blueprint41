@@ -9,7 +9,7 @@ using Blueprint41.Core;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.Persistence;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Async
 {
     /// <summary>
     /// Before running test, be sure to back up the exisiting neo4j database. 

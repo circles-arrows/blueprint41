@@ -1,0 +1,156 @@
+﻿using Blueprint41.Core;
+using Blueprint41.DatastoreTemplates;
+using Blueprint41.UnitTest.DataStore;
+using Blueprint41.UnitTest.Mocks;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace Blueprint41.UnitTest.Tests.Blocking
+{
+    [TestFixture]
+    internal class TestGenerator : TestBase
+    {
+        private class MockGeneratorModel : DatastoreModel<MockGeneratorModel>
+        {
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
+
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntityGenerator")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid")
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("PersonEntity", Entities["BaseEntityGenerator"])
+                       .AddProperty("Name", typeof(string));
+            }
+        }
+        private class MockModelWithDeprecate : DatastoreModel<MockModelWithDeprecate>
+        {
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
+
+            protected override void SubscribeEventHandlers() { }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntityGenerator")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid")
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("PersonEntity", Entities["BaseEntityGenerator"])
+                        .AddProperty("Name", typeof(string));
+            }
+
+            [Version(0, 0, 1)]
+            public void Script_0_0_1()
+            {
+                Entities["PersonEntity"].Refactor.Deprecate();
+            }
+        }
+
+        [Test]
+        public void EnsureGeneratorSettingsIsRequired()
+        {
+            Assert.Throws<ArgumentNullException>(() => Generator.Execute<MockGeneratorModel>(null!));
+        }
+
+        [Test]
+        public void GenerateMockModel()
+        {
+            GeneratorResult result = GenerateModel<MockModel>(out string projectFolder, out GeneratorSettings settings);
+
+            Assert.IsNotNull(settings.Blocking);
+
+            FileExists(result.EntityResult.Items(EntityFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
+            FileExists(result.RelationshipResult.Items(EntityFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
+            FileExists(result.NodeResult.Items(EntityFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
+        }
+
+        [Test]
+        public void EnsureFilesAreGenerated()
+        {
+            GeneratorResult result = GenerateModel<MockGeneratorModel>(out string projectFolder, out GeneratorSettings settings);
+
+            Assert.NotNull(settings.Blocking);
+
+            FileExists(result.EntityResult.Items(EntityFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
+            FileExists(result.RelationshipResult.Items(EntityFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
+            FileExists(result.NodeResult.Items(EntityFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
+        }
+
+        [Test]
+        public void EnsureFilesAreNotGeneratedWhenDeprecated()
+        {
+            GeneratorResult result = GenerateModel<MockModelWithDeprecate>(out string projectFolder, out GeneratorSettings settings);
+
+            Assert.NotNull(settings.Blocking);
+
+            // The person entity is deprecated so it should be excluded in the entity result
+            bool exist = result.EntityResult.Items(EntityFlavor.Blocking).Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
+            Assert.IsFalse(exist);
+
+            string entityPath = Path.Combine(Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder), "PersonEntity.cs");
+            Assert.IsFalse(File.Exists(entityPath));
+
+            string basePath = Path.Combine(Path.Combine(projectFolder, settings.Blocking.EntitiesFolder), "BaseEntityGenerator.cs");
+            string baseNodePath = Path.Combine(Path.Combine(projectFolder, settings.Blocking.NodesFolder), "BaseEntityGeneratorNode.cs");
+
+            if (File.Exists(basePath))
+                File.Delete(basePath);
+
+            if (File.Exists(baseNodePath))
+                File.Delete(baseNodePath);
+        }
+
+        private GeneratorResult GenerateModel<T>(out string projectFolder, out GeneratorSettings settings)
+            where T : DatastoreModel<T>, new()
+        {
+            projectFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generator", "Output");
+            settings = new GeneratorSettings(projectFolder, "Datastore", EntityFlavor.Blocking);
+
+            return Generator.Execute<T>(settings);
+        }
+
+        private void DeleteDirAndFiles(string dirPath)
+        {
+            foreach (string file in Directory.EnumerateFiles(dirPath))
+                File.Delete(file);
+
+            if (Directory.GetFiles(dirPath).Length == 0)
+                Directory.Delete(dirPath);
+        }
+
+        private void FileExists(IEnumerable<KeyValuePair<string, string>> files, string path)
+        {
+            foreach (KeyValuePair<string, string> item in files)
+            {
+                string entityPath = Path.Combine(path, item.Key + ".cs");
+                Assert.IsTrue(File.Exists(entityPath));
+
+                File.Delete(entityPath);
+            }
+        }
+    }
+}

@@ -17,7 +17,7 @@ using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Blocking
 {
     [TestFixture]
     internal class TestRefactorProperty : TestBase

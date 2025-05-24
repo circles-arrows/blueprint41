@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Blueprint41.Refactoring;
 using Blueprint41.UnitTest.DataStore;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Async
 {
     public partial class TestRelationships : TestBase
     {

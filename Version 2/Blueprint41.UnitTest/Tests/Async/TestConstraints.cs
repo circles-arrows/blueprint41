@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Async
 {
     internal class TestConstraints : TestBase
     {

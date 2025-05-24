@@ -8,7 +8,7 @@ using Blueprint41.UnitTest.Mocks;
 
 using Datastore.Manipulation.Sync;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Async
 {
     [TestFixture]
     internal class TestOptimizeFor : TestBase

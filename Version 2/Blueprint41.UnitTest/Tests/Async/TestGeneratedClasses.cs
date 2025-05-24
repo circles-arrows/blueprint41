@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 using node = Datastore.Query.Node;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Async
 {
     [TestFixture]
     public class TestGeneratedClasses : TestBase

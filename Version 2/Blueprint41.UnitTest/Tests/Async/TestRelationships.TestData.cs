@@ -17,7 +17,7 @@ using NUnit.Framework.Internal;
 
 using ClientException = Neo4j.Driver.ClientException;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Async
 {
     [TestFixture]
     public partial class TestRelationships : TestBase

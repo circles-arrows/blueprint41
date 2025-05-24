@@ -13,7 +13,7 @@ using NUnit.Framework.Internal;
 using ClientException = Neo4j.Driver.ClientException;
 using DatabaseException = Neo4j.Driver.DatabaseException;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Blocking
 {
     public partial class TestRelationships : TestBase
     {

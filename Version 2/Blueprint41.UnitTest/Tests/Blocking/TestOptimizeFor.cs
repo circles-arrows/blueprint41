@@ -1,0 +1,113 @@
+﻿using System;
+using NUnit.Framework;
+
+using Blueprint41.Core;
+using Blueprint41.UnitTest.DataStore;
+using Blueprint41.UnitTest.Helper;
+using Blueprint41.UnitTest.Mocks;
+
+using Datastore.Manipulation.Sync;
+
+namespace Blueprint41.UnitTest.Tests.Blocking
+{
+    [TestFixture]
+    internal class TestOptimizeFor : TestBase
+    {
+        [Test]
+        public void TestOptimize()
+        {
+            Connect<MockModel>(true).Execute(true);
+
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                string? key = null;
+
+                string outputConsole;
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                {
+                    Person p1 = new Person
+                    {
+                        Name = "Martin Sheen",
+                    };
+
+                    Person p2 = new Person
+                    {
+                        Name = "Michael Douglas",
+                    };
+
+                    Person p3 = new Person
+                    {
+                        Name = "Oliver Stone",
+                    };
+
+                    Person p4 = new Person
+                    {
+                        Name = "Rob Reiner",
+                    };
+
+                    Movie wallstreet = new Movie
+                    {
+                        Title = "Wall Street"
+                    };
+
+                    Movie tap = new Movie
+                    {
+                        Title = "The American President"
+                    };
+
+                    Movie st = new Movie
+                    {
+                        Title = "Starwars"
+                    };
+
+                    p1.ActedInMovies.Add(tap);
+                    p1.ActedInMovies.Add(wallstreet);
+
+                    p2.ActedInMovies.Add(tap);
+                    p2.ActedInMovies.Add(wallstreet);
+
+                    p3.DirectedMovies.Add(wallstreet);
+                    p4.DirectedMovies.Add(tap);
+
+                    Transaction.Commit();
+
+                    key = p2.Uid;
+                }
+
+                using (MockModel.BeginTransaction(OptimizeFor.RecursiveSubGraphAccess))
+                {
+                    Person? p = Person.Load(key);
+                    Assert.IsNotNull(p);
+                    Assert.Zero(p!.DirectedMovies.Count);
+                    Assert.Greater(p.ActedInMovies.Count, 0);
+                    Assert.IsNotNull(p.ActedInMovies[0]);
+                    Assert.Greater(p.ActedInMovies[0]!.Actors.Count, 0);
+
+                    outputConsole = output.GetOutput();
+
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:ACTORS]->(out:Movie) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Movie)<-[rel:ACTORS]-(out:Person) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
+                }
+
+                using (MockModel.BeginTransaction(OptimizeFor.PartialSubGraphAccess))
+                {
+                    Person? p = Person.Load(key);
+                    Assert.IsNotNull(p);
+                    Assert.Zero(p!.DirectedMovies.Count);
+                    Assert.Greater(p.ActedInMovies.Count, 0);
+                    Assert.IsNotNull(p.ActedInMovies[0]);
+                    Assert.Greater(p.ActedInMovies[0]!.Actors.Count, 0);
+
+                    outputConsole = output.GetOutput();
+
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid = $key RETURN out, rel"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:ACTORS]->(out:Movie) WHERE node.Uid = $key RETURN out, rel"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Movie)<-[rel:ACTORS]-(out:Person) WHERE node.Uid = $key RETURN out, rel"));
+                }
+            }
+        }
+    }
+}

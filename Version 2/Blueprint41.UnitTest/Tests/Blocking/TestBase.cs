@@ -11,7 +11,7 @@ using Blueprint41.UnitTest.DataStore;
 using System.Diagnostics;
 
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest.Tests.Blocking
 {
     [TestFixture]
     public abstract class TestBase
