@@ -59,6 +59,42 @@ namespace Blueprint41.Core
                     throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
             }
         }
+        public override async Task SaveAsync()
+        {
+            switch (PersistenceState)
+            {
+                case PersistenceState.New:
+                    throw new NotSupportedException(string.Format("You created an instance of {0}, but inside this transaction but did not set any properties. If you did this intentionally, you can call the method 'SetChanged' on the instance before committing the transaction.", GetEntity().Name));
+                case PersistenceState.HasUid:
+                case PersistenceState.Loaded:
+                    break;
+                case PersistenceState.NewAndChanged:
+                    await PersistenceProvider.NodePersistenceProvider.InsertAsync(this);
+                    PersistenceState = PersistenceState.Persisted;
+                    break;
+                case PersistenceState.LoadedAndChanged:
+                    await PersistenceProvider.NodePersistenceProvider.UpdateAsync(this);
+                    PersistenceState = PersistenceState.Persisted;
+                    break;
+                case PersistenceState.Persisted:
+                    break;
+                case PersistenceState.Delete:
+                    await PersistenceProvider.NodePersistenceProvider.DeleteAsync(this);
+                    PersistenceState = PersistenceState.Deleted;
+                    return;
+                case PersistenceState.ForceDelete:
+                    await PersistenceProvider.NodePersistenceProvider.ForceDeleteAsync(this);
+                    PersistenceState = PersistenceState.Deleted;
+                    return;
+                case PersistenceState.OutOfScope:
+                case PersistenceState.Error:
+                    throw new InvalidOperationException(string.Format("The {0} with key '{1}' cannot be saved because it's state was {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
+                default:
+                    throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
+            }
+        }
         protected bool RelationshipExists(EntityProperty foreignProperty, OGM instance)
         {
             return PersistenceProvider.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);

@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -59,7 +60,7 @@ namespace Datastore.Manipulation.Async
         public Blueprint41.UnitTest.DataStore.RatingComponent? Substances { get; private set; }
         public Blueprint41.UnitTest.DataStore.RatingComponent? SexAndNudity { get; private set; }
 
-        public void Assign(JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public async Task AssignAsync(JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
@@ -68,7 +69,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.MOVIE_CERTIFICATION_ALIAS alias)
             {
@@ -82,7 +83,7 @@ namespace Datastore.Manipulation.Async
                 return assignments.ToArray();
             }
         }
-        public static List<MOVIE_CERTIFICATION> Where(Func<Alias, QueryCondition> expression)
+        public static Task<List<MOVIE_CERTIFICATION>> WhereAsync(Func<Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
@@ -90,9 +91,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<MOVIE_CERTIFICATION> Where(Func<Alias, QueryCondition[]> expression)
+        public static Task<List<MOVIE_CERTIFICATION>> WhereAsync(Func<Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
@@ -101,11 +102,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Movie> InNode = default, JsNotation<Rating> OutNode = default)
+        public static Task<List<MOVIE_CERTIFICATION>> WhereAsync(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Movie> InNode = default, JsNotation<Rating> OutNode = default)
         {
-            return Where(delegate(Alias alias)
+            return WhereAsync(delegate(Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -121,8 +122,7 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        internal static List<MOVIE_CERTIFICATION> Load(ICompiled query) => Load(query, null);
-        internal static List<MOVIE_CERTIFICATION> Load(ICompiled query, params (string name, object value)[] arguments)
+        internal static async Task<List<MOVIE_CERTIFICATION>> LoadAsync(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
             if (arguments is not null && arguments.Length > 0)
@@ -131,7 +131,7 @@ namespace Datastore.Manipulation.Async
                     context.SetParameter(name, value);
             }
 
-            var results = context.Execute(NodeMapping.AsWritableEntity);
+            var results = await context.ExecuteAsync(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new MOVIE_CERTIFICATION(
                 result.elementId,
@@ -293,7 +293,7 @@ namespace Datastore.Manipulation.Async
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<MOVIE_CERTIFICATION> @this, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public static async Task AssignAsync(this IEnumerable<MOVIE_CERTIFICATION> @this, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
@@ -302,7 +302,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.MOVIE_CERTIFICATION_ALIAS alias)
             {

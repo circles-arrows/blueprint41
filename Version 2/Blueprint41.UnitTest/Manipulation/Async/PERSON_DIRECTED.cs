@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -49,7 +50,7 @@ namespace Datastore.Manipulation.Async
 
         public System.DateTime? CreationDate { get; private set; }
 
-        public void Assign()
+        public async Task AssignAsync()
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -58,7 +59,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.PERSON_DIRECTED_ALIAS alias)
             {
@@ -67,7 +68,7 @@ namespace Datastore.Manipulation.Async
                 return assignments.ToArray();
             }
         }
-        public static List<PERSON_DIRECTED> Where(Func<Alias, QueryCondition> expression)
+        public static Task<List<PERSON_DIRECTED>> WhereAsync(Func<Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -75,9 +76,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<PERSON_DIRECTED> Where(Func<Alias, QueryCondition[]> expression)
+        public static Task<List<PERSON_DIRECTED>> WhereAsync(Func<Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -86,11 +87,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<PERSON_DIRECTED> Where(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
+        public static Task<List<PERSON_DIRECTED>> WhereAsync(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
         {
-            return Where(delegate(Alias alias)
+            return WhereAsync(delegate(Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -101,8 +102,7 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        internal static List<PERSON_DIRECTED> Load(ICompiled query) => Load(query, null);
-        internal static List<PERSON_DIRECTED> Load(ICompiled query, params (string name, object value)[] arguments)
+        internal static async Task<List<PERSON_DIRECTED>> LoadAsync(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
             if (arguments is not null && arguments.Length > 0)
@@ -111,7 +111,7 @@ namespace Datastore.Manipulation.Async
                     context.SetParameter(name, value);
             }
 
-            var results = context.Execute(NodeMapping.AsWritableEntity);
+            var results = await context.ExecuteAsync(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new PERSON_DIRECTED(
                 result.elementId,
@@ -218,7 +218,7 @@ namespace Datastore.Manipulation.Async
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<PERSON_DIRECTED> @this)
+        public static async Task AssignAsync(this IEnumerable<PERSON_DIRECTED> @this)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -227,7 +227,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.PERSON_DIRECTED_ALIAS alias)
             {

@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -232,9 +233,9 @@ namespace Datastore.Manipulation.Async
 
         #region Subscribers (Time Dependent Collection)
 
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscriberRelations()
+        public Task<List<SUBSCRIBED_TO_STREAMING_SERVICE>> SubscriberRelationsAsync()
         {
-            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(_querySubscriberRelations.Value, ("key", Uid));
+            return SUBSCRIBED_TO_STREAMING_SERVICE.LoadAsync(_querySubscriberRelations.Value, ("key", Uid));
         }
         private readonly Lazy<ICompiled> _querySubscriberRelations = new Lazy<ICompiled>(delegate()
         {
@@ -244,7 +245,7 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition> expression)
+        public Task<List<SUBSCRIBED_TO_STREAMING_SERVICE>> SubscribersWhereAsync(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
@@ -253,9 +254,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
+            return SUBSCRIBED_TO_STREAMING_SERVICE.LoadAsync(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition[]> expression)
+        public Task<List<SUBSCRIBED_TO_STREAMING_SERVICE>> SubscribersWhereAsync(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
@@ -264,11 +265,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
+            return SUBSCRIBED_TO_STREAMING_SERVICE.LoadAsync(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime?> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
+        public Task<List<SUBSCRIBED_TO_STREAMING_SERVICE>> SubscribersWhereAsync(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime?> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
         {
-            return SubscribersWhere(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
+            return SubscribersWhereAsync(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 

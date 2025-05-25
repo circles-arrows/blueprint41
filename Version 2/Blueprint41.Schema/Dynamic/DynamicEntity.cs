@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Persistence;
 using Blueprint41.Refactoring;
@@ -362,6 +362,42 @@ namespace Blueprint41.Dynamic
                     return;
                 case PersistenceState.ForceDelete:
                     RunningTransaction.NodePersistenceProvider.ForceDelete(this);
+                    PersistenceState = PersistenceState.Deleted;
+                    return;
+                case PersistenceState.OutOfScope:
+                case PersistenceState.Error:
+                    throw new InvalidOperationException(string.Format("The {0} with key '{1}' cannot be saved because it's state was {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
+                default:
+                    throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
+            }
+        }
+        async Task OGM.SaveAsync()
+        {
+            switch (PersistenceState)
+            {
+                case PersistenceState.New:
+                    throw new NotSupportedException(string.Format("You created an instance of {0}, but inside this transaction but did not set any properties. If you did this intentionally, you can call the method 'SetChanged' on the instance before committing the transaction.", GetEntity().Name));
+                case PersistenceState.HasUid:
+                case PersistenceState.Loaded:
+                    break;
+                case PersistenceState.NewAndChanged:
+                    await RunningTransaction.NodePersistenceProvider.InsertAsync(this);
+                    PersistenceState = PersistenceState.Persisted;
+                    break;
+                case PersistenceState.LoadedAndChanged:
+                    await RunningTransaction.NodePersistenceProvider.UpdateAsync(this);
+                    PersistenceState = PersistenceState.Persisted;
+                    break;
+                case PersistenceState.Persisted:
+                    break;
+                case PersistenceState.Delete:
+                    await RunningTransaction.NodePersistenceProvider.DeleteAsync(this);
+                    PersistenceState = PersistenceState.Deleted;
+                    return;
+                case PersistenceState.ForceDelete:
+                    await RunningTransaction.NodePersistenceProvider.ForceDeleteAsync(this);
                     PersistenceState = PersistenceState.Deleted;
                     return;
                 case PersistenceState.OutOfScope:

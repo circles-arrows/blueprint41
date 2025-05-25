@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 
 namespace Blueprint41
@@ -102,9 +102,17 @@ namespace Blueprint41
         /// Get the next functional id
         /// </summary>
         /// <returns>The next functional id</returns>
-        public string NextFunctionID()
+        public string NextFunctionId()
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.NextFunctionID(this);
+        }
+        /// <summary>
+        /// Get the next functional id
+        /// </summary>
+        /// <returns>The next functional id</returns>
+        public Task<string> NextFunctionIdAsync()
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.NextFunctionIDAsync(this);
         }
 
         #endregion

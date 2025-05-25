@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using Blueprint41.Events;
 using Blueprint41.Persistence;
 
@@ -26,18 +26,6 @@ namespace Blueprint41.Core
             if (!GetEntity().Parent.HasExecuted)
                 throw new InvalidOperationException("You cannot use entity inside the upgrade script.");
 
-            if (transaction?.InTransaction ?? false)
-            {
-                Transaction = transaction;
-                transaction.Register(this);
-            }
-        }
-        protected OgmClass(Transaction? transaction)
-        {
-            if (!GetEntity().Parent.IsUpgraded)
-                throw new InvalidOperationException("You cannot use entity inside the upgrade script.");
-
-            Transaction = null;
             if (transaction?.InTransaction ?? false)
             {
                 Transaction = transaction;
@@ -79,6 +67,7 @@ namespace Blueprint41.Core
         protected abstract void ValidateSave();
 
         public abstract void Save();
+        public abstract Task SaveAsync();
         public abstract void Delete(bool force);
 
         #region OGM

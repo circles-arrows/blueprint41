@@ -12,7 +12,7 @@ using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
-using Datastore.Manipulation.Sync;
+using Datastore.Manipulation.Async;
 using Datastore.Query;
 
 using NUnit.Framework;

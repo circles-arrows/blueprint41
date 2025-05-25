@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -51,7 +52,7 @@ namespace Datastore.Manipulation.Async
         public System.DateTime? CreationDate { get; private set; }
         public int MinutesWatched { get; private set; }
 
-        public void Assign(JsNotation<int> MinutesWatched = default)
+        public async Task AssignAsync(JsNotation<int> MinutesWatched = default)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -60,7 +61,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.WATCHED_MOVIE_ALIAS alias)
             {
@@ -70,7 +71,7 @@ namespace Datastore.Manipulation.Async
                 return assignments.ToArray();
             }
         }
-        public static List<WATCHED_MOVIE> Where(Func<Alias, QueryCondition> expression)
+        public static Task<List<WATCHED_MOVIE>> WhereAsync(Func<Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -78,9 +79,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<WATCHED_MOVIE> Where(Func<Alias, QueryCondition[]> expression)
+        public static Task<List<WATCHED_MOVIE>> WhereAsync(Func<Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -89,11 +90,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<WATCHED_MOVIE> Where(JsNotation<System.DateTime?> CreationDate = default, JsNotation<int> MinutesWatched = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
+        public static Task<List<WATCHED_MOVIE>> WhereAsync(JsNotation<System.DateTime?> CreationDate = default, JsNotation<int> MinutesWatched = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
         {
-            return Where(delegate(Alias alias)
+            return WhereAsync(delegate(Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -105,8 +106,7 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        internal static List<WATCHED_MOVIE> Load(ICompiled query) => Load(query, null);
-        internal static List<WATCHED_MOVIE> Load(ICompiled query, params (string name, object value)[] arguments)
+        internal static async Task<List<WATCHED_MOVIE>> LoadAsync(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
             if (arguments is not null && arguments.Length > 0)
@@ -115,7 +115,7 @@ namespace Datastore.Manipulation.Async
                     context.SetParameter(name, value);
             }
 
-            var results = context.Execute(NodeMapping.AsWritableEntity);
+            var results = await context.ExecuteAsync(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new WATCHED_MOVIE(
                 result.elementId,
@@ -233,7 +233,7 @@ namespace Datastore.Manipulation.Async
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<WATCHED_MOVIE> @this, JsNotation<int> MinutesWatched = default)
+        public static async Task AssignAsync(this IEnumerable<WATCHED_MOVIE> @this, JsNotation<int> MinutesWatched = default)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -242,7 +242,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.WATCHED_MOVIE_ALIAS alias)
             {

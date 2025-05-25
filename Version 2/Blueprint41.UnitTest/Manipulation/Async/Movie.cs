@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -262,9 +263,9 @@ namespace Datastore.Manipulation.Async
 
         #region Director (Lookup)
 
-        public PERSON_DIRECTED DirectorRelation()
+        public async Task<PERSON_DIRECTED> DirectorRelationAsync()
         {
-            return PERSON_DIRECTED.Load(_queryDirectorRelation.Value, ("key", Uid)).FirstOrDefault();
+            return (await PERSON_DIRECTED.LoadAsync(_queryDirectorRelation.Value, ("key", Uid))).FirstOrDefault();
         }
         private readonly Lazy<ICompiled> _queryDirectorRelation = new Lazy<ICompiled>(delegate()
         {
@@ -274,7 +275,7 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public PERSON_DIRECTED GetDirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
+        public async Task<PERSON_DIRECTED> GetDirectorIfAsync(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -283,9 +284,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return PERSON_DIRECTED.Load(query).FirstOrDefault();
+            return (await PERSON_DIRECTED.LoadAsync(query)).FirstOrDefault();
         }
-        public PERSON_DIRECTED GetDirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition[]> expression)
+        public async Task<PERSON_DIRECTED> GetDirectorIfAsync(Func<PERSON_DIRECTED.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -294,11 +295,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return PERSON_DIRECTED.Load(query).FirstOrDefault();
+            return (await PERSON_DIRECTED.LoadAsync(query)).FirstOrDefault();
         }
-        public PERSON_DIRECTED GetDirectorIf(JsNotation<System.DateTime?> CreationDate = default)
+        public Task<PERSON_DIRECTED> GetDirectorIfAsync(JsNotation<System.DateTime?> CreationDate = default)
         {
-            return GetDirectorIf(delegate(PERSON_DIRECTED.Alias alias)
+            return GetDirectorIfAsync(delegate(PERSON_DIRECTED.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -318,9 +319,9 @@ namespace Datastore.Manipulation.Async
 
         #region Actors (Collection)
 
-        public List<ACTED_IN> ActorRelations()
+        public Task<List<ACTED_IN>> ActorRelationsAsync()
         {
-            return ACTED_IN.Load(_queryActorRelations.Value, ("key", Uid));
+            return ACTED_IN.LoadAsync(_queryActorRelations.Value, ("key", Uid));
         }
         private readonly Lazy<ICompiled> _queryActorRelations = new Lazy<ICompiled>(delegate()
         {
@@ -330,7 +331,7 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
+        public Task<List<ACTED_IN>> ActorsWhereAsync(Func<ACTED_IN.Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -339,9 +340,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return ACTED_IN.Load(query);
+            return ACTED_IN.LoadAsync(query);
         }
-        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN.Alias, QueryCondition[]> expression)
+        public Task<List<ACTED_IN>> ActorsWhereAsync(Func<ACTED_IN.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
@@ -350,11 +351,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return ACTED_IN.Load(query);
+            return ACTED_IN.LoadAsync(query);
         }
-        public List<ACTED_IN> ActorsWhere(JsNotation<System.DateTime?> CreationDate = default)
+        public Task<List<ACTED_IN>> ActorsWhereAsync(JsNotation<System.DateTime?> CreationDate = default)
         {
-            return ActorsWhere(delegate(ACTED_IN.Alias alias)
+            return ActorsWhereAsync(delegate(ACTED_IN.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -377,9 +378,9 @@ namespace Datastore.Manipulation.Async
 
         #region Certification (Lookup)
 
-        public MOVIE_CERTIFICATION CertificationRelation()
+        public async Task<MOVIE_CERTIFICATION> CertificationRelationAsync()
         {
-            return MOVIE_CERTIFICATION.Load(_queryCertificationRelation.Value, ("key", Uid)).FirstOrDefault();
+            return (await MOVIE_CERTIFICATION.LoadAsync(_queryCertificationRelation.Value, ("key", Uid))).FirstOrDefault();
         }
         private readonly Lazy<ICompiled> _queryCertificationRelation = new Lazy<ICompiled>(delegate()
         {
@@ -389,7 +390,7 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public MOVIE_CERTIFICATION GetCertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition> expression)
+        public async Task<MOVIE_CERTIFICATION> GetCertificationIfAsync(Func<MOVIE_CERTIFICATION.Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
@@ -398,9 +399,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return MOVIE_CERTIFICATION.Load(query).FirstOrDefault();
+            return (await MOVIE_CERTIFICATION.LoadAsync(query)).FirstOrDefault();
         }
-        public MOVIE_CERTIFICATION GetCertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition[]> expression)
+        public async Task<MOVIE_CERTIFICATION> GetCertificationIfAsync(Func<MOVIE_CERTIFICATION.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
@@ -409,11 +410,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return MOVIE_CERTIFICATION.Load(query).FirstOrDefault();
+            return (await MOVIE_CERTIFICATION.LoadAsync(query)).FirstOrDefault();
         }
-        public MOVIE_CERTIFICATION GetCertificationIf(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public Task<MOVIE_CERTIFICATION> GetCertificationIfAsync(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
-            return GetCertificationIf(delegate(MOVIE_CERTIFICATION.Alias alias)
+            return GetCertificationIfAsync(delegate(MOVIE_CERTIFICATION.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 

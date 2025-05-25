@@ -17,7 +17,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -153,10 +153,10 @@ if (DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Collection)
 
-        List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations();
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name.ToSingular() #>RelationsAsync();
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(<#= attr.Relationship.Properties.ToJsonNotation() #>);
         void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
         void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>);
 
@@ -174,10 +174,10 @@ if (DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Time Dependent Collection)
 
-        List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations();
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name.ToSingular() #>RelationsAsync();
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
         void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
         void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment);
 
@@ -198,10 +198,10 @@ if (DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Lookup)
 
-        <#= attr.Relationship.Name #> <#= attr.Name #>Relation();
-        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
-        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
-        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(<#= attr.Relationship.Properties.ToJsonNotation() #>);
+        Task<<#= attr.Relationship.Name #>> <#= attr.Name #>RelationAsync();
+        Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(<#= attr.Relationship.Properties.ToJsonNotation() #>);
         void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
 
         #endregion
@@ -218,14 +218,14 @@ if (DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Time Dependent Lookup)
 
-        <#= attr.Relationship.Name #> <#= attr.Name #>Relation(DateTime? moment = null);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Relations();
-        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
-        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
-        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
-        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
+        Task<<#= attr.Relationship.Name #>> <#= attr.Name #>RelationAsync(DateTime? moment = null);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>RelationsAsync();
+        Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
         void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
 
         #endregion

@@ -311,6 +311,30 @@ namespace Blueprint41
                 functionalId.highestSeenId = -1;
             }
         }
+        protected virtual async Task ApplyFunctionalIdAsync(FunctionalId functionalId)
+        {
+            if (functionalId is null)
+                return;
+
+            if (functionalId.wasApplied || functionalId.highestSeenId == -1)
+                return;
+
+            //TODO: Fix Lock Issue
+            //lock (functionalId)
+            {
+                string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
+                ResultCursor result = await RunAsync(getFidQuery);
+                Record? record = await result.FirstOrDefaultAsync();
+                long? currentFid = record?["Sequence"].As<long?>();
+                if (currentFid.HasValue)
+                    functionalId.SeenUid(currentFid.Value);
+
+                string setFidQuery = $"CALL blueprint41.functionalid.setSequenceNumber('{functionalId.Label}', {functionalId.highestSeenId}, {(functionalId.Format == IdFormat.Numeric).ToString().ToLowerInvariant()})";
+                await RunAsync(setFidQuery);
+                functionalId.wasApplied = true;
+                functionalId.highestSeenId = -1;
+            }
+        }
 
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushInternal()
@@ -427,11 +451,131 @@ namespace Blueprint41
                 }
             }
         }
+        protected virtual async Task FlushAsyncInternal()
+        {
+            List<OgmClass> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OgmClass).Cast<OgmClass>().ToList();
+            foreach (OgmClass entity in entities)
+            {
+                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                    continue;
+
+                if (HasChanges(entity))
+                {
+                    if (!beforeCommitEntityState.ContainsKey(entity))
+                        beforeCommitEntityState.Add(entity, entity.PersistenceState);
+
+                    entity.GetEntity().RaiseOnSave(entity, this);
+                    foreach (EntityEventArgs item in entity.EventHistory)
+                        item.Flush();
+                }
+            }
+
+            List<KeyValuePair<string, Dictionary<OGM, OGM>>> sortedItems = registeredEntities.OrderBy(item => item.Key).ToList(); // key is entity name
+            if (!DisableForeignKeyChecks)
+            {
+                foreach (var entitySet in sortedItems)
+                {
+                    foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
+                    {
+                        if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                            continue;
+
+
+                        if (HasChanges(entity))
+                            entity.ValidateSave();
+                    }
+                }
+            }
+
+            foreach (var entitySet in sortedItems)
+            {
+                foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
+                {
+                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                        continue;
+
+                    if (HasChanges(entity))
+                        await entity.SaveAsync();
+                }
+            }
+
+            if (actions is not null)
+            {
+                foreach (var action in actions)
+                {
+                    action.ExecuteInDatastore();
+                    forRetry.AddLast(action);
+                }
+                actions.Clear();
+            }
+
+            foreach (var entitySet in sortedItems)
+            {
+                foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
+                {
+                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                        continue;
+
+                    if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
+                    {
+                        if (!beforeCommitEntityState.ContainsKey(entity))
+                            beforeCommitEntityState.Add(entity, entity.PersistenceState);
+
+                        entity.ValidateDelete();
+                    }
+                }
+            }
+
+            foreach (var entitySet in sortedItems)
+            {
+                foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
+                {
+                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                        continue;
+
+                    if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
+                    {
+                        await entity.SaveAsync();
+                        object? key = entity.GetKey();
+                        Dictionary<object, OGM>? cache;
+                        if (!(key is null) && entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
+                            cache.Remove(key);
+                        //entitySet.Remove(entity);
+                    }
+                }
+            }
+
+            static bool HasChanges(OGM entity)
+            {
+                return entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded;
+            }
+
+            foreach (Core.EntityCollectionBase collection in registeredCollections.Values.SelectMany(item => item.Values).SelectMany(item => item))
+            {
+                collection.AfterFlush();
+            }
+
+            foreach (OgmClass entity in entities)
+            {
+                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                {
+                    entity.GetEntity().RaiseOnAfterSave(entity, this);
+                    foreach (EntityEventArgs item in entity.EventHistory)
+                        item.Flush();
+                }
+            }
+        }
         public static void Flush()
         {
             Transaction trans = RunningTransaction;
 
             trans.FlushInternal();
+        }
+        public static Task FlushAsync()
+        {
+            Transaction trans = RunningTransaction;
+
+            return trans.FlushAsyncInternal();
         }
         public static void Commit()
         {
@@ -477,11 +621,63 @@ namespace Blueprint41
             trans.Invalidate();
             trans.InTransaction = false;
         }
+        public static async Task CommitAsync()
+        {
+            Transaction trans = RunningTransaction;
+            bool repeat = false;
+            do
+            {
+                try
+                {
+                    repeat = false;
+                    await trans.FlushAsyncInternal();
+                    await trans.ApplyFunctionalIdsAsync();
+                    await trans.CommitAsyncInternal();
+                }
+                catch (Exception e)
+                {
+                    if (e.Message.ToLowerInvariant().Contains("can't acquire ExclusiveLock".ToLowerInvariant()) || e.Message.ToLowerInvariant().Contains("can't acquire UpdateLock".ToLowerInvariant()))
+                    {
+                        repeat = true;
+
+                        trans.actions.Clear();
+                        foreach (var item in trans.forRetry)
+                        {
+                            trans.actions.AddLast(item);
+                        }
+                        trans.forRetry.Clear();
+
+                        foreach (OgmClass entity in trans.registeredEntities.Values.SelectMany(item => item.Values).OfType<OgmClass>().ToList())
+                        {
+                            if (trans.beforeCommitEntityState.TryGetValue(entity, out var state))
+                                entity.PersistenceState = state;
+                        }
+                        trans.beforeCommitEntityState.Clear();
+
+                        await trans.RetryAsyncInternal();
+                    }
+                    else
+                        throw;
+                }
+            }
+            while (repeat);
+
+            trans.Invalidate();
+            trans.InTransaction = false;
+        }
         public static void Rollback()
         {
             Transaction trans = RunningTransaction;
 
             trans.RollbackInternal();
+            trans.Invalidate();
+            trans.InTransaction = false;
+        }
+        public static async Task RollbackAsync()
+        {
+            Transaction trans = RunningTransaction;
+
+            await trans.RollbackAsyncInternal();
             trans.Invalidate();
             trans.InTransaction = false;
         }
@@ -521,6 +717,16 @@ namespace Blueprint41
                 }
             }
         }
+        protected async Task ApplyFunctionalIdsAsync()
+        {
+            if (PersistenceProvider.IsNeo4j && PersistenceProvider.HasProcedure("blueprint41.functionalid.current"))
+            {
+                foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item => item is not null))
+                {
+                    await ApplyFunctionalIdAsync(functionalId);
+                }
+            }
+        }
 
         protected void CommitInternal()
         {
@@ -533,6 +739,17 @@ namespace Blueprint41
 
             RaiseOnCommit();
         }
+        protected async Task CommitAsyncInternal()
+        {
+            if (DriverSession is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+            DriverTransaction? t = DriverTransaction;
+            if (t is not null)
+                await t.CommitAsync();
+
+            RaiseOnCommit();
+        }
         protected void RollbackInternal()
         {
             if (DriverSession is null)
@@ -542,10 +759,24 @@ namespace Blueprint41
             if (t is not null)
                 t.Rollback();
         }
+        protected async Task RollbackAsyncInternal()
+        {
+            if (DriverSession is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+            DriverTransaction? t = DriverTransaction;
+            if (t is not null)
+                await t.RollbackAsync();
+        }
         protected void RetryInternal()
         {
             RollbackInternal();
             Initialize();
+        }
+        protected async Task RetryAsyncInternal()
+        {
+            await RollbackAsyncInternal();
+            await InitializeAsync();
         }
 
         protected override void Cleanup()
@@ -564,7 +795,7 @@ namespace Blueprint41
         protected override async Task CleanupAsync()
         {
             if (InTransaction)
-                Rollback();
+                await RollbackAsync();
 
             DriverTransaction? t = DriverTransaction;
             if (t is not null)

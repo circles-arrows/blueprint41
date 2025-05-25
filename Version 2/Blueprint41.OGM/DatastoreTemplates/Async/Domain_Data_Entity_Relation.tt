@@ -17,6 +17,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -71,7 +72,7 @@ namespace <#= Settings.FullCRUDNamespace #>
     }
 #>
 
-        public void Assign(<#= DALRelation.Properties.ToJsonNotation(DALRelation) #>)
+        public async Task AssignAsync(<#= DALRelation.Properties.ToJsonNotation(DALRelation) #>)
         {
             var query = Cypher
 <#
@@ -93,7 +94,7 @@ namespace <#= Settings.FullCRUDNamespace #>
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.<#= DALRelation.Name #>_ALIAS alias)
             {
@@ -112,7 +113,7 @@ namespace <#= Settings.FullCRUDNamespace #>
                 return assignments.ToArray();
             }
         }
-        public static List<<#= DALRelation.Name #>> Where(Func<Alias, QueryCondition> expression)
+        public static Task<List<<#= DALRelation.Name #>>> WhereAsync(Func<Alias, QueryCondition> expression)
         {
             var query = Cypher
 <#
@@ -133,9 +134,9 @@ namespace <#= Settings.FullCRUDNamespace #>
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<<#= DALRelation.Name #>> Where(Func<Alias, QueryCondition[]> expression)
+        public static Task<List<<#= DALRelation.Name #>>> WhereAsync(Func<Alias, QueryCondition[]> expression)
         {
             var query = Cypher
 <#
@@ -157,11 +158,11 @@ namespace <#= Settings.FullCRUDNamespace #>
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<<#= DALRelation.Name #>> Where(<#= DALRelation.Properties.ToJsonNotation() #>, JsNotation<<#= DALRelation.InEntity.ClassName #>> InNode = default, JsNotation<<#= DALRelation.OutEntity.ClassName #>> OutNode = default)
+        public static Task<List<<#= DALRelation.Name #>>> WhereAsync(<#= DALRelation.Properties.ToJsonNotation() #>, JsNotation<<#= DALRelation.InEntity.ClassName #>> InNode = default, JsNotation<<#= DALRelation.OutEntity.ClassName #>> OutNode = default)
         {
-            return Where(delegate(Alias alias)
+            return WhereAsync(delegate(Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -188,8 +189,7 @@ namespace <#= Settings.FullCRUDNamespace #>
                 return conditions.ToArray();
             });
         }
-        internal static List<<#= DALRelation.Name #>> Load(ICompiled query) => Load(query, null);
-        internal static List<<#= DALRelation.Name #>> Load(ICompiled query, params (string name, object value)[] arguments)
+        internal static async Task<List<<#= DALRelation.Name #>>> LoadAsync(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
             if (arguments is not null && arguments.Length > 0)
@@ -198,7 +198,7 @@ namespace <#= Settings.FullCRUDNamespace #>
                     context.SetParameter(name, value);
             }
 
-            var results = context.Execute(NodeMapping.AsWritableEntity);
+            var results = await context.ExecuteAsync(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new <#= DALRelation.Name #>(
                 result.elementId,
@@ -357,7 +357,7 @@ namespace <#= Settings.FullCRUDNamespace #>
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<<#= DALRelation.Name #>> @this<#= DALRelation.Properties.ToJsonNotation(DALRelation, true) #>)
+        public static async Task AssignAsync(this IEnumerable<<#= DALRelation.Name #>> @this<#= DALRelation.Properties.ToJsonNotation(DALRelation, true) #>)
         {
             var query = Cypher
 <#
@@ -379,7 +379,7 @@ namespace <#= Settings.FullCRUDNamespace #>
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.<#= DALRelation.Name #>_ALIAS alias)
             {

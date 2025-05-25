@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -246,9 +247,9 @@ namespace Datastore.Manipulation.Async
 
         #region Restaurants (Collection)
 
-        public List<RESTAURANT_LOCATED_AT> RestaurantRelations()
+        public Task<List<RESTAURANT_LOCATED_AT>> RestaurantRelationsAsync()
         {
-            return RESTAURANT_LOCATED_AT.Load(_queryRestaurantRelations.Value, ("key", Uid));
+            return RESTAURANT_LOCATED_AT.LoadAsync(_queryRestaurantRelations.Value, ("key", Uid));
         }
         private readonly Lazy<ICompiled> _queryRestaurantRelations = new Lazy<ICompiled>(delegate()
         {
@@ -258,7 +259,7 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition> expression)
+        public Task<List<RESTAURANT_LOCATED_AT>> RestaurantsWhereAsync(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -267,9 +268,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return RESTAURANT_LOCATED_AT.Load(query);
+            return RESTAURANT_LOCATED_AT.LoadAsync(query);
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition[]> expression)
+        public Task<List<RESTAURANT_LOCATED_AT>> RestaurantsWhereAsync(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -278,11 +279,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return RESTAURANT_LOCATED_AT.Load(query);
+            return RESTAURANT_LOCATED_AT.LoadAsync(query);
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime?> CreationDate = default)
+        public Task<List<RESTAURANT_LOCATED_AT>> RestaurantsWhereAsync(JsNotation<System.DateTime?> CreationDate = default)
         {
-            return RestaurantsWhere(delegate(RESTAURANT_LOCATED_AT.Alias alias)
+            return RestaurantsWhereAsync(delegate(RESTAURANT_LOCATED_AT.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 

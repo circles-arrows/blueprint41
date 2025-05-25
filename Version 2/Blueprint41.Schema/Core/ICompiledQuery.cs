@@ -19,6 +19,7 @@ namespace Blueprint41.Core
         void SetParameter(string parameterName, object? value);
         Dictionary<string, object?> GetParameters();
         List<dynamic> Execute(NodeMapping nodeMapping = NodeMapping.AsReadOnlyEntity);
+        Task<List<dynamic>> ExecuteAsync(NodeMapping nodeMapping = NodeMapping.AsReadOnlyEntity);
 
         ICompiledQueryInfo CompiledQuery { get; }
         IReadOnlyList<string> Errors { get; }

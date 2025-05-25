@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Core
 {
@@ -17,6 +18,7 @@ namespace Blueprint41.Core
         void SetData(IReadOnlyDictionary<string, object?> data);
         void Delete(bool force);
         void Save();
+        Task SaveAsync();
         void ValidateSave();
         void ValidateDelete();
 

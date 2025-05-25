@@ -1,6 +1,8 @@
-﻿using Blueprint41.UnitTest.Helper;
+﻿using System;
+
+using Blueprint41.UnitTest.Helper;
+
 using NUnit.Framework;
-using System;
 
 namespace Blueprint41.UnitTest.Tests.Async
 {

@@ -165,6 +165,117 @@ namespace Blueprint41
             }
             return items;
         }
+        public async Task<List<dynamic>> ExecuteAsync(NodeMapping nodeMapping = NodeMapping.AsReadOnlyEntity)
+        {
+            List<dynamic> items = new List<dynamic>();
+
+            Transaction transaction = Transaction.RunningTransaction;
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>(QueryParameters.Count);
+            foreach (KeyValuePair<string, (object? value, bool isConstant)> queryParameter in QueryParameters)
+            {
+                if (queryParameter.Value.value is null)
+                    parameters.Add(queryParameter.Key, null);
+                else
+                    parameters.Add(queryParameter.Key, transaction.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));
+            }
+
+            var result = await Transaction.RunAsync(CompiledQuery.QueryText, parameters);
+            if (result is not null)
+            {
+                foreach (var row in await result.ToListAsync())
+                {
+                    IDictionary<string, object?> record = new ExpandoObject();
+                    foreach (var field in CompiledQuery.CompiledResultColumns)
+                    {
+                        object? value;
+                        if (row.TryGetValue(field.FieldName, out value) && value is not null)
+                        {
+                            object? target = (field.ConvertMethod is null) ? value : field.ConvertMethod.Invoke(value);
+                            if (target is not null)
+                            {
+                                if (field.Info.IsAlias)
+                                {
+                                    if (!field.Info.IsList) // RETURNS INode
+                                    {
+                                        NodeResult node = target.As<NodeResult>();
+                                        target = (field.MapMethod is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping);
+                                    }
+                                    else if (!field.Info.IsJaggedList) // RETURNS List<INode>
+                                    {
+                                        List<object?>? nodeList = ((List<object?>?)target);
+                                        IList? newList = null;
+                                        if (nodeList is not null)
+                                        {
+                                            newList = (field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Invoke(nodeList.Count);
+
+                                            for (int index = 0; index < nodeList.Count; index++)
+                                            {
+                                                object? t = nodeList[index];
+                                                if (t is null)
+                                                {
+                                                    newList!.Add(null);
+                                                }
+                                                else
+                                                {
+                                                    NodeResult node = t.As<NodeResult>();
+                                                    newList!.Add((field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                }
+                                            }
+                                        }
+                                        target = newList;
+                                    }
+                                    else // RETURNS List<List<INode>>
+                                    {
+                                        List<List<object?>?>? jaggedNodeList = ((List<List<object?>?>?)target);
+                                        IList? newJaggedList = null;
+                                        if (jaggedNodeList is not null)
+                                        {
+
+                                            for (int mainindex = 0; mainindex < jaggedNodeList.Count; mainindex++)
+                                            {
+                                                List<object?>? nodeList = jaggedNodeList[mainindex];
+                                                if (nodeList is null)
+                                                {
+                                                    newJaggedList!.Add(null);
+                                                }
+                                                else
+                                                {
+                                                    IList newList = (field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Invoke(nodeList.Count);
+
+                                                    for (int subindex = 0; subindex < nodeList.Count; subindex++)
+                                                    {
+                                                        object? t = nodeList[subindex];
+                                                        if (t is null)
+                                                        {
+                                                            newList.Add(null);
+                                                        }
+                                                        else
+                                                        {
+                                                            NodeResult node = t.As<NodeResult>();
+                                                            newList.Add((field.MapMethod is null || field.NewList is null || field.NewJaggedList is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                        }
+                                                    }
+
+                                                    newJaggedList!.Add(newList);
+                                                }
+                                            }
+                                        }
+                                        target = newJaggedList;
+                                    }
+                                }
+                            }
+                            record.Add(field.FieldName, target);
+                        }
+                        else
+                        {
+                            record.Add(field.FieldName, null);
+                        }
+                    }
+                    items.Add(record);
+                }
+            }
+            return items;
+        }
 
         public CompiledQueryInfo CompiledQuery { get; set; }
         ICompiledQueryInfo IQueryExecutionContext.CompiledQuery => CompiledQuery;

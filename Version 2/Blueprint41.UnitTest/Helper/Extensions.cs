@@ -13,11 +13,7 @@ namespace Blueprint41.UnitTest
 {
     public static class Extensions
     {
-        public static void AssertSuccess(this List<Async.TestScenario> scenarios)
-        {
-            Assert.IsFalse(scenarios.Exists(scenario => scenario.Error));
-        }
-        public static void AssertSuccess(this List<Blocking.TestScenario> scenarios)
+        public static void AssertSuccess(this List<TestScenario> scenarios)
         {
             Assert.IsFalse(scenarios.Exists(scenario => scenario.Error));
         }

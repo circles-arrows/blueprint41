@@ -5,3 +5,15 @@ Changed to:		(fromIsNullable) ? (Expression)Expression.Not(Expression.Property(f
 
 
 docker run --name MEMGRAPH -p 7690:7687 -e MEMGRAPH="--storage-enable-schema-metadata=True" memgraph/memgraph-mage:latest
+
+
+Transaction.cs
+//TODO: Fix Lock Issue
+
+
+Tests\Async\TestRelationships.Load.cs
+//TODO: Implement Person.LoadAsync
+
+
+Tests\Async\TestRelationships.TestData.cs
+//TODO: REMOVE BLOCKING METHOD

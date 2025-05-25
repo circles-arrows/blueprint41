@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Persistence;
 using Blueprint41.UnitTest.DataStore;
@@ -10,7 +10,7 @@ using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
 using neo4j = Neo4j.Driver;
-using Datastore.Manipulation.Sync;
+using Datastore.Manipulation.Async;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -588,6 +588,8 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             Transaction.Run(cypher);
         }
+
+        private Task SetupTestDataSetAsync() => Task.Run(SetupTestDataSet);
         private void SetupTestDataSet()
         {
             using (MockModel.BeginTransaction())
@@ -705,6 +707,42 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
         private List<(DateTime from, DateTime till, Dictionary<string, object> properties)> ReadRelationsWithProperties(OGM @in, Relationship relationship, OGM @out)
         {
+            //TODO: REMOVE BLOCKING METHOD
+
+            Entity inEntity = @in.GetEntity();
+            Entity outEntity = @out.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
+            string cypher = $"""
+                             MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
+                             WHERE in.{inEntity.Key.Name} = $in AND out.{outEntity.Key.Name} = $out
+                             RETURN r.StartDate AS `From`, r.EndDate AS `Till`, properties(r) AS Properties
+                             """;
+
+            var parameters = new Dictionary<string, object>()
+            {
+                { "in", @in.GetKey()! },
+                { "out", @out.GetKey()! },
+            };
+
+            ResultCursor result = Transaction.Run(cypher, parameters!);
+
+            return result.ToList().Select(delegate (Record record)
+            {
+                DateTime from = Conversion<long?, DateTime?>.Convert(record["From"]?.As<long?>()) ?? Conversion.MinDateTime;
+                DateTime till = Conversion<long?, DateTime?>.Convert(record["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
+                Dictionary<string, object> properties = record["Properties"]
+                    .As<Dictionary<string, object>>()
+                    .Where(item => item.Key != relationship.StartDate && item.Key != relationship.EndDate && item.Key != relationship.CreationDate)
+                    .ToDictionary(item => item.Key, item => item.Value);
+
+                return (from, till, properties);
+            }).ToList();
+        }
+        private async Task<List<(DateTime from, DateTime till, Dictionary<string, object> properties)>> ReadRelationsWithPropertiesAsync(OGM @in, Relationship relationship, OGM @out)
+        {
             Entity inEntity = @in.GetEntity();
             Entity outEntity = @out.GetEntity();
 
@@ -723,9 +761,10 @@ namespace Blueprint41.UnitTest.Tests.Async
                 { "out", @out.GetKey()! },
             };
 
-            ResultCursor result = Transaction.Run(cypher, parameters!);
+            ResultCursor result = await Transaction.RunAsync(cypher, parameters!);
+            List<Record> list = await result.ToListAsync();
 
-            return result.ToList().Select(delegate (Record record)
+            return list.Select(delegate (Record record)
             {
                 DateTime from = Conversion<long?, DateTime?>.Convert(record["From"]?.As<long?>()) ?? Conversion.MinDateTime;
                 DateTime till = Conversion<long?, DateTime?>.Convert(record["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
@@ -843,6 +882,17 @@ namespace Blueprint41.UnitTest.Tests.Async
             var model = Connect<MockModel>(true, false);
 
             ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(name));
+        }
+        public Task ExecuteAsync(Action<DatastoreModel> script)
+        {
+            return Task.Run(() =>
+            {
+                string name = script.Method.Name;
+
+                var model = Connect<MockModel>(true, false);
+
+                ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(name));
+            });
         }
 
         #endregion

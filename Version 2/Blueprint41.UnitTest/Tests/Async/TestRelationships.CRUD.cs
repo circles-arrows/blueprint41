@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
-using Datastore.Manipulation.Sync;
+using Datastore.Manipulation.Async;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using ClientException = Neo4j.Driver.ClientException;
@@ -102,7 +103,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             #region Strip Constraint from MinutesWatched
 
-            Execute(MakeMinutesWatchedNullable);
+            Execute(Blocking.TestRelationships.MakeMinutesWatchedNullable);
 
             #endregion
 #endif
@@ -261,7 +262,7 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void CollAddAndRemoveWithProperties()
+        public async Task CollAddAndRemoveWithProperties()
         {
             #region Add Watched Movie
 
@@ -351,7 +352,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                 {
                     Debug.WriteLine($"Mutate Watched Movie {mutate.movie} for {mutate.person.Name}");
 
-                    var relations = WATCHED_MOVIE.Where(InNode: mutate.person, OutNode: mutate.movie);
+                    var relations = await WATCHED_MOVIE.WhereAsync(InNode: mutate.person, OutNode: mutate.movie);
                     Assert.AreEqual(1, relations.Count);
 
                     mutate.person.AddWatchedMovie(mutate.movie, MinutesWatched: relations.First().MinutesWatched + mutate.minutes);
@@ -494,7 +495,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             #region Strip Constraint from MonthlyFee
 
-            Execute(MakeMonthlyFeeNullable);
+            Execute(Blocking.TestRelationships.MakeMonthlyFeeNullable);
 
             #endregion
 #endif

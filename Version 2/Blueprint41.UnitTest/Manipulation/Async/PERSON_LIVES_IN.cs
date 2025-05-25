@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -59,7 +60,7 @@ namespace Datastore.Manipulation.Async
         public string AddressLine2 { get; private set; }
         public string AddressLine3 { get; private set; }
 
-        public void Assign(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
+        public async Task AssignAsync(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -68,7 +69,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.PERSON_LIVES_IN_ALIAS alias)
             {
@@ -80,7 +81,7 @@ namespace Datastore.Manipulation.Async
                 return assignments.ToArray();
             }
         }
-        public static List<PERSON_LIVES_IN> Where(Func<Alias, QueryCondition> expression)
+        public static Task<List<PERSON_LIVES_IN>> WhereAsync(Func<Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -88,9 +89,9 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<PERSON_LIVES_IN> Where(Func<Alias, QueryCondition[]> expression)
+        public static Task<List<PERSON_LIVES_IN>> WhereAsync(Func<Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -99,11 +100,11 @@ namespace Datastore.Manipulation.Async
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return Load(query);
+            return LoadAsync(query);
         }
-        public static List<PERSON_LIVES_IN> Where(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime?> CreationDate = default, JsNotation<System.DateTime?> EndDate = default, JsNotation<System.DateTime?> StartDate = default, JsNotation<Person> InNode = default, JsNotation<City> OutNode = default)
+        public static Task<List<PERSON_LIVES_IN>> WhereAsync(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime?> CreationDate = default, JsNotation<System.DateTime?> EndDate = default, JsNotation<System.DateTime?> StartDate = default, JsNotation<Person> InNode = default, JsNotation<City> OutNode = default)
         {
-            return Where(delegate(Alias alias)
+            return WhereAsync(delegate(Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -119,8 +120,7 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        internal static List<PERSON_LIVES_IN> Load(ICompiled query) => Load(query, null);
-        internal static List<PERSON_LIVES_IN> Load(ICompiled query, params (string name, object value)[] arguments)
+        internal static async Task<List<PERSON_LIVES_IN>> LoadAsync(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
             if (arguments is not null && arguments.Length > 0)
@@ -129,7 +129,7 @@ namespace Datastore.Manipulation.Async
                     context.SetParameter(name, value);
             }
 
-            var results = context.Execute(NodeMapping.AsWritableEntity);
+            var results = await context.ExecuteAsync(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new PERSON_LIVES_IN(
                 result.elementId,
@@ -295,7 +295,7 @@ namespace Datastore.Manipulation.Async
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<PERSON_LIVES_IN> @this, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
+        public static async Task AssignAsync(this IEnumerable<PERSON_LIVES_IN> @this, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -304,7 +304,7 @@ namespace Datastore.Manipulation.Async
                 .Compile();
 
             var context = query.GetExecutionContext();
-            context.Execute();
+            await context.ExecuteAsync();
 
             Assignment[] GetAssignments(q.PERSON_LIVES_IN_ALIAS alias)
             {

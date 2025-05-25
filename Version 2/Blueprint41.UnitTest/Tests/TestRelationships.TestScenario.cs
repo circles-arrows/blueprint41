@@ -1,10 +1,11 @@
-﻿using Blueprint41.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Blueprint41.UnitTest.Tests.Async
+using Blueprint41.Core;
+
+namespace Blueprint41.UnitTest.Tests
 {
     [DebuggerDisplay("{ToString()}")]
     public class TestScenario

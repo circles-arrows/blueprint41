@@ -17,6 +17,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
@@ -749,9 +750,9 @@ if (!DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Collection)
 
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations()
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name.ToSingular() #>RelationsAsync()
         {
-            return <#= attr.Relationship.Name #>.Load(_query<#= attr.Name.ToSingular() #>Relations.Value, ("key", <#= DALModel.Key.Name #>));
+            return <#= attr.Relationship.Name #>.LoadAsync(_query<#= attr.Name.ToSingular() #>Relations.Value, ("key", <#= DALModel.Key.Name #>));
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name.ToSingular() #>Relations = new Lazy<ICompiled>(delegate()
         {
@@ -774,7 +775,7 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             var query = Cypher
 <#
@@ -796,9 +797,9 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query);
+            return <#= attr.Relationship.Name #>.LoadAsync(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
 <#
@@ -820,11 +821,11 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query);
+            return <#= attr.Relationship.Name #>.LoadAsync(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(<#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
-            return <#= attr.Name #>Where(delegate(<#= attr.Relationship.Name #>.Alias alias)
+            return <#= attr.Name #>WhereAsync(delegate(<#= attr.Relationship.Name #>.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -890,9 +891,9 @@ if (!DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Time Dependent Collection)
 
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations()
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name.ToSingular() #>RelationsAsync()
         {
-            return <#= attr.Relationship.Name #>.Load(_query<#= attr.Name.ToSingular() #>Relations.Value, ("key", <#= DALModel.Key.Name #>));
+            return <#= attr.Relationship.Name #>.LoadAsync(_query<#= attr.Name.ToSingular() #>Relations.Value, ("key", <#= DALModel.Key.Name #>));
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name.ToSingular() #>Relations = new Lazy<ICompiled>(delegate()
         {
@@ -915,7 +916,7 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             var query = Cypher
 <#
@@ -937,9 +938,9 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query);
+            return <#= attr.Relationship.Name #>.LoadAsync(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
 <#
@@ -961,11 +962,11 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query);
+            return <#= attr.Relationship.Name #>.LoadAsync(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>)
         {
-            return <#= attr.Name #>Where(delegate(<#= attr.Relationship.Name #>.Alias alias)
+            return <#= attr.Name #>WhereAsync(delegate(<#= attr.Relationship.Name #>.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -1041,9 +1042,9 @@ if (!DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Lookup)
 
-        public <#= attr.Relationship.Name #> <#= attr.Name #>Relation()
+        public async Task<<#= attr.Relationship.Name #>> <#= attr.Name #>RelationAsync()
         {
-            return <#= attr.Relationship.Name #>.Load(_query<#= attr.Name #>Relation.Value, ("key", <#= DALModel.Key.Name #>)).FirstOrDefault();
+            return (await <#= attr.Relationship.Name #>.LoadAsync(_query<#= attr.Name #>Relation.Value, ("key", <#= DALModel.Key.Name #>))).FirstOrDefault();
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relation = new Lazy<ICompiled>(delegate()
         {
@@ -1066,7 +1067,7 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
+        public async Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             var query = Cypher
 <#
@@ -1088,9 +1089,9 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query).FirstOrDefault();
+            return (await <#= attr.Relationship.Name #>.LoadAsync(query)).FirstOrDefault();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
+        public async Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
 <#
@@ -1112,11 +1113,11 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query).FirstOrDefault();
+            return (await <#= attr.Relationship.Name #>.LoadAsync(query)).FirstOrDefault();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(<#= attr.Relationship.Properties.ToJsonNotation() #>)
+        public Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(<#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
-            return Get<#= attr.Name #>If(delegate(<#= attr.Relationship.Name #>.Alias alias)
+            return Get<#= attr.Name #>IfAsync(delegate(<#= attr.Relationship.Name #>.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -1179,12 +1180,12 @@ if (!DALModel.IsAbstract)
 
         #region <#= attr.Name #> (Time Dependent Lookup)
 
-        public <#= attr.Relationship.Name #> <#= attr.Name #>Relation(DateTime? moment = null)
+        public async Task<<#= attr.Relationship.Name #>> <#= attr.Name #>RelationAsync(DateTime? moment = null)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            return <#= attr.Relationship.Name #>.Load(_query<#= attr.Name #>Relation.Value, ("key", <#= DALModel.Key.Name #>), ("moment", moment)).FirstOrDefault();
+            return (await <#= attr.Relationship.Name #>.LoadAsync(_query<#= attr.Name #>Relation.Value, ("key", <#= DALModel.Key.Name #>), ("moment", moment))).FirstOrDefault();
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relation = new Lazy<ICompiled>(delegate()
         {
@@ -1208,9 +1209,9 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Relations()
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>RelationsAsync()
         {
-            return <#= attr.Relationship.Name #>.Load(_query<#= attr.Name #>Relations.Value, ("key", <#= DALModel.Key.Name #>));
+            return <#= attr.Relationship.Name #>.LoadAsync(_query<#= attr.Name #>Relations.Value, ("key", <#= DALModel.Key.Name #>));
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relations = new Lazy<ICompiled>(delegate()
         {
@@ -1233,7 +1234,7 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
         });
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
+        public async Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -1259,9 +1260,9 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query).FirstOrDefault();
+            return (await <#= attr.Relationship.Name #>.LoadAsync(query)).FirstOrDefault();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
+        public async Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -1287,11 +1288,11 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query).FirstOrDefault();
+            return (await <#= attr.Relationship.Name #>.LoadAsync(query)).FirstOrDefault();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>)
+        public Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>)
         {
-            return Get<#= attr.Name #>If(moment, delegate(<#= attr.Relationship.Name #>.Alias alias)
+            return Get<#= attr.Name #>IfAsync(moment, delegate(<#= attr.Relationship.Name #>.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -1319,7 +1320,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             var query = Cypher
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
@@ -1328,9 +1329,9 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query);
+            return <#= attr.Relationship.Name #>.LoadAsync(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             var query = Cypher
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
@@ -1339,11 +1340,11 @@ if (!DALModel.IsAbstract)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
-            return <#= attr.Relationship.Name #>.Load(query);
+            return <#= attr.Relationship.Name #>.LoadAsync(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>)
+        public Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>)
         {
-            return <#= attr.Name #>Where(delegate(<#= attr.Relationship.Name #>.Alias alias)
+            return <#= attr.Name #>WhereAsync(delegate(<#= attr.Relationship.Name #>.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
