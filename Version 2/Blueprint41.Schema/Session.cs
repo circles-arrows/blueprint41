@@ -23,14 +23,7 @@ namespace Blueprint41
 
             return session;
         }
-        static internal async Task<Session> GetAsync(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
-        {
-            Session session = new Session(model, readwrite, optimize, logger);
-            await session.AttachAsync().ConfigureAwait(false);
-            session.TransactionDate = DateTime.UtcNow;
 
-            return session;
-        }
         private Session(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
@@ -54,11 +47,6 @@ namespace Blueprint41
                 if (Consistency is not null)
                     c.WithBookmarks(Consistency);
             });
-        }
-        protected override Task InitializeAsync()
-        {
-            Initialize();
-            return Task.CompletedTask;
         }
 
         private protected TransactionLogger? Logger { get; private set; }

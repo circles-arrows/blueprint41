@@ -14,22 +14,37 @@ namespace Blueprint41
     public class Transaction : DisposableScope<Transaction>, IStatementRunner, IStatementRunnerAsync
     {
         public DriverSession? DriverSession { get; set; }
-        public DriverTransaction? DriverTransaction { get; set; }
-        public IQueryRunner? StatementRunner => DriverTransaction as IQueryRunner ?? DriverSession;
+        
+        
+        public virtual DriverTransaction? GetDriverTransaction()
+        {
+            if (!InTransaction)
+                return null;
+
+            if (_driverTransaction is null && DriverSession is not null)
+                _driverTransaction = DriverSession.BeginTransaction();
+
+            return _driverTransaction;
+        }
+        public virtual async Task<DriverTransaction?> GetDriverTransactionAsync()
+        {
+            if (!InTransaction)
+                return null;
+
+            if (_driverTransaction is null && DriverSession is not null)
+                _driverTransaction = await DriverSession.BeginTransactionAsync();
+
+            return _driverTransaction;
+        }
+        protected DriverTransaction? _driverTransaction = null;
+
+        public IQueryRunner? GetStatementRunner() => GetDriverTransaction() as IQueryRunner ?? DriverSession;
+        public async Task<IQueryRunner?> GetStatementRunnerAsync() => (await GetDriverTransactionAsync()) as IQueryRunner ?? DriverSession;
 
         static internal Transaction Get(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Transaction transaction = new Transaction(model, readwrite, optimize, logger);
             transaction.Attach();
-            transaction.TransactionDate = DateTime.UtcNow;
-            transaction.FireEvents = EventOptions.AllEvents;
-
-            return transaction;
-        }
-        static internal async Task<Transaction> GetAsync(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
-        {
-            Transaction transaction = new Transaction(model, readwrite, optimize, logger);
-            await transaction.AttachAsync().ConfigureAwait(false);
             transaction.TransactionDate = DateTime.UtcNow;
             transaction.FireEvents = EventOptions.AllEvents;
 
@@ -64,25 +79,7 @@ namespace Blueprint41
                     c.WithBookmarks(Consistency);
             });
             
-            DriverTransaction = DriverSession!.BeginTransaction();
-        }
-        protected override async Task InitializeAsync()
-        {
-            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
-
-            DriverSession = PersistenceProvider.Driver.Session(c =>
-            {
-                if (PersistenceProvider.Database is not null)
-                    c.WithDatabase(PersistenceProvider.Database);
-
-                c.WithFetchSize(ConfigBuilder.Infinite);
-                c.WithDefaultAccessMode(accessMode);
-
-                if (Consistency is not null)
-                    c.WithBookmarks(Consistency);
-            });
-            
-            DriverTransaction = await DriverSession!.BeginTransactionAsync().ConfigureAwait(false);
+            //DriverTransaction = DriverSession!.BeginTransaction();
         }
 
         private protected TransactionLogger? Logger { get; private set; }
@@ -202,7 +199,7 @@ namespace Blueprint41
         static public ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningTransaction).Run(cypher, memberName, sourceFilePath, sourceLineNumber);
         static public ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningTransaction).Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
 
-        Task<ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
+        async Task<ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -211,17 +208,19 @@ namespace Blueprint41
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return Task.FromResult(new ResultCursor());
+                return new ResultCursor();
             }
             else
             {
-                if (StatementRunner is null)
+                IQueryRunner? runner = await GetStatementRunnerAsync();
+
+                if (runner is null)
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-                return StatementRunner.RunAsync(cypher);
+                return await runner.RunAsync(cypher);
             }
         }
-        Task<ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
+        async Task<ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -231,18 +230,19 @@ namespace Blueprint41
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return Task.FromResult(new ResultCursor());
+                return new ResultCursor();
             }
             else
             {
+                IQueryRunner? runner = await GetStatementRunnerAsync();
 
-                if (StatementRunner is null)
+                if (runner is null)
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
                 if (parameters is null)
-                    return StatementRunner.RunAsync(cypher);
+                    return await runner.RunAsync(cypher);
                 else
-                    return StatementRunner.RunAsync(cypher, parameters);
+                    return await runner.RunAsync(cypher, parameters);
             }
         }
         ResultCursor IStatementRunner.Run(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
@@ -258,10 +258,12 @@ namespace Blueprint41
             }
             else
             {
-                if (StatementRunner is null)
+                IQueryRunner? runner = GetStatementRunner();
+
+                if (runner is null)
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-                return StatementRunner.Run(cypher);
+                return runner.Run(cypher);
             }
         }
         ResultCursor IStatementRunner.Run(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
@@ -277,14 +279,15 @@ namespace Blueprint41
             }
             else
             {
+                IQueryRunner? runner = GetStatementRunner();
 
-                if (StatementRunner is null)
+                if (runner is null)
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
                 if (parameters is null)
-                    return StatementRunner.Run(cypher);
+                    return runner.Run(cypher);
                 else
-                    return StatementRunner.Run(cypher, parameters);
+                    return runner.Run(cypher, parameters);
             }
         }
 
@@ -733,7 +736,7 @@ namespace Blueprint41
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = GetDriverTransaction();
             if (t is not null)
                 t.Commit();
 
@@ -744,7 +747,7 @@ namespace Blueprint41
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = await GetDriverTransactionAsync();
             if (t is not null)
                 await t.CommitAsync();
 
@@ -755,7 +758,7 @@ namespace Blueprint41
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = GetDriverTransaction();
             if (t is not null)
                 t.Rollback();
         }
@@ -764,7 +767,7 @@ namespace Blueprint41
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = await GetDriverTransactionAsync();
             if (t is not null)
                 await t.RollbackAsync();
         }
@@ -776,7 +779,8 @@ namespace Blueprint41
         protected async Task RetryAsyncInternal()
         {
             await RollbackAsyncInternal();
-            await InitializeAsync();
+            Initialize();
+            _driverTransaction = null;
         }
 
         protected override void Cleanup()
@@ -784,7 +788,7 @@ namespace Blueprint41
             if (InTransaction)
                 Rollback();
 
-            DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = GetDriverTransaction();
             if (t is not null)
                 t.Dispose();
 
@@ -795,9 +799,13 @@ namespace Blueprint41
         protected override async Task CleanupAsync()
         {
             if (InTransaction)
-                await RollbackAsync();
+            {
+                await RollbackAsyncInternal();
+                Invalidate();
+                InTransaction = false;
+            }
 
-            DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = await GetDriverTransactionAsync();
             if (t is not null)
                 await t.DisposeAsync();
 

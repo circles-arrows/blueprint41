@@ -24,20 +24,6 @@ namespace Blueprint41.Core
             if (key is null && locked)
                 throw new ArgumentNullException(nameof(key), "The key cannot be null when trying to acquire a lock.");
 
-            TWrapper? item = Lookup(key);
-            if (item is null)
-                return null;
-
-            if (locked || item.PersistenceState != PersistenceState.DoesntExist)
-                item.LazyGet(locked);
-
-            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
-                return item;
-            else
-                return null;
-        }
-        public static TWrapper? Lookup(TKey key)
-        {
             if (key is null)
                 return null;
 
@@ -48,7 +34,37 @@ namespace Blueprint41.Core
             TWrapper item = Transaction.Execute(() => new TWrapper(), EventOptions.GraphEvents);
             item.SetKey(key);
 
-            return item;
+            if (locked || item.PersistenceState != PersistenceState.DoesntExist)
+                item.LazyGet(locked);
+
+            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
+                return item;
+            else
+                return null;
+        }
+        public static Task<TWrapper?> LoadAsync(TKey key) => LoadAsync(key, false);
+        public static async Task<TWrapper?> LoadAsync(TKey key, bool locked)
+        {
+            if (key is null && locked)
+                throw new ArgumentNullException(nameof(key), "The key cannot be null when trying to acquire a lock.");
+
+            if (key is null)
+                return null;
+
+            TWrapper? instance = (TWrapper?)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key);
+            if (instance is not null)
+                return instance;
+
+            TWrapper item = Transaction.Execute(() => new TWrapper(), EventOptions.GraphEvents);
+            item.SetKey(key);
+
+            if (item.PersistenceState != PersistenceState.DoesntExist)
+                await item.LazyGetAsync(locked);
+
+            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
+                return item;
+            else
+                return null;
         }
 
         internal static OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, persistence.NodeMapping mappingMode)
@@ -196,6 +212,37 @@ namespace Blueprint41.Core
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
         }
+        internal protected override async Task LazyGetAsync(bool locked = false)
+        {
+            switch (PersistenceState)
+            {
+                case PersistenceState.New:
+                case PersistenceState.NewAndChanged:
+                    if (locked)
+                        await PersistenceProvider.NodePersistenceProvider.LoadAsync(this, locked);
+                    break;
+                case PersistenceState.HasUid:
+                    await PersistenceProvider.NodePersistenceProvider.LoadAsync(this, locked);
+                    break;
+                case PersistenceState.Loaded:
+                case PersistenceState.LoadedAndChanged:
+                case PersistenceState.OutOfScope:
+                case PersistenceState.Persisted:
+                case PersistenceState.Delete:
+                case PersistenceState.ForceDelete:
+                    if (locked)
+                        await PersistenceProvider.NodePersistenceProvider.LoadAsync(this, locked);
+                    break;
+                case PersistenceState.Deleted:
+                    throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
+                case PersistenceState.Error:
+                    throw new InvalidOperationException("The object suffered an unexpected failure.");
+                default:
+                    throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
+            }
+        }
         internal protected override void LazySet()
         {
             if (PersistenceState == PersistenceState.OutOfScope)
@@ -328,18 +375,6 @@ namespace Blueprint41.Core
         sealed internal override void SetKey(TKey key)
         {
             InnerData.SetKey(key);
-        }
-
-        public static void Delete(TKey key)
-        {
-            TWrapper? wrapper = Lookup(key);
-            wrapper?.Delete();
-        }
-
-        public static void ForceDelete(TKey key)
-        {
-            TWrapper? wrapper = Lookup(key);
-            wrapper?.ForceDelete();
         }
 
         private TData? innerData = default(TData);

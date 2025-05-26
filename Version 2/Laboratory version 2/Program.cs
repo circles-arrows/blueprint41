@@ -66,7 +66,7 @@ namespace Laboratory
 
         private static async Task CleanDB()
         {
-            await using (var trans = await MockModel.BeginTransactionAsync())
+            await using (var trans = MockModel.BeginTransactionAsync())
             {
                 await trans.RunAsync("MATCH (n) DETACH DELETE n;");
                 await trans.RunAsync("CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *;");

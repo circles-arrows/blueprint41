@@ -278,15 +278,13 @@ After:
 
         public virtual Session NewSession(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
         {
-            return Session.Get(DatastoreModel, mode, optimize, AdvancedConfig?.GetLogger());
+            Session session = Session.Get(DatastoreModel, mode, optimize, AdvancedConfig?.GetLogger());
+            return session;
         }
         public virtual Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
         {
-            return Transaction.Get(DatastoreModel, mode, optimize, AdvancedConfig?.GetLogger());
-        }
-        public virtual Task<Transaction> NewTransactionAsync(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
-        {
-            return Transaction.GetAsync(DatastoreModel, mode, optimize, AdvancedConfig?.GetLogger());
+            Transaction trans = Transaction.Get(DatastoreModel, mode, optimize, AdvancedConfig?.GetLogger());
+            return trans;
         }
 
         public bool IsNeo4j => (DatastoreModel.DatastoreTechnology == GDMS.Neo4j);

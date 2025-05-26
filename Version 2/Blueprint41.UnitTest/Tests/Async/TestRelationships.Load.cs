@@ -22,9 +22,10 @@ namespace Blueprint41.UnitTest.Tests.Async
         {
             await SetupTestDataSetAsync();
 
-            await using (await MockModel.BeginTransactionAsync())
+            await using (MockModel.BeginTransactionAsync())
             {
-                var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                Person? linus = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
+
                 Assert.IsNotNull(linus);
 
                 List<PERSON_LIVES_IN> livesIn1 = await PERSON_LIVES_IN.WhereAsync(alias => alias.Person(linus));
@@ -44,17 +45,14 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             await ExecuteAsync(Blocking.TestRelationships.RenameAddrLine1);
 
-            await using (await MockModel.BeginTransactionAsync())
+            await using (MockModel.BeginTransactionAsync())
             {
-                //TODO: Implement Person.LoadAsync
-                var linus = await Task.Run(() => Person.Load(DatabaseUids.Persons.LinusTorvalds));
+                var linus = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                 Assert.IsNotNull(linus);
 
                 var rels = await ReadRelationsWithPropertiesAsync(linus!, PERSON_LIVES_IN.Relationship, linus!.City);
                 Assert.That(rels.All(r => r.properties.ContainsKey("NewName")));
             }
         }
-
-
     }
 }

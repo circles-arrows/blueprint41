@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Persistence;
@@ -386,6 +386,11 @@ namespace Blueprint41.Core
             // ClearRelationshipsAction removes ALL relationships from an Entity, we only need to remove all relationships from a collection.
             // Difference being ALL relationships in ALL directions vs. 1 relationship in 1 direction!!!
             return new RemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, inItem, outItem);
+        }
+
+        public Task LazyLoadAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

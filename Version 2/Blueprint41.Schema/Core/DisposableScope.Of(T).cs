@@ -28,27 +28,6 @@ namespace Blueprint41.Core
 
             return (T)this;
         }
-        protected async Task<T> AttachAsync()
-        {
-            isDisposed = true;
-            isInitialized = false;
-
-            await InitializeAsync().ConfigureAwait(false);
-            isInitialized = true;
-
-            if (current is null)
-                current = new AsyncLocal<Stack<T>?>();
-
-            if (current.Value is null)
-                current.Value = new Stack<T>();
-
-            current.Value.Push((T)this);
-
-            isDisposed = false;
-
-            return (T)this;
-        }
-
 
         public static T? Current
         {
@@ -122,7 +101,6 @@ namespace Blueprint41.Core
         }
 
         protected abstract void Initialize();
-        protected abstract Task InitializeAsync();
         protected abstract void Cleanup();
         protected abstract Task CleanupAsync();
 

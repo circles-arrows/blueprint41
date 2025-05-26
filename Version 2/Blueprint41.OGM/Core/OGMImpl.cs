@@ -279,6 +279,7 @@ namespace Blueprint41.Core
         }
 
         internal protected abstract void LazyGet(bool locked = false);
+        internal protected abstract Task LazyGetAsync(bool locked = false);
         internal protected abstract void LazySet();
         internal protected abstract void AfterSetData();
         internal protected virtual bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)

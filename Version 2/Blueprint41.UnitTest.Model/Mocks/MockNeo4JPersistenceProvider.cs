@@ -24,10 +24,6 @@ namespace Blueprint41.UnitTest.Mocks
         {
             return MockNeo4jTransaction.Get(DatastoreModel, mode, optimize, AdvancedConfig?.GetLogger());
         }
-        public override Task<Transaction> NewTransactionAsync(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
-        {
-            return MockNeo4jTransaction.GetAsync(DatastoreModel, mode, optimize, AdvancedConfig?.GetLogger());
-        }
     }
 
     public class MockNeo4jTransaction : Transaction
@@ -41,15 +37,6 @@ namespace Blueprint41.UnitTest.Mocks
         {
             MockNeo4jTransaction transaction = new MockNeo4jTransaction(model, readwrite, optimize, logger);
             transaction.Attach();
-            transaction.TransactionDate = DateTime.UtcNow;
-            transaction.FireEvents = EventOptions.AllEvents;
-
-            return transaction;
-        }
-        static internal async Task<Transaction> GetAsync(DatastoreModel model, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
-        {
-            MockNeo4jTransaction transaction = new MockNeo4jTransaction(model, readwrite, optimize, logger);
-            await transaction.AttachAsync().ConfigureAwait(false);
             transaction.TransactionDate = DateTime.UtcNow;
             transaction.FireEvents = EventOptions.AllEvents;
 
@@ -71,26 +58,27 @@ namespace Blueprint41.UnitTest.Mocks
                 if (Consistency is not null)
                     c.WithBookmarks(Consistency);
             }));
-
-            DriverTransaction = Swap(DriverSession!.BeginTransaction());
         }
-        protected override async Task InitializeAsync()
+
+        public virtual DriverTransaction? GetDriverTransaction()
         {
-            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
+            if (!InTransaction)
+                return null;
 
-            DriverSession = Swap(PersistenceProvider.Driver.Session(c =>
-            {
-                if (PersistenceProvider.Database is not null)
-                    c.WithDatabase(PersistenceProvider.Database);
+            if (_driverTransaction is null && DriverSession is not null)
+                _driverTransaction = Swap(DriverSession.BeginTransaction());
 
-                c.WithFetchSize(ConfigBuilder.Infinite);
-                c.WithDefaultAccessMode(accessMode);
+            return _driverTransaction;
+        }
+        public virtual async Task<DriverTransaction?> GetDriverTransactionAsync()
+        {
+            if (!InTransaction)
+                return null;
 
-                if (Consistency is not null)
-                    c.WithBookmarks(Consistency);
-            }));
+            if (_driverTransaction is null && DriverSession is not null)
+                _driverTransaction = Swap(await DriverSession.BeginTransactionAsync());
 
-            DriverTransaction = Swap(await DriverSession!.BeginTransactionAsync().ConfigureAwait(false));
+            return _driverTransaction;
         }
 
         private DriverSession Swap(DriverSession session)
