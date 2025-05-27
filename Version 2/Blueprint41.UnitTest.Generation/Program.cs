@@ -24,7 +24,7 @@ namespace UnitTest.Generation
                 new GeneratorSettings(
                     folder,
                     "Datastore",
-                    EntityFlavor.Both
+                    EntityGenerationFlavor.Both
                 )
             );
         }

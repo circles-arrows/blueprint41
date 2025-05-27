@@ -53,15 +53,15 @@ namespace ");
             
             #line default
             #line hidden
-            this.Write(".Model.TypesRegistered)\r\n                return;\r\n\r\n            lock (typeof(Regi" +
-                    "ster))\r\n            {\r\n                if (");
+            this.Write(".Model.TypesRegistered.Blocking)\r\n                return;\r\n\r\n            lock (ty" +
+                    "peof(Register))\r\n            {\r\n                if (");
             
             #line 27 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
-            this.Write(".Model.TypesRegistered)\r\n                    return;\r\n\r\n");
+            this.Write(".Model.TypesRegistered.Blocking)\r\n                    return;\r\n\r\n");
             
             #line 30 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Register.tt"
 
@@ -99,7 +99,7 @@ foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
             
             #line default
             #line hidden
-            this.Write("));\r\n");
+            this.Write("), EntityFlavor.Blocking);\r\n");
             
             #line 35 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Register.tt"
 

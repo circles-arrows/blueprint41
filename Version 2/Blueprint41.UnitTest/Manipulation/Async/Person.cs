@@ -152,12 +152,12 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Person";
 
-                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { int loadHack = item.Persons.Count; } });
-                DirectedMovies = new EntityCollection<Movie>(Wrapper, Members.DirectedMovies, item => { if (Members.DirectedMovies.Events.HasRegisteredChangeHandlers) { object loadHack = item.Director; } });
-                ActedInMovies = new EntityCollection<Movie>(Wrapper, Members.ActedInMovies, item => { if (Members.ActedInMovies.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
-                StreamingServiceSubscriptions = new EntityTimeCollection<StreamingService>(Wrapper, Members.StreamingServiceSubscriptions, item => { if (Members.StreamingServiceSubscriptions.Events.HasRegisteredChangeHandlers) { int loadHack = item.Subscribers.CountAll; } });
-                WatchedMovies = new EntityCollection<Movie>(Wrapper, Members.WatchedMovies);
-                City = new EntityTimeCollection<City>(Wrapper, Members.City);
+                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { int loadHack = item.Persons.Count; } });
+                DirectedMovies = new EntityCollection<Movie>(Wrapper, Members.DirectedMovies, EntityFlavor.Async, item => { if (Members.DirectedMovies.Events.HasRegisteredChangeHandlers) { object loadHack = item.Director; } });
+                ActedInMovies = new EntityCollection<Movie>(Wrapper, Members.ActedInMovies, EntityFlavor.Async, item => { if (Members.ActedInMovies.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
+                StreamingServiceSubscriptions = new EntityTimeCollection<StreamingService>(Wrapper, Members.StreamingServiceSubscriptions, EntityFlavor.Async, item => { if (Members.StreamingServiceSubscriptions.Events.HasRegisteredChangeHandlers) { int loadHack = item.Subscribers.CountAll; } });
+                WatchedMovies = new EntityCollection<Movie>(Wrapper, Members.WatchedMovies, EntityFlavor.Async);
+                City = new EntityTimeCollection<City>(Wrapper, Members.City, EntityFlavor.Async);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -780,6 +780,7 @@ namespace Datastore.Manipulation.Async
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Async;
 
         private static PersonEvents events = null;
         public static PersonEvents Events

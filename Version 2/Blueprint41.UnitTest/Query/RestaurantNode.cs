@@ -24,6 +24,13 @@ namespace Datastore.Query
 
     public partial class RestaurantNode : Blueprint41.Query.Node
     {
+        [Obsolete]
+        static RestaurantNode()
+        {
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
+        }
+
         public static implicit operator QueryCondition(RestaurantNode a)
         {
             return new QueryCondition(a);

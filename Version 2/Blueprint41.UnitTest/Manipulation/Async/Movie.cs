@@ -157,9 +157,9 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Movie";
 
-                Director = new EntityCollection<Person>(Wrapper, Members.Director, item => { if (Members.Director.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedMovies.Count; } });
-                Actors = new EntityCollection<Person>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedInMovies.Count; } });
-                Certification = new EntityCollection<Rating>(Wrapper, Members.Certification);
+                Director = new EntityCollection<Person>(Wrapper, Members.Director, EntityFlavor.Async, item => { if (Members.Director.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedMovies.Count; } });
+                Actors = new EntityCollection<Person>(Wrapper, Members.Actors, EntityFlavor.Async, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedInMovies.Count; } });
+                Certification = new EntityCollection<Rating>(Wrapper, Members.Certification, EntityFlavor.Async);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -520,6 +520,7 @@ namespace Datastore.Manipulation.Async
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Async;
 
         private static MovieEvents events = null;
         public static MovieEvents Events

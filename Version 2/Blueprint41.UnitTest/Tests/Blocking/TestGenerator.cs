@@ -83,9 +83,9 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
             Assert.IsNotNull(settings.Blocking);
 
-            FileExists(result.EntityResult.Items(EntityFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
-            FileExists(result.RelationshipResult.Items(EntityFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
-            FileExists(result.NodeResult.Items(EntityFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
+            FileExists(result.EntityResult.Items(EntityGenerationFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
+            FileExists(result.RelationshipResult.Items(EntityGenerationFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
+            FileExists(result.NodeResult.Items(EntityGenerationFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
         }
 
         [Test]
@@ -95,9 +95,9 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
             Assert.NotNull(settings.Blocking);
 
-            FileExists(result.EntityResult.Items(EntityFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
-            FileExists(result.RelationshipResult.Items(EntityFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
-            FileExists(result.NodeResult.Items(EntityFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
+            FileExists(result.EntityResult.Items(EntityGenerationFlavor.Blocking),       Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder));
+            FileExists(result.RelationshipResult.Items(EntityGenerationFlavor.Blocking), Path.Combine(projectFolder, settings.Blocking.RelationshipsFolder));
+            FileExists(result.NodeResult.Items(EntityGenerationFlavor.Blocking),         Path.Combine(projectFolder, settings.Blocking.NodesFolder));
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             Assert.NotNull(settings.Blocking);
 
             // The person entity is deprecated so it should be excluded in the entity result
-            bool exist = result.EntityResult.Items(EntityFlavor.Blocking).Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
+            bool exist = result.EntityResult.Items(EntityGenerationFlavor.Blocking).Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
             Assert.IsFalse(exist);
 
             string entityPath = Path.Combine(Path.Combine(projectFolder, settings.Blocking!.EntitiesFolder), "PersonEntity.cs");
@@ -128,7 +128,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             where T : DatastoreModel<T>, new()
         {
             projectFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generator", "Output");
-            settings = new GeneratorSettings(projectFolder, "Datastore", EntityFlavor.Blocking);
+            settings = new GeneratorSettings(projectFolder, "Datastore", EntityGenerationFlavor.Blocking);
 
             return Generator.Execute<T>(settings);
         }

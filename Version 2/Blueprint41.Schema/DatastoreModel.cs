@@ -597,7 +597,7 @@ namespace Blueprint41
         /// <summary>
         /// True if runtime-types have been registered on the entities
         /// </summary>
-        public bool TypesRegistered { get; internal set; } = false;
+        public readonly RuntimeRegistered<bool> TypesRegistered = new RuntimeRegistered<bool>(false, false);
     }
 
     public abstract class DatastoreModel<TSelf> : DatastoreModel

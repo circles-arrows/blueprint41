@@ -10,7 +10,7 @@ namespace Blueprint41.Core
     public abstract class EntityCollectionBase<TEntity> : EntityCollectionBase, ICollection<TEntity>, ILookupHelper<TEntity>, IInnerDataCol<TEntity>
         where TEntity : class, OGM
     {
-        protected EntityCollectionBase(OGM parent, Property property, Action<TEntity>? eagerLoadLogic) : base(parent, property)
+        protected EntityCollectionBase(OGM parent, Property property, EntityFlavor flavor, Action<TEntity>? eagerLoadLogic) : base(parent, property)
         {
             EagerLoadLogic = eagerLoadLogic;
         }

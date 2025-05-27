@@ -407,7 +407,7 @@ namespace Blueprint41.Persistence
                 T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
                 if (wrapper is null)
                 {
-                    wrapper = (T)concrete.Activator();
+                    wrapper = (T)concrete.Activator(EntityFlavor.Blocking);
                     wrapper.SetKey(key);
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);
@@ -918,7 +918,7 @@ namespace Blueprint41.Persistence
                 T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
                 if (wrapper is null)
                 {
-                    wrapper = (T)concrete.Activator();
+                    wrapper = (T)concrete.Activator(EntityFlavor.Async);
                     wrapper.SetKey(key);
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);

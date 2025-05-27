@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Blueprint41.Core;
+
 namespace Blueprint41.DatastoreTemplates
 {
     public class GeneratorResult
@@ -27,47 +29,47 @@ namespace Blueprint41.DatastoreTemplates
             _any      = new Dictionary<string, string>();
         }
 
-        public void Add(EntityFlavor? flavor, string key, string value)
+        public void Add(EntityGenerationFlavor? flavor, string key, string value)
         {
-            switch (flavor ?? EntityFlavor.Both)
+            switch (flavor ?? EntityGenerationFlavor.Both)
             {
-                case EntityFlavor.Blocking:
+                case EntityGenerationFlavor.Blocking:
                     _blocking.Add(key, value);
                     break;
-                case EntityFlavor.Async:
+                case EntityGenerationFlavor.Async:
                     _async.Add(key, value);
                     break;
-                case EntityFlavor.Both:
+                case EntityGenerationFlavor.Both:
                     _any.Add(key, value);
                     break;
                 default:
                     throw new NotSupportedException($"Adding generated code for flavor '{flavor}' is not supported.");
             }
         }
-        public bool ContainsFile(EntityFlavor? flavor, string key)
+        public bool ContainsFile(EntityGenerationFlavor? flavor, string key)
         {
-            switch (flavor ?? EntityFlavor.Both)
+            switch (flavor ?? EntityGenerationFlavor.Both)
             {
-                case EntityFlavor.Blocking:
+                case EntityGenerationFlavor.Blocking:
                     return _blocking.ContainsKey(key);
-                case EntityFlavor.Async:
+                case EntityGenerationFlavor.Async:
                     return _async.ContainsKey(key);
-                case EntityFlavor.Both:
+                case EntityGenerationFlavor.Both:
                     return _any.ContainsKey(key);
                 default:
                     throw new NotSupportedException($"Adding generated code for flavor '{flavor}' is not supported.");
             }
         }
 
-        public IReadOnlyDictionary<string, string> Items(EntityFlavor? flavor)
+        public IReadOnlyDictionary<string, string> Items(EntityGenerationFlavor? flavor)
         {
-            switch (flavor ?? EntityFlavor.Both)
+            switch (flavor ?? EntityGenerationFlavor.Both)
             {
-                case EntityFlavor.Blocking:
+                case EntityGenerationFlavor.Blocking:
                     return _blocking;
-                case EntityFlavor.Async:
+                case EntityGenerationFlavor.Async:
                     return _async;
-                case EntityFlavor.Both:
+                case EntityGenerationFlavor.Both:
                     return _any;
                 default:
                     throw new NotSupportedException($"Enumerating generated code for flavor '{flavor}' is not supported.");

@@ -83,6 +83,7 @@ namespace Blueprint41.Core
         void OGM.ValidateDelete() => ValidateDelete();
         Entity OGM.GetEntity() => GetEntity();
         void OGM.SetChanged() => SetChanged();
+        public abstract EntityFlavor Flavor { get; }
 
         #endregion
 

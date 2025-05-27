@@ -473,6 +473,8 @@ namespace Blueprint41.Query
 
         public ICompiled Compile()
         {
+
+
             SetType(PartType.Compiled);
 
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);

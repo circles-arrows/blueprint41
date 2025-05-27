@@ -891,7 +891,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                 var model = Connect<MockModel>(true, false);
 
-                ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(name));
+                ((IDatastoreUnitTesting)model).Execute(true, typeof(Blocking.TestRelationships).GetMethod(name));
             });
         }
 

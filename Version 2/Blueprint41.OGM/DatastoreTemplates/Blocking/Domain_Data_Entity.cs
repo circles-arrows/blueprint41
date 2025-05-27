@@ -1332,7 +1332,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(", item => { if (");
+            this.Write(", EntityFlavor.Blocking, item => { if (");
             
             #line 400 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers")))));
@@ -1379,7 +1379,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(", item => { if (");
+            this.Write(", EntityFlavor.Blocking, item => { if (");
             
             #line 407 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers")))));
@@ -1432,7 +1432,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(");\r\n");
+            this.Write(", EntityFlavor.Blocking);\r\n");
             
             #line 414 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
@@ -5918,17 +5918,18 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("\"];\r\n                }\r\n            }\r\n            return entity;\r\n        }\r\n\r\n " +
-                    "       private static ");
+            this.Write("\"];\r\n                }\r\n            }\r\n            return entity;\r\n        }\r\n   " +
+                    "     public override EntityFlavor Flavor => EntityFlavor.Blocking;\r\n\r\n        pr" +
+                    "ivate static ");
             
-            #line 1506 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1507 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("Events events = null;\r\n        public static ");
             
-            #line 1507 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1508 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
@@ -5936,7 +5937,7 @@ if (!DALModel.IsAbstract)
             this.Write("Events Events\r\n        {\r\n            get\r\n            {\r\n                if (eve" +
                     "nts is null)\r\n                {\r\n                    lock (typeof(");
             
-            #line 1513 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1514 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
@@ -5944,7 +5945,7 @@ if (!DALModel.IsAbstract)
             this.Write("))\r\n                    {\r\n                        if (events is null)\r\n         " +
                     "                   events = new ");
             
-            #line 1516 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1517 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
@@ -5952,14 +5953,14 @@ if (!DALModel.IsAbstract)
             this.Write("Events();\r\n                    }\r\n                }\r\n                return event" +
                     "s;\r\n            }\r\n        }\r\n        public class ");
             
-            #line 1522 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1523 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("Events\r\n        {\r\n");
             
-            #line 1524 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1525 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     List<string> events = new List<string>();
     events.Add("OnNew");
@@ -5975,42 +5976,42 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n            #region ");
             
-            #line 1535 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1536 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n            private bool ");
             
-            #line 1537 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1538 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered = false;\r\n\r\n            private EventHandler<");
             
-            #line 1539 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1540 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(", EntityEventArgs> ");
             
-            #line 1539 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1540 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(";\r\n            public event EventHandler<");
             
-            #line 1540 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1541 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(", EntityEventArgs> ");
             
-            #line 1540 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1541 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
@@ -6018,7 +6019,7 @@ if (!DALModel.IsAbstract)
             this.Write("\r\n            {\r\n                add\r\n                {\r\n                    lock" +
                     " (this)\r\n                    {\r\n                        if (!");
             
-            #line 1546 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1547 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6026,42 +6027,42 @@ if (!DALModel.IsAbstract)
             this.Write("IsRegistered)\r\n                        {\r\n                            Entity.Even" +
                     "ts.");
             
-            #line 1548 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1549 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
-            #line 1548 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1549 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                            Entity.Events.");
             
-            #line 1549 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1550 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" += ");
             
-            #line 1549 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1550 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                            ");
             
-            #line 1550 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1551 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered = true;\r\n                        }\r\n                        ");
             
-            #line 1552 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1553 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6070,21 +6071,21 @@ if (!DALModel.IsAbstract)
                     "             {\r\n                    lock (this)\r\n                    {\r\n        " +
                     "                ");
             
-            #line 1559 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1560 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n                        if (");
             
-            #line 1560 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1561 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" is null && ");
             
-            #line 1560 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1561 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6092,21 +6093,21 @@ if (!DALModel.IsAbstract)
             this.Write("IsRegistered)\r\n                        {\r\n                            Entity.Even" +
                     "ts.");
             
-            #line 1562 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1563 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
-            #line 1562 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1563 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                            ");
             
-            #line 1563 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1564 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6114,7 +6115,7 @@ if (!DALModel.IsAbstract)
             this.Write("IsRegistered = false;\r\n                        }\r\n                    }\r\n        " +
                     "        }\r\n            }\r\n            \r\n            private void ");
             
-            #line 1569 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1570 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6122,14 +6123,14 @@ if (!DALModel.IsAbstract)
             this.Write("Proxy(object sender, EntityEventArgs args)\r\n            {\r\n                EventH" +
                     "andler<");
             
-            #line 1571 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1572 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(", EntityEventArgs> handler = ");
             
-            #line 1571 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1572 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6137,14 +6138,14 @@ if (!DALModel.IsAbstract)
             this.Write(";\r\n                if (handler is not null)\r\n                    handler.Invoke((" +
                     "");
             
-            #line 1573 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1574 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(")sender, args);\r\n            }\r\n\r\n            #endregion\r\n");
             
-            #line 1577 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1578 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     }
 
@@ -6154,7 +6155,7 @@ if (!DALModel.IsAbstract)
             this.Write("\r\n            #region OnPropertyChange\r\n\r\n            public static class OnPrope" +
                     "rtyChange\r\n            {\r\n\r\n");
             
-            #line 1586 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1587 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
     {
@@ -6167,42 +6168,42 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("                #region ");
             
-            #line 1593 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1594 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n                private static bool ");
             
-            #line 1595 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1596 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered = false;\r\n\r\n                private static EventHandler<");
             
-            #line 1597 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1598 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(", PropertyEventArgs> ");
             
-            #line 1597 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1598 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(";\r\n                public static event EventHandler<");
             
-            #line 1598 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1599 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(", PropertyEventArgs> ");
             
-            #line 1598 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1599 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
@@ -6211,7 +6212,7 @@ if (!DALModel.IsAbstract)
                     "            lock (typeof(OnPropertyChange))\r\n                        {\r\n        " +
                     "                    if (!");
             
-            #line 1604 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1605 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6219,35 +6220,35 @@ if (!DALModel.IsAbstract)
             this.Write("IsRegistered)\r\n                            {\r\n                                Mem" +
                     "bers.");
             
-            #line 1606 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1607 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".Events.OnChange -= ");
             
-            #line 1606 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1607 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                                Members.");
             
-            #line 1607 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1608 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".Events.OnChange += ");
             
-            #line 1607 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1608 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                                ");
             
-            #line 1608 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1609 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6255,7 +6256,7 @@ if (!DALModel.IsAbstract)
             this.Write("IsRegistered = true;\r\n                            }\r\n                            " +
                     "");
             
-            #line 1610 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1611 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6264,21 +6265,21 @@ if (!DALModel.IsAbstract)
                     " remove\r\n                    {\r\n                        lock (typeof(OnPropertyC" +
                     "hange))\r\n                        {\r\n                            ");
             
-            #line 1617 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1618 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n                            if (");
             
-            #line 1618 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1619 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" is null && ");
             
-            #line 1618 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1619 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6286,21 +6287,21 @@ if (!DALModel.IsAbstract)
             this.Write("IsRegistered)\r\n                            {\r\n                                Mem" +
                     "bers.");
             
-            #line 1620 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1621 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".Events.OnChange -= ");
             
-            #line 1620 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1621 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                                ");
             
-            #line 1621 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1622 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6309,7 +6310,7 @@ if (!DALModel.IsAbstract)
                     "                    }\r\n                }\r\n            \r\n                private " +
                     "static void ");
             
-            #line 1627 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1628 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6317,14 +6318,14 @@ if (!DALModel.IsAbstract)
             this.Write("Proxy(object sender, PropertyEventArgs args)\r\n                {\r\n                " +
                     "    EventHandler<");
             
-            #line 1629 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1630 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(", PropertyEventArgs> handler = ");
             
-            #line 1629 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1630 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
@@ -6332,14 +6333,14 @@ if (!DALModel.IsAbstract)
             this.Write(";\r\n                    if (handler is not null)\r\n                        handler." +
                     "Invoke((");
             
-            #line 1631 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1632 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(")sender, args);\r\n                }\r\n\r\n                #endregion\r\n\r\n");
             
-            #line 1636 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1637 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         }
     }
@@ -6349,7 +6350,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("            }\r\n\r\n            #endregion\r\n        }\r\n\r\n        #endregion\r\n");
             
-            #line 1646 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1647 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     var enumProperties = DALModel.Properties.Where(item => item.EnumValues is not null).ToList();
 
@@ -6361,7 +6362,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n        #region Enumerations\r\n\r\n");
             
-            #line 1655 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1656 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         foreach (Property attr in enumProperties)
         {
@@ -6373,14 +6374,14 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        public enum ");
             
-            #line 1661 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1662 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("Enum\r\n        {\r\n");
             
-            #line 1663 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1664 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
             foreach (var value in attr.EnumValues)
             {
@@ -6390,21 +6391,21 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("            ");
             
-            #line 1667 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1668 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 1667 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1668 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.Value));
             
             #line default
             #line hidden
             this.Write(",\r\n");
             
-            #line 1668 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1669 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
             }
 
@@ -6413,7 +6414,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        }\r\n\r\n");
             
-            #line 1673 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1674 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         }
 
@@ -6422,7 +6423,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        #endregion\r\n");
             
-            #line 1677 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1678 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     }
 
@@ -6435,7 +6436,7 @@ if (!DALModel.IsAbstract)
             this.Write("\r\n        #region Static Data\r\n\r\n        public static class StaticData\r\n        " +
                     "{\r\n");
             
-            #line 1688 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1689 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         foreach (Property property in DALModel.GetPropertiesOfBaseTypesAndSelf().OrderBy(item => item.Name))
         {
@@ -6457,21 +6458,21 @@ if (!DALModel.IsAbstract)
             this.Write("            /// <summary>\r\n            /// Get the \'Key\' value for the correspond" +
                     "ing ");
             
-            #line 1704 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1705 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
             
             #line default
             #line hidden
             this.Write("\r\n            /// </summary>\r\n            public static class ");
             
-            #line 1706 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1707 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
             
             #line default
             #line hidden
             this.Write("\r\n            {\r\n");
             
-            #line 1708 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1709 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
             foreach (TypeSafeStaticData value in values)
             {
@@ -6481,28 +6482,28 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("                public const ");
             
-            #line 1712 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1713 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 1712 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1713 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.SafeValue));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 1712 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1713 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(EmitConstantValue(value.KeyValue, DALModel.Key.SystemReturnType)));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 1713 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1714 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
             }
 
@@ -6511,14 +6512,14 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("                public static bool Exist(string ");
             
-            #line 1716 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1717 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n                {\r\n");
             
-            #line 1718 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1719 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
             foreach (TypeSafeStaticData value in values)
             {
@@ -6528,21 +6529,21 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("                    if (");
             
-            #line 1722 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1723 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" == \"");
             
-            #line 1722 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1723 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.OriginalValue.Replace("\"", "\\\"")));
             
             #line default
             #line hidden
             this.Write("\")\r\n                        return true;\r\n");
             
-            #line 1724 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1725 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
             }
 
@@ -6551,7 +6552,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("                    return false;\r\n                }\r\n            }\r\n");
             
-            #line 1730 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1731 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         }
 
@@ -6560,7 +6561,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        }\r\n\r\n        #endregion\r\n");
             
-            #line 1736 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1737 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     }
 
@@ -6569,21 +6570,21 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n        #region I");
             
-            #line 1740 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1741 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData\r\n\r\n        public I");
             
-            #line 1742 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1743 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData OriginalVersion { get { return this; } }\r\n\r\n");
             
-            #line 1744 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1745 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
     {
@@ -6593,14 +6594,14 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        #region Members for interface I");
             
-            #line 1748 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1749 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 1749 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1750 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         if (inherited.IsAbstract)
         {
@@ -6610,21 +6611,21 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n        I");
             
-            #line 1754 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1755 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData ");
             
-            #line 1754 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1755 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.ClassName));
             
             #line default
             #line hidden
             this.Write(".OriginalVersion { get { return this; } }\r\n");
             
-            #line 1755 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1756 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         }
 
@@ -6633,7 +6634,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n");
             
-            #line 1759 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1760 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
         foreach (Property attr in inherited.Properties)
         {
@@ -6645,35 +6646,35 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        ");
             
-            #line 1765 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1766 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 1765 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1766 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1765 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1766 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.");
             
-            #line 1765 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1766 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".OriginalData; } }\r\n");
             
-            #line 1766 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1767 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
                 if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
                 {
@@ -6686,56 +6687,56 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        ");
             
-            #line 1773 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concreteOuterType));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 1773 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1773 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("_");
             
-            #line 1773 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concrete.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.");
             
-            #line 1773 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".OriginalData.Where(item => item is ");
             
-            #line 1773 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concrete.ClassName));
             
             #line default
             #line hidden
             this.Write(").Select(item => item as ");
             
-            #line 1773 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concrete.ClassName));
             
             #line default
             #line hidden
             this.Write("); } }\r\n");
             
-            #line 1774 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1775 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
                     }
                 }
@@ -6750,42 +6751,42 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        ");
             
-            #line 1783 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1784 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 1783 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1784 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1783 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1784 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return ((ILookupHelper<");
             
-            #line 1783 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1784 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(">)OriginalData.");
             
-            #line 1783 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1784 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(").GetOriginalItem(DateTime.UtcNow); } }\r\n");
             
-            #line 1784 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1785 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
                 }
                 else
@@ -6796,42 +6797,42 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        ");
             
-            #line 1789 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1790 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 1789 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1790 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1789 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1790 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return ((ILookupHelper<");
             
-            #line 1789 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1790 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(">)OriginalData.");
             
-            #line 1789 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1790 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(").GetOriginalItem(null); } }\r\n");
             
-            #line 1790 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1791 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
                 }
             }
@@ -6847,49 +6848,49 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        ");
             
-            #line 1800 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1801 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 1800 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1801 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1800 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1801 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return Parse<");
             
-            #line 1800 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1801 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Parent.Name));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 1800 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1801 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("Enum>(OriginalData.");
             
-            #line 1800 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1801 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("); } }\r\n");
             
-            #line 1801 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1802 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
                     }
                     else
@@ -6900,49 +6901,49 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        ");
             
-            #line 1806 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1807 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 1806 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1807 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1806 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1807 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return Parse<");
             
-            #line 1806 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1807 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Parent.Name));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 1806 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1807 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("Enum>(OriginalData.");
             
-            #line 1806 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1807 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(") ?? default; } }\r\n");
             
-            #line 1807 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1808 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
                     }
                 }
@@ -6954,35 +6955,35 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        ");
             
-            #line 1813 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1814 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 1813 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1814 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1813 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1814 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.");
             
-            #line 1813 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1814 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("; } }\r\n");
             
-            #line 1814 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1815 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
                 }
             }
@@ -6993,7 +6994,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n        #endregion\r\n");
             
-            #line 1821 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1822 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     }
 
@@ -7002,7 +7003,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        #endregion\r\n");
             
-            #line 1825 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1826 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     if (inheritedUnidentifiedProp is not null)
     {
@@ -7013,21 +7014,21 @@ if (!DALModel.IsAbstract)
             this.Write("        \r\n        #region Member for UnidentifiedProperties\r\n\r\n        IDictionar" +
                     "y<string, object> I");
             
-            #line 1832 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1833 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 1832 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1833 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.UnidentifiedProperties; } }\r\n\r\n        #endregion\r\n");
             
-            #line 1835 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1836 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
     }
 
@@ -7036,7 +7037,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("    }\r\n");
             
-            #line 1839 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
+            #line 1840 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
 }
 

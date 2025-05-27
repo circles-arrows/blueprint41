@@ -328,6 +328,7 @@ namespace Datastore.Manipulation.Async
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Async;
 
         private static RatingEvents events = null;
         public static RatingEvents Events

@@ -24,6 +24,13 @@ namespace Datastore.Query
 
     public partial class StreamingServiceNode : Blueprint41.Query.Node
     {
+        [Obsolete]
+        static StreamingServiceNode()
+        {
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
+        }
+
         public static implicit operator QueryCondition(StreamingServiceNode a)
         {
             return new QueryCondition(a);

@@ -19,19 +19,19 @@ namespace <#= Settings.FullCRUDNamespace #>
         [Obsolete]
         public static void Types()
         {
-            if (<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.TypesRegistered)
+            if (<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.TypesRegistered.Blocking)
                 return;
 
             lock (typeof(Register))
             {
-                if (<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.TypesRegistered)
+                if (<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.TypesRegistered.Blocking)
                     return;
 
 <#
 foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
 {
 #>
-                ((ISetRuntimeType)<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"]).SetRuntimeTypes(typeof(<#= DALModel.ClassName #>), typeof(<#= DALModel.Name #>));
+                ((ISetRuntimeType)<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"]).SetRuntimeTypes(typeof(<#= DALModel.ClassName #>), typeof(<#= DALModel.Name #>), EntityFlavor.Blocking);
 <#
 }
 #>

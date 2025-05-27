@@ -68,13 +68,13 @@ namespace Blueprint41
                     parameters.Add(queryParameter.Key, transaction.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));
             }
 
-            var result = Transaction.Run(CompiledQuery.QueryText, parameters);
+            ResultCursor? result = Transaction.Run(CompiledQuery.QueryText, parameters);
             if (result is not null)
             {
-                foreach (var row in result.ToList())
+                foreach (Record? row in result.ToList())
                 {
                     IDictionary<string, object?> record = new ExpandoObject();
-                    foreach (var field in CompiledQuery.CompiledResultColumns)
+                    foreach (CompiledQueryInfo.FieldInfo field in CompiledQuery.CompiledResultColumns)
                     {
                         object? value;
                         if (row.TryGetValue(field.FieldName, out value) && value is not null)
@@ -87,7 +87,7 @@ namespace Blueprint41
                                     if (!field.Info.IsList) // RETURNS INode
                                     {
                                         NodeResult node = target.As<NodeResult>();
-                                        target = (field.MapMethod is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping);
+                                        target = (field.MapMethod.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping);
                                     }
                                     else if (!field.Info.IsJaggedList) // RETURNS List<INode>
                                     {
@@ -95,7 +95,7 @@ namespace Blueprint41
                                         IList? newList = null;
                                         if (nodeList is not null)
                                         {
-                                            newList = (field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Invoke(nodeList.Count);
+                                            newList = (field.MapMethod.Blocking is null || field.NewList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Blocking.Invoke(nodeList.Count);
 
                                             for (int index = 0; index < nodeList.Count; index++)
                                             {
@@ -107,7 +107,7 @@ namespace Blueprint41
                                                 else
                                                 {
                                                     NodeResult node = t.As<NodeResult>();
-                                                    newList!.Add((field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                    newList!.Add((field.MapMethod.Blocking is null || field.NewList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
                                                 }
                                             }
                                         }
@@ -129,7 +129,7 @@ namespace Blueprint41
                                                 }
                                                 else
                                                 {
-                                                    IList newList = (field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Invoke(nodeList.Count);
+                                                    IList newList = (field.MapMethod.Blocking is null || field.NewList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Blocking.Invoke(nodeList.Count);
 
                                                     for (int subindex = 0; subindex < nodeList.Count; subindex++)
                                                     {
@@ -141,7 +141,7 @@ namespace Blueprint41
                                                         else
                                                         {
                                                             NodeResult node = t.As<NodeResult>();
-                                                            newList.Add((field.MapMethod is null || field.NewList is null || field.NewJaggedList is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                            newList.Add((field.MapMethod.Blocking is null || field.NewList.Blocking is null || field.NewJaggedList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
                                                         }
                                                     }
 
@@ -179,13 +179,13 @@ namespace Blueprint41
                     parameters.Add(queryParameter.Key, transaction.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));
             }
 
-            var result = await Transaction.RunAsync(CompiledQuery.QueryText, parameters);
+            ResultCursor? result = await Transaction.RunAsync(CompiledQuery.QueryText, parameters);
             if (result is not null)
             {
-                foreach (var row in await result.ToListAsync())
+                foreach (Record? row in await result.ToListAsync())
                 {
                     IDictionary<string, object?> record = new ExpandoObject();
-                    foreach (var field in CompiledQuery.CompiledResultColumns)
+                    foreach (CompiledQueryInfo.FieldInfo field in CompiledQuery.CompiledResultColumns)
                     {
                         object? value;
                         if (row.TryGetValue(field.FieldName, out value) && value is not null)
@@ -198,7 +198,7 @@ namespace Blueprint41
                                     if (!field.Info.IsList) // RETURNS INode
                                     {
                                         NodeResult node = target.As<NodeResult>();
-                                        target = (field.MapMethod is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping);
+                                        target = (field.MapMethod.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping);
                                     }
                                     else if (!field.Info.IsJaggedList) // RETURNS List<INode>
                                     {
@@ -206,7 +206,7 @@ namespace Blueprint41
                                         IList? newList = null;
                                         if (nodeList is not null)
                                         {
-                                            newList = (field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Invoke(nodeList.Count);
+                                            newList = (field.MapMethod.Async is null || field.NewList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Async.Invoke(nodeList.Count);
 
                                             for (int index = 0; index < nodeList.Count; index++)
                                             {
@@ -218,7 +218,7 @@ namespace Blueprint41
                                                 else
                                                 {
                                                     NodeResult node = t.As<NodeResult>();
-                                                    newList!.Add((field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                    newList!.Add((field.MapMethod.Async is null || field.NewList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
                                                 }
                                             }
                                         }
@@ -240,7 +240,7 @@ namespace Blueprint41
                                                 }
                                                 else
                                                 {
-                                                    IList newList = (field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Invoke(nodeList.Count);
+                                                    IList newList = (field.MapMethod.Async is null || field.NewList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? new List<Result>(nodeList.Count) : field.NewList.Async.Invoke(nodeList.Count);
 
                                                     for (int subindex = 0; subindex < nodeList.Count; subindex++)
                                                     {
@@ -252,7 +252,7 @@ namespace Blueprint41
                                                         else
                                                         {
                                                             NodeResult node = t.As<NodeResult>();
-                                                            newList.Add((field.MapMethod is null || field.NewList is null || field.NewJaggedList is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                            newList.Add((field.MapMethod.Async is null || field.NewList.Async is null || field.NewJaggedList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
                                                         }
                                                     }
 

@@ -1293,7 +1293,7 @@ namespace Blueprint41
                             if (getValueWithMoment is null)
                             {
                                 string name = string.Concat("Get", Name);
-                                MethodInfo? method = entity.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
+                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetMethods().FirstOrDefault(item => item.Name == name);
                                 if (method is null)
                                     throw new NotSupportedException("No get accessor exists");
 
@@ -1311,7 +1311,7 @@ namespace Blueprint41
                         {
                             if (getValue is null)
                             {
-                                MethodInfo? method = entity.RuntimeReturnType!.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
+                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
                                 if (method is null)
                                     throw new NotSupportedException("No get accessor exists");
 
@@ -1350,7 +1350,7 @@ namespace Blueprint41
                             if (setValueWithMoment is null)
                             {
                                 string name = string.Concat("Set", Name);
-                                MethodInfo? method = entity.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
+                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetMethods().FirstOrDefault(item => item.Name == name);
                                 if (method is null)
                                     throw new NotSupportedException("No set accessor exists");
 
@@ -1368,7 +1368,7 @@ namespace Blueprint41
                         {
                             if (setValue is null)
                             {
-                                MethodInfo? method = entity.RuntimeReturnType!.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
+                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetProperties().First(item => item.Name == Name).GetSetMethod(true);
                                 if (method is null)
                                 {
                                     if (IsRowVersion)
@@ -1518,7 +1518,7 @@ namespace Blueprint41
         }
         private EventHandler<PropertyEventArgs>? onChange;
 
-        internal Type GetPropertyEventArgsType(Type senderType)
+        internal Type GetPropertyEventArgsType(Type senderType, EntityFlavor flavor)
         {
             Type? type;
             if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
@@ -1527,7 +1527,7 @@ namespace Blueprint41
                 {
                     if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
                     {
-                        type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType!);
+                        type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType.Get(flavor));
                         propertyEventArgsType.Add(senderType.Name, type);
                     }
                 }

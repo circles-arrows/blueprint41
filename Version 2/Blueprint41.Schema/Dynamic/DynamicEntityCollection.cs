@@ -7,7 +7,7 @@ namespace Blueprint41.Dynamic
 {
     public class DynamicEntityCollection : EntityCollection<DynamicEntity>
     {
-        public DynamicEntityCollection(OGM parent, Property property) : base(parent, property)
+        public DynamicEntityCollection(OGM parent, Property property) : base(parent, property, EntityFlavor.Blocking)
         {
 
         }

@@ -24,6 +24,13 @@ namespace Datastore.Query
 
     public partial class RatingNode : Blueprint41.Query.Node
     {
+        [Obsolete]
+        static RatingNode()
+        {
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
+        }
+
         public static implicit operator QueryCondition(RatingNode a)
         {
             return new QueryCondition(a);

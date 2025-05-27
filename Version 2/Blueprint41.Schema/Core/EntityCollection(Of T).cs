@@ -12,8 +12,8 @@ namespace Blueprint41.Core
     public partial class EntityCollection<TEntity> : EntityCollectionBase<TEntity>
         where TEntity : class, OGM
     {
-        public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null)
-            : base(parent, property, eagerLoadLogic) { }
+        public EntityCollection(OGM parent, Property property, EntityFlavor flavor, Action<TEntity>? eagerLoadLogic = null)
+            : base(parent, property, flavor, eagerLoadLogic) { }
 
         #region Manipulation
 

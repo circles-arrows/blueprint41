@@ -73,36 +73,51 @@ namespace Blueprint41.Query
         {
             internal FieldInfo(Transaction transaction, AsResult field)
             {
-                Field = field;
-                FieldName = field.GetFieldName() ?? throw new InvalidOperationException("GetFieldName() cannot be null here.");
+                Field      = field;
+                FieldName  = field.GetFieldName() ?? throw new InvalidOperationException("GetFieldName() cannot be null here.");
                 TargetType = field.GetResultType();
                 ResultType = field.Result.GetType();
-                Info = ResultHelper.Of(ResultType);
+                Info       = ResultHelper.Of(ResultType);
 
-                Conversion? converter = (TargetType is null) ? null : transaction.PersistenceProvider.GetConverterFromStoredType(TargetType);
-                ConvertMethod = (converter is null) ? null : (Func<object?, object?>)converter.Convert;
-
-                Entity? entity = null;
+                Conversion? converter       = (TargetType is null) ? null : transaction.PersistenceProvider.GetConverterFromStoredType(TargetType);
+                ConvertMethod               = (converter is null) ? null : (Func<object?, object?>)converter.Convert;
+                Entity? entity              = null;
                 MethodInfo? getEntityMethod = ResultType.GetProperty("Entity")?.GetGetMethod();
                 if (getEntityMethod is not null)
-                    entity = getEntityMethod.Invoke(field.Result, null) as Entity;
+                    entity                  = getEntityMethod.Invoke(field.Result, null) as Entity;
 
-                MethodInfo? method = (entity is null) ? null : entity!.RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                MapMethod = (method is null) ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
+                MapMethod     = new RuntimeRegistered<Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?>();
+                NewList       = new RuntimeRegistered<Func<int, IList>?>();
+                NewJaggedList = new RuntimeRegistered<Func<int, IList>?>();
+
+                MethodInfo? blockedMethod = (entity is null) ? null : entity!.RuntimeClassType.Blocking.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                MethodInfo? asyncMethod   = (entity is null) ? null : entity!.RuntimeClassType.Async.   GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                MapMethod.Blocking        = (blockedMethod is null) ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), blockedMethod, true);
+                MapMethod.Async           = (asyncMethod is null)   ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), asyncMethod,   true);
 
                 if (entity is null)
                     return;
 
-                Type listType = typeof(List<>).MakeGenericType(entity.RuntimeReturnType);
-                Type jaggedListType = typeof(List<>).MakeGenericType(listType);
-                ConstructorInfo listCtor = listType.GetConstructor(new Type[] { typeof(int) })!;
-                ConstructorInfo jaggedListCtor = jaggedListType.GetConstructor(new Type[] { typeof(int) })!;
+                (NewList.Blocking, NewJaggedList.Blocking) = GetListFunctions(entity.RuntimeReturnType.Blocking);
+                (NewList.Async,    NewJaggedList.Async)    = GetListFunctions(entity.RuntimeReturnType.Async);
 
-                ParameterExpression capacity1 = Expression.Parameter(typeof(int), "capacity");
-                ParameterExpression capacity2 = Expression.Parameter(typeof(int), "capacity");
+                return;
 
-                NewList = Expression.Lambda<Func<int, IList>>(Expression.New(listCtor, capacity1), capacity1).Compile();
-                NewJaggedList = Expression.Lambda<Func<int, IList>>(Expression.New(jaggedListCtor, capacity2), capacity2).Compile();
+                (Func<int, IList>? newList, Func<int, IList>? newJaggedList) GetListFunctions(Type runtimeType)
+                {
+                    Type listType = typeof(List<>).MakeGenericType(runtimeType);
+                    Type jaggedListType = typeof(List<>).MakeGenericType(listType);
+                    ConstructorInfo listCtor = listType.GetConstructor(new Type[] { typeof(int) })!;
+                    ConstructorInfo jaggedListCtor = jaggedListType.GetConstructor(new Type[] { typeof(int) })!;
+
+                    ParameterExpression capacity1 = Expression.Parameter(typeof(int), "capacity");
+                    ParameterExpression capacity2 = Expression.Parameter(typeof(int), "capacity");
+
+                    return (
+                            Expression.Lambda<Func<int, IList>>(Expression.New(listCtor, capacity1), capacity1).Compile(),
+                            Expression.Lambda<Func<int, IList>>(Expression.New(jaggedListCtor, capacity2), capacity2).Compile()
+                        );
+                }
             }
 
             public AsResult Field { get; private set; }
@@ -111,9 +126,9 @@ namespace Blueprint41.Query
             public Type ResultType { get; private set; }
             public ResultHelper Info { get; private set; }
             public Func<object?, object?>? ConvertMethod { get; private set; }
-            public Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>? MapMethod { get; private set; }
-            public Func<int, IList>? NewList { get; private set; }
-            public Func<int, IList>? NewJaggedList { get; private set; }
+            public readonly RuntimeRegistered<Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?> MapMethod;
+            public readonly RuntimeRegistered<Func<int, IList>?> NewList;
+            public readonly RuntimeRegistered<Func<int, IList>?> NewJaggedList;
         }
     }
 }

@@ -12,13 +12,13 @@ namespace Blueprint41.DatastoreTemplates
         private const string ASYNC    = "Async";
         private const string BLOCKING = "Sync";
 
-        public GeneratorSettings(string projectFolder, string projectNamespace = "Datastore", EntityFlavor flavor = EntityFlavor.Both)
+        public GeneratorSettings(string projectFolder, string projectNamespace = "Datastore", EntityGenerationFlavor flavor = EntityGenerationFlavor.Both)
         {
             ProjectNamespace = projectNamespace;
             ProjectFolder = projectFolder;
 
-            Blocking = flavor.HasFlag(EntityFlavor.Blocking) ? new GeneratorFlavorSettings(this, EntityFlavor.Blocking, BLOCKING) : null;
-            Async    = flavor.HasFlag(EntityFlavor.Async)    ? new GeneratorFlavorSettings(this, EntityFlavor.Async,    ASYNC)    : null;
+            Blocking = flavor.HasFlag(EntityGenerationFlavor.Blocking) ? new GeneratorFlavorSettings(this, EntityGenerationFlavor.Blocking, BLOCKING) : null;
+            Async    = flavor.HasFlag(EntityGenerationFlavor.Async)    ? new GeneratorFlavorSettings(this, EntityGenerationFlavor.Async,    ASYNC)    : null;
             Any      = new GeneratorFlavorSettings(this);
 
             settings = new Lazy<IReadOnlyList<GeneratorFlavorSettings>>(delegate ()
@@ -95,7 +95,7 @@ namespace Blueprint41.DatastoreTemplates
 
             Flavor = null;
         }
-        internal GeneratorFlavorSettings(GeneratorSettings parent, EntityFlavor flavor, string postfix)
+        internal GeneratorFlavorSettings(GeneratorSettings parent, EntityGenerationFlavor flavor, string postfix)
         {
             Parent = parent;
 
@@ -134,7 +134,7 @@ namespace Blueprint41.DatastoreTemplates
         }
 
         internal GeneratorSettings Parent { get; }
-        public EntityFlavor? Flavor { get; }
+        public EntityGenerationFlavor? Flavor { get; }
 
         public string ProjectFolder => Parent.ProjectFolder;
         public string ProjectNamespace => Parent.ProjectNamespace;
@@ -174,9 +174,8 @@ namespace Blueprint41.DatastoreTemplates
         }
     }
 
-
     [Flags]
-    public enum EntityFlavor
+    public enum EntityGenerationFlavor
     {
         Blocking = 1,
         Async = 2,

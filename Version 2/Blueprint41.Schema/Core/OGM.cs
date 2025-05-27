@@ -28,6 +28,7 @@ namespace Blueprint41.Core
         Transaction RunningTransaction { get; }
 
         Entity GetEntity();
+        EntityFlavor Flavor { get; }
 
         void SetChanged();
     }

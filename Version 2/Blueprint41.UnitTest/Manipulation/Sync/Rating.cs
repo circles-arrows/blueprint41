@@ -325,6 +325,7 @@ namespace Datastore.Manipulation.Sync
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Blocking;
 
         private static RatingEvents events = null;
         public static RatingEvents Events

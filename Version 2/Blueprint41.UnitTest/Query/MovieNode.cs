@@ -24,6 +24,13 @@ namespace Datastore.Query
 
     public partial class MovieNode : Blueprint41.Query.Node
     {
+        [Obsolete]
+        static MovieNode()
+        {
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
+        }
+
         public static implicit operator QueryCondition(MovieNode a)
         {
             return new QueryCondition(a);

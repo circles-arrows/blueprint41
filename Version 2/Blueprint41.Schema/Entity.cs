@@ -556,20 +556,18 @@ namespace Blueprint41
         /// <summary>
         /// The dot-net type at runtime that was generated (either a class or an interface)
         /// </summary>
-        public Type RuntimeReturnType => _runtimeReturnType ?? throw new InvalidOperationException("Runtime types are not yet initialized.");
-        private Type? _runtimeReturnType = null;
+        public readonly RuntimeReturnTypes RuntimeReturnType = new RuntimeReturnTypes();
 
         /// <summary>
         /// The dot-net type at runtime that was generated (the class, not the interface)
         /// </summary>
-        public Type RuntimeClassType => _runtimeClassType ?? throw new InvalidOperationException("Runtime types are not yet initialized.");
-        private Type? _runtimeClassType = null;
-        void ISetRuntimeType.SetRuntimeTypes(Type returnType, Type classType)
-        {
-            _runtimeReturnType = returnType;
-            _runtimeClassType = classType;
+        public readonly RuntimeReturnTypes RuntimeClassType = new RuntimeReturnTypes();
 
-            Parent.TypesRegistered = true;
+        void ISetRuntimeType.SetRuntimeTypes(Type returnType, Type classType, EntityFlavor flavor)
+        {
+            RuntimeReturnType.Set(flavor, returnType);
+            RuntimeClassType.Set(flavor, classType);
+            Parent.TypesRegistered.Set(flavor, true);
         }
 
         #region Refactor Actions
@@ -940,22 +938,21 @@ namespace Blueprint41
         /// </summary>
         public IEntityEvents Events { get { return this; } }
 
-        internal Type EntityEventArgsType
+        internal RuntimeReturnTypes EntityEventArgsType
         {
             get
             {
-                if (entityEventArgsType is null)
+                if (_entityEventArgsType is null)
                 {
                     lock (this)
                     {
-                        if (entityEventArgsType is null)
-                            entityEventArgsType = typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType!);
+                        _entityEventArgsType ??= new RuntimeReturnTypes(RuntimeReturnType);
                     }
                 }
-                return entityEventArgsType;
+                return _entityEventArgsType;
             }
         }
-        private Type? entityEventArgsType = null;
+        private RuntimeReturnTypes? _entityEventArgsType = null;
 
         /// <summary>
         /// True when a OnNew event is registered
@@ -1650,7 +1647,7 @@ namespace Blueprint41
         //    public AliasResultInfo? Inherits { get; set; }
         //}
 
-        internal OGM Activator(EventOptions eventOptions = EventOptions.GraphEvents)
+        internal OGM Activator(EntityFlavor flavor, EventOptions eventOptions = EventOptions.GraphEvents)
         {
             if (IsAbstract)
                 throw new NotSupportedException($"You cannot instantiate the abstract entity {Name}.");
@@ -1660,7 +1657,7 @@ namespace Blueprint41
                 lock(this)
                 {
                     if (activator is null)
-                        activator = Expression.Lambda<Func<OGM>>(Expression.New(RuntimeReturnType)).Compile();
+                        activator = Expression.Lambda<Func<OGM>>(Expression.New(RuntimeReturnType.Get(flavor))).Compile();
                 }
             }
 
@@ -1694,7 +1691,7 @@ namespace Blueprint41
             if (instance is not null)
                 return instance;
 
-            OGM item = Activator();
+            OGM item = Activator(EntityFlavor.Blocking);
             item.SetKey(key);
 
             return item;
@@ -1716,20 +1713,20 @@ namespace Blueprint41
             item.Delete(false);
         }
 
-        internal OGM? Map(driver.NodeResult node, NodeMapping mappingMode)
+        internal OGM? Map(driver.NodeResult node, NodeMapping mappingMode, EntityFlavor flavor)
         {
-            return Map(node, null!, null!, mappingMode);
+            return Map(node, null!, null!, mappingMode, flavor);
         }
 
-        internal OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
+        internal OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode, EntityFlavor flavor)
         {
-            if(mapMethod is null)
+            if (mapMethod is null)
             {
                 lock (this)
                 {
                     if (mapMethod is null)
                     {
-                        MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                        MethodInfo? method = RuntimeClassType.Get(flavor).GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
                         mapMethod = (method is null) ? null : (Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
                     }
                 }
@@ -1773,7 +1770,7 @@ namespace Blueprint41
         /// </summary>
         /// <param name="eventOptions">Which events should be fired during the creation</param>
         /// <returns>The new node</returns>
-        OGM IEntityAdvancedFeatures.Activator(EventOptions eventOptions) => Activator(eventOptions);
+        OGM IEntityAdvancedFeatures.Activator(EntityFlavor flavor, EventOptions eventOptions) => Activator(flavor, eventOptions);
 
         /// <summary>
         /// Map a node loaded via a query into a new node instance
@@ -1781,7 +1778,7 @@ namespace Blueprint41
         /// <param name="node">The raw cypher node</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? IEntityAdvancedFeatures.Map(driver.NodeResult node, NodeMapping mappingMode) => Map(node, mappingMode);
+        OGM? IEntityAdvancedFeatures.Map(driver.NodeResult node, NodeMapping mappingMode, EntityFlavor flavor) => Map(node, mappingMode, flavor);
 
         /// <summary>
         /// Map a node loaded via a query into a new node instance
@@ -1791,7 +1788,7 @@ namespace Blueprint41
         /// <param name="parameters">The cypher query parameters</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? IEntityAdvancedFeatures.Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode) => Map(node, cypher, parameters, mappingMode);
+        OGM? IEntityAdvancedFeatures.Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode, EntityFlavor flavor) => Map(node, cypher, parameters, mappingMode, flavor);
 
         #endregion
 

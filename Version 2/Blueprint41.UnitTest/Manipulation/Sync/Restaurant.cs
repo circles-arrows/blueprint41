@@ -139,8 +139,8 @@ namespace Datastore.Manipulation.Sync
             {
                 NodeType = "Restaurant";
 
-                City = new EntityCollection<City>(Wrapper, Members.City, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
-                Persons = new EntityCollection<Person>(Wrapper, Members.Persons, item => { if (Members.Persons.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
+                City = new EntityCollection<City>(Wrapper, Members.City, EntityFlavor.Blocking, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
+                Persons = new EntityCollection<Person>(Wrapper, Members.Persons, EntityFlavor.Blocking, item => { if (Members.Persons.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -424,6 +424,7 @@ namespace Datastore.Manipulation.Sync
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Blocking;
 
         private static RestaurantEvents events = null;
         public static RestaurantEvents Events

@@ -142,8 +142,8 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Restaurant";
 
-                City = new EntityCollection<City>(Wrapper, Members.City, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
-                Persons = new EntityCollection<Person>(Wrapper, Members.Persons, item => { if (Members.Persons.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
+                City = new EntityCollection<City>(Wrapper, Members.City, EntityFlavor.Async, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
+                Persons = new EntityCollection<Person>(Wrapper, Members.Persons, EntityFlavor.Async, item => { if (Members.Persons.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -427,6 +427,7 @@ namespace Datastore.Manipulation.Async
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Async;
 
         private static RestaurantEvents events = null;
         public static RestaurantEvents Events

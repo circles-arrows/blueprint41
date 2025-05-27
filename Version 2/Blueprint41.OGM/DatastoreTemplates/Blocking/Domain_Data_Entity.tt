@@ -397,20 +397,20 @@ if (!DALModel.IsAbstract)
                 if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { object loadHack = item.<#= attr.ForeignProperty.Name #>; } });
+                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Blocking, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { object loadHack = item.<#= attr.ForeignProperty.Name #>; } });
 <#
                 }
                 else if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Collection)
                 {
                     string countMethod = (attr.Relationship.IsTimeDependent) ? "CountAll" : "Count";
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = item.<#= attr.ForeignProperty.Name #>.<#= countMethod #>; } });
+                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Blocking, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = item.<#= attr.ForeignProperty.Name #>.<#= countMethod #>; } });
 <#
                 }
                 else
                 {
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>);
+                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Blocking);
 <#
                 }
             }
@@ -1502,6 +1502,7 @@ if (!DALModel.IsAbstract)
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Blocking;
 
         private static <#= DALModel.Name #>Events events = null;
         public static <#= DALModel.Name #>Events Events

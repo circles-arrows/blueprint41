@@ -150,7 +150,7 @@ namespace Datastore.Manipulation.Sync
             {
                 NodeType = "StreamingService";
 
-                Subscribers = new EntityTimeCollection<Person>(Wrapper, Members.Subscribers, item => { if (Members.Subscribers.Events.HasRegisteredChangeHandlers) { int loadHack = item.StreamingServiceSubscriptions.CountAll; } });
+                Subscribers = new EntityTimeCollection<Person>(Wrapper, Members.Subscribers, EntityFlavor.Blocking, item => { if (Members.Subscribers.Events.HasRegisteredChangeHandlers) { int loadHack = item.StreamingServiceSubscriptions.CountAll; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -369,6 +369,7 @@ namespace Datastore.Manipulation.Sync
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Blocking;
 
         private static StreamingServiceEvents events = null;
         public static StreamingServiceEvents Events

@@ -24,6 +24,13 @@ namespace Datastore.Query
 
     public partial class PersonNode : Blueprint41.Query.Node
     {
+        [Obsolete]
+        static PersonNode()
+        {
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
+        }
+
         public static implicit operator QueryCondition(PersonNode a)
         {
             return new QueryCondition(a);

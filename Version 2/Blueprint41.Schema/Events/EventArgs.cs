@@ -84,7 +84,7 @@ namespace Blueprint41.Events
 
         internal static EntityEventArgs CreateInstance(EventTypeEnum eventType, OgmClass sender, Transaction trans, bool locked = false)
         {
-            Type type = sender.GetEntity().EntityEventArgsType;
+            Type type = sender.GetEntity().EntityEventArgsType.Get(sender.Flavor);
 
             EntityEventArgs args = (EntityEventArgs)Activator.CreateInstance(type, true)!;
             args.EventType = eventType;
@@ -163,7 +163,7 @@ namespace Blueprint41.Events
         internal static PropertyEventArgs CreateInstance(EventTypeEnum eventType, OgmClass sender, Property property, object? previousValue, object? assignedValue, DateTime moment, OperationEnum operation, Transaction trans)
         {
             Type senderType = sender.GetType();
-            Type argsType = property.GetPropertyEventArgsType(senderType);
+            Type argsType = property.GetPropertyEventArgsType(senderType, sender.Flavor);
 
             PropertyEventArgs args = (PropertyEventArgs)Activator.CreateInstance(argsType, true)!;
             args.EventType = eventType;
@@ -187,8 +187,8 @@ namespace Blueprint41.Events
             if (Sender is null || !Sender.GetType().IsSubclassOfOrSelf(typeof(TSender)))
                 throw new InvalidCastException(string.Format("The event sender (type={0}) cannot be cast to generic parmameter TSender (type={1})", Sender?.GetType().Name ?? "Unknown", typeof(TSender).Name));
 
-            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType))
-                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType)?.Name ?? "Unknown", typeof(TSender).Name));
+            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType.Get(Sender.Flavor)))
+                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType.Get(Sender.Flavor))?.Name ?? "Unknown", typeof(TSender).Name));
 
             return (PropertyEventArgs<TSender, TReturnType>)this;
         }
@@ -216,8 +216,8 @@ namespace Blueprint41.Events
 
         public virtual PropertyEventArgs<TSender, TReturnType> As<TReturnType>()
         {
-            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType))
-                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType)?.Name ?? "Unknown", typeof(TSender).Name));
+            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType.Get(Sender.Flavor)))
+                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType.Get(Sender.Flavor))?.Name ?? "Unknown", typeof(TSender).Name));
 
             return (PropertyEventArgs<TSender, TReturnType>)this;
         }

@@ -157,7 +157,7 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "City";
 
-                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
+                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -382,6 +382,7 @@ namespace Datastore.Manipulation.Async
             }
             return entity;
         }
+        public override EntityFlavor Flavor => EntityFlavor.Async;
 
         private static CityEvents events = null;
         public static CityEvents Events

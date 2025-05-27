@@ -96,7 +96,7 @@ namespace Blueprint41.Persistence
                 if (node is null)
                     continue;
 
-                OGM item = ReadNode(parent, targetEntity, node);
+                OGM item = ReadNode(parent, targetEntity, node, parent.Flavor);
                 driver.RelationshipResult rel = record["rel"].As<driver.RelationshipResult>();
 
                 DateTime? startDate = null;
@@ -179,8 +179,8 @@ namespace Blueprint41.Persistence
                     startDate = (record["StartDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["StartDate"].As<long>()) : (DateTime?)null;
                     endDate = (record["EndDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["EndDate"].As<long>()) : (DateTime?)null;
                 }
-                OGM? parent = target.Parent.GetEntity().Map(record["Parent"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity);
-                OGM? item = targetEntity.Map(record["Item"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity);
+                OGM? parent = target.Parent.GetEntity().Map(record["Parent"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity, target.Parent.Flavor);
+                OGM? item = targetEntity.Map(record["Item"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity, target.Parent.Flavor);
 
                 if (parent is null || item is null)
                     throw new NotSupportedException("The cypher query expected to have a parent node and a child node.");
@@ -228,35 +228,32 @@ namespace Blueprint41.Persistence
 
             return retval;
         }
-        private OGM ReadNode(OGM parent, Entity targetEntity, driver.NodeResult node)
+        private OGM ReadNode(OGM parent, Entity targetEntity, driver.NodeResult node, EntityFlavor flavor)
         {
             object? keyObject = null;
             if (targetEntity.Key is not null)
                 node.Properties.TryGetValue(targetEntity.Key.Name, out keyObject);
 
-            string? typeName = null;
-            if (targetEntity.NodeType is not null)
-            {
-                object? nodeType;
-                if (node.Properties.TryGetValue(targetEntity.NodeType.Name, out nodeType))
-                    typeName = nodeType as string;
-            }
+            Entity? entity = null;
+            //if (targetEntity.NodeType is not null)
+            //{
+            //    object? nodeType;
+            //    if (node.Properties.TryGetValue(targetEntity.NodeType.Name, out nodeType))
+            //        typeName = nodeType as string;
+            //}
 
-            if (typeName is null)
-            {
-                if (!targetEntity.IsAbstract)
-                    typeName = targetEntity.Name;
-                else
-                    typeName = targetEntity.GetConcreteClasses().Where(e => node.Labels.Contains(e.Label.Name)).Select(e => e.Name).FirstOrDefault();
-            }
+            if (!targetEntity.IsAbstract)
+                entity = targetEntity;
+            else
+                entity = targetEntity.GetConcreteClasses().FirstOrDefault(e => node.Labels.Contains(e.Label.Name));
 
-            if (typeName is null)
+            if (entity is null)
                 throw new NotSupportedException("The concrete type of the node could not be determined.");
 
             OGM? item = null;
             if (keyObject is not null)
             {
-                item = Transaction.RunningTransaction.GetEntityByKey(typeName, keyObject);
+                item = Transaction.RunningTransaction.GetEntityByKey(entity.Name, keyObject);
                 if (item is not null &&
                     (item.PersistenceState == PersistenceState.HasUid
                         ||
@@ -273,21 +270,12 @@ namespace Blueprint41.Persistence
                 {
                     if (targetEntity.Parent.IsUpgraded)
                     {
-                        Type? type = typeCache.TryGetOrAdd(typeName, key =>
-                        {
-                            type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
-                            if (type is null)
-                                throw new NotSupportedException();
-
-                            return type;
-                        });
-                        Transaction.Execute(() =>
-                        {
-                            item = (OGM)Activator.CreateInstance(type)!;
-                        }, EventOptions.SupressEvents);
+                        item = entity.Activator(flavor, EventOptions.SupressEvents);
                     }
                     else
+                    {
                         item = new DynamicEntity(Transaction.Current, targetEntity, DatastoreModel.Parser.ShouldExecute);
+                    }
 
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item!.SetData(node.Properties);
@@ -303,7 +291,6 @@ namespace Blueprint41.Persistence
 
             return item;
         }
-        private static AtomicDictionary<string, Type> typeCache = new AtomicDictionary<string, Type>();
 
         public void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent, Dictionary<string, object>? properties)
         {

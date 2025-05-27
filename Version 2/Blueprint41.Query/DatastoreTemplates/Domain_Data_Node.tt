@@ -39,6 +39,13 @@ namespace <#= Settings.FullQueryNamespace #>
 
     public partial class <#= DALModel.Name #>Node : Blueprint41.Query.Node
     {
+        [Obsolete]
+        static <#= DALModel.Name #>Node()
+        {
+            <#= BlockingSettings.FullCRUDNamespace #>.Register.Types();
+            <#= AsyncSettings.FullCRUDNamespace #>.Register.Types();
+        }
+
         public static implicit operator QueryCondition(<#= DALModel.Name #>Node a)
         {
             return new QueryCondition(a);

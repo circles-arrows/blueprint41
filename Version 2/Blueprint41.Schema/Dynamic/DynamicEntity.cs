@@ -79,9 +79,9 @@ namespace Blueprint41.Dynamic
                 return;
 
             if (item.Relationship.IsTimeDependent)
-                DynamicEntityLinks.Add(item.Name, new EntityTimeCollection<DynamicEntity>(this, item));
+                DynamicEntityLinks.Add(item.Name, new EntityTimeCollection<DynamicEntity>(this, item, EntityFlavor.Blocking));
             else
-                DynamicEntityLinks.Add(item.Name, new EntityCollection<DynamicEntity>(this, item));
+                DynamicEntityLinks.Add(item.Name, new EntityCollection<DynamicEntity>(this, item, EntityFlavor.Blocking));
         }
         internal void RefactorActionPropertyRenamed(string oldname, Property item, MergeAlgorithm mergeAlgorithm = MergeAlgorithm.NotApplicable)
         {
@@ -710,6 +710,7 @@ namespace Blueprint41.Dynamic
         {
             return DynamicEntityType;
         }
+        public EntityFlavor Flavor => EntityFlavor.Dynamic;
 
         public PersistenceProvider PersistenceProvider
         {

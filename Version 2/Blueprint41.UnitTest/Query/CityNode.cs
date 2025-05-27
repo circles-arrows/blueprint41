@@ -24,6 +24,13 @@ namespace Datastore.Query
 
     public partial class CityNode : Blueprint41.Query.Node
     {
+        [Obsolete]
+        static CityNode()
+        {
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
+        }
+
         public static implicit operator QueryCondition(CityNode a)
         {
             return new QueryCondition(a);
