@@ -42,8 +42,20 @@ namespace <#= Settings.FullQueryNamespace #>
         [Obsolete]
         static <#= DALModel.Name #>Node()
         {
+<#
+    if (BlockingSettings is not null)
+    {
+#>
             <#= BlockingSettings.FullCRUDNamespace #>.Register.Types();
+<#
+    }
+    if (AsyncSettings is not null)
+    {
+#>
             <#= AsyncSettings.FullCRUDNamespace #>.Register.Types();
+<#
+    }
+#>
         }
 
         public static implicit operator QueryCondition(<#= DALModel.Name #>Node a)
