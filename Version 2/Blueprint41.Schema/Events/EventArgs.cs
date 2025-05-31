@@ -84,7 +84,9 @@ namespace Blueprint41.Events
 
         internal static EntityEventArgs CreateInstance(EventTypeEnum eventType, OgmClass sender, Transaction trans, bool locked = false)
         {
-            Type type = sender.GetEntity().EntityEventArgsType.Get(sender.Flavor);
+            Type? type = sender.GetEntity().EntityEventArgsType.Get(sender.Flavor);
+            if (type is null)
+                throw new NotSupportedException($"{sender.Flavor} code not generated.");
 
             EntityEventArgs args = (EntityEventArgs)Activator.CreateInstance(type, true)!;
             args.EventType = eventType;

@@ -105,7 +105,20 @@ if (!DALModel.IsAbstract)
         [Obsolete]
         static <#= DALModel.ClassName #>()
         {
-            Register.Types();
+<#
+    if (BlockingSettings is not null)
+    {
+#>
+            <#= BlockingSettings.FullCRUDNamespace #>.Register.Types();
+<#
+    }
+    if (AsyncSettings is not null)
+    {
+#>
+            <#= AsyncSettings.FullCRUDNamespace #>.Register.Types();
+<#
+    }
+#>
         }
 
 <#

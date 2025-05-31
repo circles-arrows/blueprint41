@@ -90,8 +90,8 @@ namespace Blueprint41.Query
                 NewList       = new RuntimeRegistered<Func<int, IList>?>();
                 NewJaggedList = new RuntimeRegistered<Func<int, IList>?>();
 
-                MethodInfo? blockedMethod = (entity is null) ? null : entity!.RuntimeClassType.Blocking.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                MethodInfo? asyncMethod   = (entity is null) ? null : entity!.RuntimeClassType.Async.   GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                MethodInfo? blockedMethod = (entity is null) ? null : entity!.RuntimeClassType.Blocking?.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                MethodInfo? asyncMethod   = (entity is null) ? null : entity!.RuntimeClassType.Async?.   GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
                 MapMethod.Blocking        = (blockedMethod is null) ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), blockedMethod, true);
                 MapMethod.Async           = (asyncMethod is null)   ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), asyncMethod,   true);
 
@@ -103,8 +103,11 @@ namespace Blueprint41.Query
 
                 return;
 
-                (Func<int, IList>? newList, Func<int, IList>? newJaggedList) GetListFunctions(Type runtimeType)
+                (Func<int, IList>? newList, Func<int, IList>? newJaggedList) GetListFunctions(Type? runtimeType)
                 {
+                    if (runtimeType is null)
+                        return (null, null);
+
                     Type listType = typeof(List<>).MakeGenericType(runtimeType);
                     Type jaggedListType = typeof(List<>).MakeGenericType(listType);
                     ConstructorInfo listCtor = listType.GetConstructor(new Type[] { typeof(int) })!;

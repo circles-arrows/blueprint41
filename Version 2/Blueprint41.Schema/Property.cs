@@ -1292,8 +1292,12 @@ namespace Blueprint41
                         {
                             if (getValueWithMoment is null)
                             {
+                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                                if (type is null)
+                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+
                                 string name = string.Concat("Get", Name);
-                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetMethods().FirstOrDefault(item => item.Name == name);
+                                MethodInfo? method = type.GetMethods().FirstOrDefault(item => item.Name == name);
                                 if (method is null)
                                     throw new NotSupportedException("No get accessor exists");
 
@@ -1311,7 +1315,11 @@ namespace Blueprint41
                         {
                             if (getValue is null)
                             {
-                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
+                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                                if (type is null)
+                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+
+                                MethodInfo? method = type.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
                                 if (method is null)
                                     throw new NotSupportedException("No get accessor exists");
 
@@ -1349,8 +1357,12 @@ namespace Blueprint41
                         {
                             if (setValueWithMoment is null)
                             {
+                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                                if (type is null)
+                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+
                                 string name = string.Concat("Set", Name);
-                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetMethods().FirstOrDefault(item => item.Name == name);
+                                MethodInfo? method = type.GetMethods().FirstOrDefault(item => item.Name == name);
                                 if (method is null)
                                     throw new NotSupportedException("No set accessor exists");
 
@@ -1368,7 +1380,11 @@ namespace Blueprint41
                         {
                             if (setValue is null)
                             {
-                                MethodInfo? method = entity.RuntimeReturnType.Get(instance.Flavor).GetProperties().First(item => item.Name == Name).GetSetMethod(true);
+                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                                if (type is null)
+                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+
+                                MethodInfo? method = type.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
                                 if (method is null)
                                 {
                                     if (IsRowVersion)
@@ -1527,7 +1543,12 @@ namespace Blueprint41
                 {
                     if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
                     {
-                        type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType.Get(flavor));
+                        Type? innerType = SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType.Get(flavor);
+                        if (innerType is null)
+                            throw new NotSupportedException($"{flavor} code not generated.");
+
+                        type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, innerType);
+
                         propertyEventArgsType.Add(senderType.Name, type);
                     }
                 }

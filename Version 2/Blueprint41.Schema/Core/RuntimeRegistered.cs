@@ -46,7 +46,7 @@ namespace Blueprint41.Core
         }
 #nullable enable
     }
-    public class RuntimeReturnTypes : RuntimeRegistered<Type>
+    public class RuntimeReturnTypes : RuntimeRegistered<Type?>
     {
         internal RuntimeReturnTypes()
         {
@@ -57,11 +57,12 @@ namespace Blueprint41.Core
             _returnTypes = returnTypes;
         }
 
-        public override Type Blocking
+#pragma warning disable CS8764
+        public override Type? Blocking
         {
             get
             {
-                if (_returnTypes is not null && base.Blocking is null)
+                if (_returnTypes?.Blocking is not null && base.Blocking is null)
                 {
                     lock (this)
                     {
@@ -69,14 +70,14 @@ namespace Blueprint41.Core
                             base.Blocking = typeof(EntityEventArgs<>).MakeGenericType(_returnTypes.Blocking);
                     }
                 }
-                return base.Blocking ?? throw new InvalidOperationException("Runtime types are not yet initialized.");
+                return base.Blocking;
             }
         }
-        public override Type Async
+        public override Type? Async
         {
             get
             {
-                if (_returnTypes is not null && base.Async is null)
+                if (_returnTypes?.Async is not null && base.Async is null)
                 {
                     lock (this)
                     {
@@ -84,7 +85,7 @@ namespace Blueprint41.Core
                             base.Async = typeof(EntityEventArgs<>).MakeGenericType(_returnTypes.Async);
                     }
                 }
-                return base.Async ?? throw new InvalidOperationException("Runtime types are not yet initialized.");
+                return base.Async;
             }
         }
 

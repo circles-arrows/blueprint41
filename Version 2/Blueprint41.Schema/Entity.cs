@@ -1654,10 +1654,14 @@ namespace Blueprint41
 
             if (activator is null)
             {
-                lock(this)
+                Type? type = RuntimeReturnType.Get(flavor);
+                if (type is null)
+                    throw new NotSupportedException($"{flavor} code not generated.");
+
+                lock (this)
                 {
                     if (activator is null)
-                        activator = Expression.Lambda<Func<OGM>>(Expression.New(RuntimeReturnType.Get(flavor))).Compile();
+                        activator = Expression.Lambda<Func<OGM>>(Expression.New(type)).Compile();
                 }
             }
 
@@ -1726,7 +1730,11 @@ namespace Blueprint41
                 {
                     if (mapMethod is null)
                     {
-                        MethodInfo? method = RuntimeClassType.Get(flavor).GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                        Type? type = RuntimeClassType.Get(flavor);
+                        if (type is null)
+                            throw new NotSupportedException($"{flavor} code not generated.");
+
+                        MethodInfo? method = type.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
                         mapMethod = (method is null) ? null : (Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
                     }
                 }
