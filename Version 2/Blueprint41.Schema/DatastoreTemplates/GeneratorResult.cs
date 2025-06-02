@@ -80,4 +80,14 @@ namespace Blueprint41.DatastoreTemplates
         private readonly Dictionary<string, string> _async;
         private readonly Dictionary<string, string> _any;
     }
+    public class GeneratorResult<T> : GeneratorResult
+        where T : DatastoreModel<T>, new()
+    {
+        public GeneratorResult(T model)
+        {
+            Model = model;
+        }
+
+        public T Model { get; set; }
+    }
 }

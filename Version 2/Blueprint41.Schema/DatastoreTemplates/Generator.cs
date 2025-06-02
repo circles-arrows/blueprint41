@@ -11,15 +11,14 @@ namespace Blueprint41.DatastoreTemplates
     public static class Generator
     {
         private const string FILE_EXTENSION = ".cs";
-        public static GeneratorResult Execute<T>(GeneratorSettings settings)
+        public static GeneratorResult<T> Execute<T>(GeneratorSettings settings)
             where T : DatastoreModel<T>, new()
         {
             if (settings is null)
                 throw new ArgumentNullException(nameof(settings));
 
-            DatastoreModel model = DatastoreModel<T>.Model;
-
-            GeneratorResult generatorResult = new();
+            T model = DatastoreModel<T>.Model;
+            GeneratorResult<T> generatorResult = new GeneratorResult<T>(model);
 
             foreach (GeneratorFlavorSettings flavor in settings)
             {
