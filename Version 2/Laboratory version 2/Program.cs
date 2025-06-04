@@ -53,7 +53,7 @@ namespace Laboratory
                 ThresholdInSeconds = 0,
             };
 
-            MockModel model = MockModel.Connect(new Uri(@"bolt://localhost:7687"), AuthToken.Basic("neo4j", "neoneoneo"), "unittest", config);
+            MockModel model = MockModel.ConnectTest(new Uri(@"bolt://localhost:7687"), AuthToken.Basic("neo4j", "neoneoneo"), "unittest", config);
             await CleanDB();
 
             model.Execute(true);

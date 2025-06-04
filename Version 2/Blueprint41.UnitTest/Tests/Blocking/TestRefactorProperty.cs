@@ -23,7 +23,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
     internal class TestRefactorProperty : TestBase
     {
         #region IRefactorPropertyRename
-        private class DataModelPropertyRename : DatastoreModel<DataModelPropertyRename>
+        private class DataModelPropertyRename : DatastoreModelEx<DataModelPropertyRename>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -78,7 +78,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                var model = Connect<DataModelPropertyRename>(true).ExecuteModel(true);                
+                var model = Connect<DataModelPropertyRename>(true).ExecuteModel(true);
 
                 Assert.DoesNotThrow(() => { var a = model.Entities["Person"].Properties["FullName"]; });
                 Assert.That(output.GetOutput(), Contains.Substring("executing RenameProperty -> Rename property from Name to FullName"));
@@ -88,7 +88,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorPropertyMove
-        private class DataModelPropertyMove : DatastoreModel<DataModelPropertyMove>
+        private class DataModelPropertyMove : DatastoreModelEx<DataModelPropertyMove>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -133,7 +133,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class DataModelPropertyMoveToBase : DatastoreModel<DataModelPropertyMoveToBase>
+        private class DataModelPropertyMoveToBase : DatastoreModelEx<DataModelPropertyMoveToBase>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -180,7 +180,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class DataModelPropertyMoveFromBase : DatastoreModel<DataModelPropertyMoveFromBase>
+        private class DataModelPropertyMoveFromBase : DatastoreModelEx<DataModelPropertyMoveFromBase>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -247,7 +247,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorPropertyMerge
-        private class DataModelPropertyMerge : DatastoreModel<DataModelPropertyMerge>
+        private class DataModelPropertyMerge : DatastoreModelEx<DataModelPropertyMerge>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -327,7 +327,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorPropertyConvert
-        private class DataModelPropertyConvert : DatastoreModel<DataModelPropertyConvert>
+        private class DataModelPropertyConvert : DatastoreModelEx<DataModelPropertyConvert>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -412,7 +412,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorPropertySetIndexTypeAndDeprecate
-        private class DataModelPropertySetIndexTypeAndDeprecate : DatastoreModel<DataModelPropertySetIndexTypeAndDeprecate>
+        private class DataModelPropertySetIndexTypeAndDeprecate : DatastoreModelEx<DataModelPropertySetIndexTypeAndDeprecate>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -514,7 +514,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorReroute
 
-        private class DataModelPropertyReroute : DatastoreModel<DataModelPropertyReroute>
+        private class DataModelPropertyReroute : DatastoreModelEx<DataModelPropertyReroute>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -588,7 +588,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorConvert, IRefactorMakeMandatory(), IRefactorMakeNullable
-        private class DataModelPropertyConvertRel : DatastoreModel<DataModelPropertyConvertRel>
+        private class DataModelPropertyConvertRel : DatastoreModelEx<DataModelPropertyConvertRel>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -662,7 +662,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorMakeMandatory with values
-        private class DataModelPropertyMandatory : DatastoreModel<DataModelPropertyMandatory>
+        private class DataModelPropertyMandatory : DatastoreModelEx<DataModelPropertyMandatory>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 

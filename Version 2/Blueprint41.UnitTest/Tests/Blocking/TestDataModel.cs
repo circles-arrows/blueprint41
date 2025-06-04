@@ -17,7 +17,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
     {
         #region DataModelWithRowVersion
 
-        private class DataModelWithRowVersion : DatastoreModel<DataModelWithRowVersion>
+        private class DataModelWithRowVersion : DatastoreModelEx<DataModelWithRowVersion>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -52,7 +52,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         public void EnsureEntitiesHaveRowVersionPropertyOrInherited()
         {
             DatastoreModel model = Connect<DataModelWithRowVersion>().ExecuteModel(false);
-            
+
             Assert.IsTrue(model.Entities["BaseEntityWithRowVersion"].Properties["LastModifiedOn"].IsRowVersion);
             Assert.IsTrue(model.Entities["PersonInheritedBase"].IsSubsclassOf(model.Entities["BaseEntityWithRowVersion"]));
             Assert.IsFalse(model.Entities["AddressWithNoParent"].Properties["LastModifiedOn"].IsRowVersion);
@@ -61,7 +61,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region DataModelWithInvalidRowVersion
-        private class DataModelWithInvalidRowVersion : DatastoreModel<DataModelWithInvalidRowVersion>
+        private class DataModelWithInvalidRowVersion : DatastoreModelEx<DataModelWithInvalidRowVersion>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -104,7 +104,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region DataModelWithMultipleRowVersion
-        private class DataModelWithMultipleRowVersion : DatastoreModel<DataModelWithMultipleRowVersion>
+        private class DataModelWithMultipleRowVersion : DatastoreModelEx<DataModelWithMultipleRowVersion>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -144,7 +144,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region DataModelEntityKey
-        private class DataModelKeyNotUnique : DatastoreModel<DataModelKeyNotUnique>
+        private class DataModelKeyNotUnique : DatastoreModelEx<DataModelKeyNotUnique>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -168,7 +168,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class DataModelKeyIsUnique : DatastoreModel<DataModelKeyIsUnique>
+        private class DataModelKeyIsUnique : DatastoreModelEx<DataModelKeyIsUnique>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -195,7 +195,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class DataModelMultipleKey : DatastoreModel<DataModelMultipleKey>
+        private class DataModelMultipleKey : DatastoreModelEx<DataModelMultipleKey>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -238,7 +238,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion        
 
         #region DataModelProperties
-        private class DataModelEntityWithSameProperties : DatastoreModel<DataModelEntityWithSameProperties>
+        private class DataModelEntityWithSameProperties : DatastoreModelEx<DataModelEntityWithSameProperties>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -256,7 +256,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class DataModelEntityWithSamePropertiesFromBase : DatastoreModel<DataModelEntityWithSamePropertiesFromBase>
+        private class DataModelEntityWithSamePropertiesFromBase : DatastoreModelEx<DataModelEntityWithSamePropertiesFromBase>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -282,7 +282,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class DataModelEntityWithSamePropertiesFromChangedInheritance : DatastoreModel<DataModelEntityWithSamePropertiesFromChangedInheritance>
+        private class DataModelEntityWithSamePropertiesFromChangedInheritance : DatastoreModelEx<DataModelEntityWithSamePropertiesFromChangedInheritance>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -337,7 +337,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorEntity CreateNode
 
-        private class DataModelWithStaticData : DatastoreModel<DataModelWithStaticData>
+        private class DataModelWithStaticData : DatastoreModelEx<DataModelWithStaticData>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -425,7 +425,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             Assert.IsInstanceOf<List<string>>(values["Fields"]);
         }
 
-        private class DataModelWithStaticDataKeyDuplicate : DatastoreModel<DataModelWithStaticDataKeyDuplicate>
+        private class DataModelWithStaticDataKeyDuplicate : DatastoreModelEx<DataModelWithStaticDataKeyDuplicate>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -459,7 +459,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             Assert.That(exception.Message, Contains.Substring("A static entity with the same key already exists."));
         }
 
-        private class DataModelWithStaticDataWithoutKey : DatastoreModel<DataModelWithStaticDataWithoutKey>
+        private class DataModelWithStaticDataWithoutKey : DatastoreModelEx<DataModelWithStaticDataWithoutKey>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -494,7 +494,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             Assert.That(exception.Message, Contains.Substring("No key exists for entity 'ContactStatus'"));
         }
 
-        private class DataModelWithStaticDataMissingProperty : DatastoreModel<DataModelWithStaticDataMissingProperty>
+        private class DataModelWithStaticDataMissingProperty : DatastoreModelEx<DataModelWithStaticDataMissingProperty>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -531,7 +531,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorEntity DeleteNode
 
-        private class DataModelStaticDataWithDeleteNode : DatastoreModel<DataModelStaticDataWithDeleteNode>
+        private class DataModelStaticDataWithDeleteNode : DatastoreModelEx<DataModelStaticDataWithDeleteNode>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -579,7 +579,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorEntity Deprecate
-        private class DataModelWithDeprecatedEntities : DatastoreModel<DataModelWithDeprecatedEntities>
+        private class DataModelWithDeprecatedEntities : DatastoreModelEx<DataModelWithDeprecatedEntities>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -622,7 +622,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 var model = Connect<DataModelWithDeprecatedEntities>(true).ExecuteModel(true);
-                
+
                 Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
                 Assert.That(output.GetOutput(), Contains.Substring("Deprecate entity from Person"));
             }
@@ -656,7 +656,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorEntity Rename
 
-        private class DatastoreEntityRefactor : DatastoreModel<DatastoreEntityRefactor>
+        private class DatastoreEntityRefactor : DatastoreModelEx<DatastoreEntityRefactor>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -708,7 +708,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorEntity ApplyConstraints
 
-        private class DatastoreEntityRefactorConstraints : DatastoreModel<DatastoreEntityRefactorConstraints>
+        private class DatastoreEntityRefactorConstraints : DatastoreModelEx<DatastoreEntityRefactorConstraints>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -759,7 +759,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         }
 
 #if !MEMGRAPH
-        private class DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint : DatastoreModel<DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint>
+        private class DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint : DatastoreModelEx<DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -822,7 +822,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorEntity ChangeInheritance()
 
-        private class DatastoreEntityBaseWithoutParent : DatastoreModel<DatastoreEntityBaseWithoutParent>
+        private class DatastoreEntityBaseWithoutParent : DatastoreModelEx<DatastoreEntityBaseWithoutParent>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -863,7 +863,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class DatastoreEntityBaseWithParent : DatastoreModel<DatastoreEntityBaseWithParent>
+        private class DatastoreEntityBaseWithParent : DatastoreModelEx<DatastoreEntityBaseWithParent>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -912,7 +912,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorEntity ResetFunctionalId
-        private class DatastoreEntityResetFunctionalId : DatastoreModel<DatastoreEntityResetFunctionalId>
+        private class DatastoreEntityResetFunctionalId : DatastoreModelEx<DatastoreEntityResetFunctionalId>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -960,7 +960,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorEntity CopyValue
 
-        private class DatastoreEntityCopyValue : DatastoreModel<DatastoreEntityCopyValue>
+        private class DatastoreEntityCopyValue : DatastoreModelEx<DatastoreEntityCopyValue>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -1009,7 +1009,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 Connect<DatastoreEntityCopyValue>(true).Execute(true);
-                
+
                 Assert.IsTrue(Regex.IsMatch(output.GetOutput(), "Copy properties from Name to CopyName for entity Account"));
             }
         }
@@ -1018,7 +1018,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
 
         #region IRefactorEntity SetDefaultValue
 
-        private class DatastoreEntitySetDefaultValue : DatastoreModel<DatastoreEntitySetDefaultValue>
+        private class DatastoreEntitySetDefaultValue : DatastoreModelEx<DatastoreEntitySetDefaultValue>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -1069,7 +1069,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         #endregion
 
         #region IRefactorEntity SetFunctionalId
-        private class DatastoreEntitySetFunctionalId : DatastoreModel<DatastoreEntitySetFunctionalId>
+        private class DatastoreEntitySetFunctionalId : DatastoreModelEx<DatastoreEntitySetFunctionalId>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -1109,7 +1109,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
                 Assert.AreEqual(Entities["Account"].FunctionalId, toChangeFunctionalId);
             }
         }
-        private class DatastoreEntityInheritedFunctionalId : DatastoreModel<DatastoreEntityInheritedFunctionalId>
+        private class DatastoreEntityInheritedFunctionalId : DatastoreModelEx<DatastoreEntityInheritedFunctionalId>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -1166,6 +1166,6 @@ namespace Blueprint41.UnitTest.Tests.Blocking
         }
 #endif
 
-#endregion
+        #endregion
     }
 }

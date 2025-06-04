@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 using Blueprint41.Persistence;
@@ -7,7 +8,17 @@ using Blueprint41.UnitTest.Mocks;
 
 namespace Blueprint41.UnitTest.DataStore
 {
-    public class MockModel : DatastoreModel<MockModel>
+    public abstract class DatastoreModelEx<TSelf> : DatastoreModel<TSelf>
+        where TSelf : DatastoreModelEx<TSelf>, new()
+    {
+        public static TSelf ConnectTest(Uri uri, AuthToken authToken, string? database = null, AdvancedConfig? advancedConfig = null)
+        {
+            return ConnectForUnitTest(uri, authToken, database, advancedConfig);
+        }
+    }
+
+
+    public class MockModel : DatastoreModelEx<MockModel>
     {
 #if NEO4J
         public override GDMS DatastoreTechnology => GDMS.Neo4j;

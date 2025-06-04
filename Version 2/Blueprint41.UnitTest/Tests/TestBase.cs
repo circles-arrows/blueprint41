@@ -16,7 +16,7 @@ namespace Blueprint41.UnitTest.Tests
     [TestFixture]
     public abstract class TestBase
     {
-        private static Lazy<Driver> _driver = new Lazy<Driver>(delegate()
+        private static Lazy<Driver> _driver = new Lazy<Driver>(delegate ()
         {
             Driver.Configure<neo4j.IDriver>();
             return Driver.Get(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD));
@@ -59,11 +59,11 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         protected T Connect<T>(bool logToConsole = false, bool teardown = true)
-            where T : DatastoreModel<T>, new()
+            where T : DatastoreModelEx<T>, new()
         {
             if (teardown)
                 TearDown();
-            var model = DatastoreModel<T>.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
+            var model = DatastoreModelEx<T>.ConnectTest(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE, new AdvancedConfig()
             {
                 CustomCypherLogging = delegate (string cypher, Dictionary<string, object?>? parameters, long elapsedMilliseconds, string? memberName, string? sourceFilePath, int sourceLineNumber)
                 {
@@ -72,7 +72,7 @@ namespace Blueprint41.UnitTest.Tests
             });
 
             model.LogToConsole = logToConsole;
-            
+
             return model;
         }
     }

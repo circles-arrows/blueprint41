@@ -1,12 +1,15 @@
-﻿using Blueprint41.UnitTest.Helper;
+﻿using System;
+
 using NUnit.Framework;
-using System;
+
+using Blueprint41.UnitTest.Helper;
+using Blueprint41.UnitTest.DataStore;
 
 namespace Blueprint41.UnitTest.Tests.Blocking
 {
     internal class TestConstraints : TestBase
     {
-        private class MovieDataStoreModel_01 : DatastoreModel<MovieDataStoreModel_01>
+        private class MovieDataStoreModel_01 : DatastoreModelEx<MovieDataStoreModel_01>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
@@ -40,7 +43,7 @@ namespace Blueprint41.UnitTest.Tests.Blocking
             }
         }
 
-        private class MovieDataStoreModel_02 : DatastoreModel<MovieDataStoreModel_02>
+        private class MovieDataStoreModel_02 : DatastoreModelEx<MovieDataStoreModel_02>
         {
             public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 

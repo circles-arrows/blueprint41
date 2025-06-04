@@ -607,7 +607,23 @@ namespace Blueprint41
         {
             PersistenceProvider.Initialize();
         }
-        public static TSelf Connect(Uri uri, AuthToken authToken, string? database = null, AdvancedConfig? advancedConfig = null)
+        public static void Connect(Uri uri, AuthToken authToken, string? database = null, AdvancedConfig? advancedConfig = null)
+        {
+            if (_uri is not null || _authToken is not null || _database is not null)
+            {
+                if (_uri?.AbsoluteUri != uri.AbsoluteUri || _authToken?.ToJson() != authToken.ToJson() || _database != database)
+                    throw new InvalidOperationException($"You can only connect the data-model once. Please use 'new {typeof(TSelf).Name}();' instead.");
+            }
+
+            _uri            = uri;
+            _authToken      = authToken;
+            _database       = database;
+            _advancedConfig = advancedConfig;
+
+            TSelf m = new TSelf();
+            m.Execute(true);
+        }
+        protected static TSelf ConnectForUnitTest(Uri uri, AuthToken authToken, string? database = null, AdvancedConfig? advancedConfig = null)
         {
             if (_uri is not null || _authToken is not null || _database is not null)
             {
