@@ -67,7 +67,7 @@ namespace Blueprint41.Core
                 return null;
         }
 
-        internal static OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, persistence.NodeMapping mappingMode)
+        internal static OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, persistence.NodeMapping mappingMode, EntityFlavor flavor)
         {
             if (Entity.Key is null)
                 throw new InvalidOperationException("No key has been defined for this entity.");

@@ -1734,15 +1734,15 @@ namespace Blueprint41
                         if (type is null)
                             throw new NotSupportedException($"{flavor} code not generated.");
 
-                        MethodInfo? method = type.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                        mapMethod = (method is null) ? null : (Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
+                        MethodInfo? method = type.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping), typeof(EntityFlavor) }, null);
+                        mapMethod = (method is null) ? null : (Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>), method, true);
                     }
                 }
             }
 
-            return mapMethod?.Invoke(node, cypher, parameters, mappingMode);
+            return mapMethod?.Invoke(node, cypher, parameters, mappingMode, flavor);
         }
-        private Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>? mapMethod = null;
+        private Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>? mapMethod = null;
 
         #region IEntityAdvancedFeatures
 
