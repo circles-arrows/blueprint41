@@ -190,6 +190,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 3 => new v3.Neo4jQueryTranslator(this),
                 4 => new v4.Neo4jQueryTranslator(this),
                 5 => new v5.Neo4jQueryTranslator(this),
+                2025 => new v5.Neo4jQueryTranslator(this),
                 _ => throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.")
             };
         }

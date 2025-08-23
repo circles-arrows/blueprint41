@@ -198,6 +198,9 @@ namespace Blueprint41.UnitTest.Tests
         [Test] // Asserts done
         public void SetIndexTypeToUnique()
         {
+            const string ERROR_MESSAGE_1 = "Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )";
+            const string ERROR_MESSAGE_2 = "Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP PROPERTY UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )";
+
 #pragma warning disable CS0618 // Type or member is obsolete
             var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as driver.Neo4jPersistenceProvider;
             if (persistenceProvider is null || !persistenceProvider.VersionGreaterOrEqual(5, 7))
@@ -212,9 +215,9 @@ namespace Blueprint41.UnitTest.Tests
 #if NEO4J
             var ex = Assert.Throws<AggregateException>(() => Execute(UniqueAddrLine1));
 #if NET5_0_OR_GREATER
-            Assert.That(ex.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
+            Assert.That(ex.Message.Contains(ERROR_MESSAGE_1) || ex.Message.Contains(ERROR_MESSAGE_2));
 #else
-            Assert.That(ex.InnerException.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
+            Assert.That(ex.InnerException.Message.Contains(ERROR_MESSAGE_1) || ex.InnerException.Message.Contains(ERROR_MESSAGE_2));
 #endif
 #elif MEMGRAPH
             Assert.DoesNotThrow(() => Execute(UniqueAddrLine1));
