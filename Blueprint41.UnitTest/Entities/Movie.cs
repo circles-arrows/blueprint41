@@ -50,11 +50,22 @@ namespace Datastore.Manipulation
 
             #endregion
 
+            #region LoadByUid
+
+            RegisterQuery(nameof(LoadByUid), (query, alias) => query.
+                Where(alias.Uid == Parameter.New<System.String>(Param0)));
+
+            #endregion
+
             AdditionalGeneratedStoredQueries();
         }
         public static Movie LoadByTitle(System.String title)
         {
             return FromQuery(nameof(LoadByTitle), new Parameter(Param0, title)).FirstOrDefault();
+        }
+        public static Movie LoadByUid(System.String uid)
+        {
+            return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 

@@ -277,7 +277,7 @@ if (DALModel.IsAbstract)
             #endregion
 
 <#
-        foreach (Property attr in DALModel.Properties)
+        foreach (Property attr in DALModel.GetPropertiesOfBaseTypesAndSelf())
         {
             if (attr.PropertyType != PropertyType.Attribute || attr.IndexType != IndexType.Unique)
                 continue;
@@ -296,7 +296,7 @@ if (DALModel.IsAbstract)
             AdditionalGeneratedStoredQueries();
         }
 <#
-    foreach (Property attr in DALModel.Properties)
+    foreach (Property attr in DALModel.GetPropertiesOfBaseTypesAndSelf())
     {
         if (attr.PropertyType != PropertyType.Attribute || attr.IndexType != IndexType.Unique)
             continue;
