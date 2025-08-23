@@ -53,28 +53,41 @@ namespace Blueprint41.Sync.Neo4j.Persistence.Void
 
 	public partial class Neo4jPersistenceProvider : PersistenceProvider
 	{
-		public static readonly List<TypeMapping> supportedTypeMappings = new List<TypeMapping>()
+		protected internal override List<TypeMapping> GetSupportedTypeMappings()
 		{
-			// primitives...
+			return new List<TypeMapping>()
+			{
+				// primitives...
 <#
 	foreach (var item in conversions)
 	{
 #>
-			new TypeMapping(typeof(<#= item[0] #>), typeof(<#= item[1] #>), "<#= item[2] #>"),
+				new TypeMapping(typeof(<#= item[0] #>), typeof(<#= item[1] #>), "<#= item[2] #>"),
 <#
 	}
-#>          
-			// lists...
-<#
-	foreach (var item in conversions)
-	{
 #>
-			new TypeMapping(typeof(List<<#= item[0] #>>), typeof(List<object>), "l_<#= item[2] #>"),
-<#
-	}
-#>          
 
-			// dictionaries
+				// arrays...
+<#
+	foreach (var item in conversions)
+	{
+#>
+				new TypeMapping(typeof(<#= item[0] #>[]), typeof(List<object>), "l_<#= item[2] #>"),
+<#
+	}
+#>
+
+				// lists...
+<#
+	foreach (var item in conversions)
+	{
+#>
+				new TypeMapping(typeof(List<<#= item[0] #>>), typeof(List<object>), "l_<#= item[2] #>"),
+<#
+	}
+#>
+
+				// dictionaries
 <#
 	foreach (var key in conversions)
 	{
@@ -84,12 +97,13 @@ namespace Blueprint41.Sync.Neo4j.Persistence.Void
 		foreach (var value in conversions)
 		{
 #>
-			new TypeMapping(typeof(Dictionary<<#= key[0] #>, <#= value[0] #>>), typeof(string), "d_<#= key[2] #>_<#= value[2] #>"),
+				new TypeMapping(typeof(Dictionary<<#= key[0] #>, <#= value[0] #>>), typeof(string), "d_<#= key[2] #>_<#= value[2] #>"),
 <#
 		}
 	}
-#>           
-		};
+#>
+			};
+		}
 	}
 
 	#endregion
