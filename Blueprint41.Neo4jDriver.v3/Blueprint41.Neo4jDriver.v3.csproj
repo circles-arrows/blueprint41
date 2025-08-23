@@ -21,12 +21,12 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageVersion>1.1.7</PackageVersion>
+    <PackageVersion>1.1.8</PackageVersion>
     <PackageId>Blueprint41.Neo4jDriver.v3</PackageId>
     <Title>Blueprint41.Neo4jDriver.v3</Title>
     <Authors>Circles Arrows Limited</Authors>
     <Description>Driver needed to connect to Neo4j using Blueprint41</Description>
-    <Copyright>Copyright 2017, 2024 (c) Circles Arrows Limited</Copyright>
+    <Copyright>Copyright 2017, 2025 (c) Circles Arrows Limited</Copyright>
     <PackageLicense>MIT</PackageLicense>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://www.circlesarrows.com/blueprint41</PackageProjectUrl>
