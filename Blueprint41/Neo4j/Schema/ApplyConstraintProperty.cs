@@ -33,7 +33,11 @@ namespace Blueprint41.Neo4j.Schema
         protected ApplyConstraintEntity Parent { get; private set; }
         protected Neo4jPersistenceProvider PersistenceProvider { get; private set; }
 
-        public string Property { get; protected set; }
+        public string Property
+        {
+            get;
+            protected set;
+        }
         public IReadOnlyList<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> Commands { get; protected set; }
 
         /// <summary>

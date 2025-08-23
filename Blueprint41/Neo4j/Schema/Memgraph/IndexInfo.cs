@@ -23,11 +23,24 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 
             IsIndexed = true;
             //isUnique = record.Values["owningConstraint"].As<string>() is not null;
-            string? label = record.Values["label"]?.ToString();
-            Entity = !string.IsNullOrEmpty(label) ? new List<string>() { label! } : default!;
+            
+            Entity = ToStringList(record.Values["label"]);
 
-            string? field = record.Values["property"]?.ToString();
-            Field = !string.IsNullOrEmpty(field) ? new List<string>() { field! } : default!;
+            Field = ToStringList(record.Values["property"]);
+
+            static List<string> ToStringList(object? value)
+            {
+                if (value is null)
+                    return null!;
+
+                if (value is List<object> list)
+                    return list.Select(item => item?.ToString()!).ToList();
+
+                if (value is string)
+                    return new List<string>() { (string)value };
+
+                return new List<string>() { value.ToString() };
+            }
         }
     }
 }
