@@ -36,7 +36,8 @@ namespace Datastore.Manipulation.Async
         [Obsolete]
         static Rating()
         {
-            Register.Types();
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
         }
 
 

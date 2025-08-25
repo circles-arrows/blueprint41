@@ -34,7 +34,8 @@ namespace Datastore.Manipulation.Sync
         [Obsolete]
         static City()
         {
-            Register.Types();
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
         }
 
 

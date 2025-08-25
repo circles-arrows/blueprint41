@@ -37,7 +37,8 @@ namespace Datastore.Manipulation.Sync
         [Obsolete]
         static Person()
         {
-            Register.Types();
+            Datastore.Manipulation.Sync.Register.Types();
+            Datastore.Manipulation.Async.Register.Types();
         }
 
 
