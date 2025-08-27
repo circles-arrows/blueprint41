@@ -87,7 +87,7 @@ namespace Blueprint41
                                     if (!field.Info.IsList) // RETURNS INode
                                     {
                                         NodeResult node = target.As<NodeResult>();
-                                        target = (field.MapMethod.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping);
+                                        target = (field.MapMethod.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping, EntityFlavor.Blocking);
                                     }
                                     else if (!field.Info.IsJaggedList) // RETURNS List<INode>
                                     {
@@ -107,7 +107,7 @@ namespace Blueprint41
                                                 else
                                                 {
                                                     NodeResult node = t.As<NodeResult>();
-                                                    newList!.Add((field.MapMethod.Blocking is null || field.NewList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                    newList!.Add((field.MapMethod.Blocking is null || field.NewList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping, EntityFlavor.Blocking));
                                                 }
                                             }
                                         }
@@ -141,7 +141,7 @@ namespace Blueprint41
                                                         else
                                                         {
                                                             NodeResult node = t.As<NodeResult>();
-                                                            newList.Add((field.MapMethod.Blocking is null || field.NewList.Blocking is null || field.NewJaggedList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                            newList.Add((field.MapMethod.Blocking is null || field.NewList.Blocking is null || field.NewJaggedList.Blocking is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Blocking.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping, EntityFlavor.Blocking));
                                                         }
                                                     }
 
@@ -198,7 +198,7 @@ namespace Blueprint41
                                     if (!field.Info.IsList) // RETURNS INode
                                     {
                                         NodeResult node = target.As<NodeResult>();
-                                        target = (field.MapMethod.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping);
+                                        target = (field.MapMethod.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping, EntityFlavor.Async);
                                     }
                                     else if (!field.Info.IsJaggedList) // RETURNS List<INode>
                                     {
@@ -218,7 +218,7 @@ namespace Blueprint41
                                                 else
                                                 {
                                                     NodeResult node = t.As<NodeResult>();
-                                                    newList!.Add((field.MapMethod.Async is null || field.NewList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                    newList!.Add((field.MapMethod.Async is null || field.NewList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping, EntityFlavor.Async));
                                                 }
                                             }
                                         }
@@ -252,7 +252,7 @@ namespace Blueprint41
                                                         else
                                                         {
                                                             NodeResult node = t.As<NodeResult>();
-                                                            newList.Add((field.MapMethod.Async is null || field.NewList.Async is null || field.NewJaggedList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping));
+                                                            newList.Add((field.MapMethod.Async is null || field.NewList.Async is null || field.NewJaggedList.Async is null || nodeMapping == NodeMapping.AsRawResult) ? (object?)node : field.MapMethod.Async.Invoke(node, CompiledQuery.QueryText, parameters, nodeMapping, EntityFlavor.Async));
                                                         }
                                                     }
 

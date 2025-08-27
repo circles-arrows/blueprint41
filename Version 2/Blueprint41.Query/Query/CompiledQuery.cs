@@ -86,14 +86,14 @@ namespace Blueprint41.Query
                 if (getEntityMethod is not null)
                     entity                  = getEntityMethod.Invoke(field.Result, null) as Entity;
 
-                MapMethod     = new RuntimeRegistered<Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?>();
+                MapMethod     = new RuntimeRegistered<Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?>();
                 NewList       = new RuntimeRegistered<Func<int, IList>?>();
                 NewJaggedList = new RuntimeRegistered<Func<int, IList>?>();
 
-                MethodInfo? blockedMethod = (entity is null) ? null : entity!.RuntimeClassType.Blocking?.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                MethodInfo? asyncMethod   = (entity is null) ? null : entity!.RuntimeClassType.Async?.   GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                MapMethod.Blocking        = (blockedMethod is null) ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), blockedMethod, true);
-                MapMethod.Async           = (asyncMethod is null)   ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), asyncMethod,   true);
+                MethodInfo? blockedMethod = (entity is null) ? null : entity!.RuntimeClassType.Blocking?.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping), typeof(EntityFlavor) }, null);
+                MethodInfo? asyncMethod   = (entity is null) ? null : entity!.RuntimeClassType.Async?.   GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping), typeof(EntityFlavor) }, null);
+                MapMethod.Blocking        = (blockedMethod is null) ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>), blockedMethod, true);
+                MapMethod.Async           = (asyncMethod is null)   ? null : (Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?)Delegate.CreateDelegate(typeof(Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>), asyncMethod,   true);
 
                 if (entity is null)
                     return;
@@ -129,7 +129,7 @@ namespace Blueprint41.Query
             public Type ResultType { get; private set; }
             public ResultHelper Info { get; private set; }
             public Func<object?, object?>? ConvertMethod { get; private set; }
-            public readonly RuntimeRegistered<Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?> MapMethod;
+            public readonly RuntimeRegistered<Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?> MapMethod;
             public readonly RuntimeRegistered<Func<int, IList>?> NewList;
             public readonly RuntimeRegistered<Func<int, IList>?> NewJaggedList;
         }

@@ -926,7 +926,7 @@ namespace Blueprint41
 
         private Dictionary<string, Dictionary<object, OGM>> entitiesByKey = new Dictionary<string, Dictionary<object, OGM>>(50);
 
-        public OGM? GetEntityByKey(string type, object key)
+        public OGM? GetEntityByKey(string type, object key, EntityFlavor flavor)
         {
             if (key is null)
                 return null;
