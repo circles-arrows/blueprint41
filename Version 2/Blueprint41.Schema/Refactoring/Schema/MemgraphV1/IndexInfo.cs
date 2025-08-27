@@ -20,16 +20,24 @@ namespace Blueprint41.Refactoring.Schema
 
             IsIndexed = true;
             //isUnique = record.Values["owningConstraint"].As<string>() is not null;
-            string? label = record["label"]?.ToString();
-            Entity = !string.IsNullOrEmpty(label) ? new List<string>() { label! } : default!;
 
-            List<object>? field = record["property"] as List<object>;
-            if (field is null)
-                field = new List<object> { record["property"].As<string>() };
-            if (field[0] is null)
-                field = null;
+            Entity = ToStringList(record["label"]);
 
-            Field = field is null ? default! : field.Cast<string>().ToList();
+            Field = ToStringList(record["property"]);
+
+            static List<string> ToStringList(object? value)
+            {
+                if (value is null)
+                    return null!;
+
+                if (value is List<object> list)
+                    return list.Select(item => item?.ToString()!).ToList();
+
+                if (value is string)
+                    return new List<string>() { (string)value };
+
+                return new List<string>() { value.ToString()! };
+            }
         }
     }
 }
