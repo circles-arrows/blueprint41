@@ -10,7 +10,8 @@ using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
 using neo4j = Neo4j.Driver;
-using Datastore.Manipulation.Async;
+using a = Datastore.Manipulation.Async;
+using s = Datastore.Manipulation.Sync;
 
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -67,31 +68,31 @@ namespace Blueprint41.UnitTest.Tests.Async
                 {
                     #region Movies
 
-                    Movie aliens = new Movie()
+                    s.Movie aliens = new s.Movie()
                     {
                         Title = "Aliens",
                     };
-                    Movie dieHard = new Movie()
+                    s.Movie dieHard = new s.Movie()
                     {
                         Title = "Die Hard",
                     };
-                    Movie matrix = new Movie()
+                    s.Movie matrix = new s.Movie()
                     {
                         Title = "The Matrix",
                     };
-                    Movie serenity = new Movie()
+                    s.Movie serenity = new s.Movie()
                     {
                         Title = "Serenity",
                     };
-                    Movie terminator2 = new Movie()
+                    s.Movie terminator2 = new s.Movie()
                     {
                         Title = "Terminator 2: Judgment Day",
                     };
-                    Movie theFifthElement = new Movie()
+                    s.Movie theFifthElement = new s.Movie()
                     {
                         Title = "The Fifth Element",
                     };
-                    Movie topGunMaverick = new Movie()
+                    s.Movie topGunMaverick = new s.Movie()
                     {
                         Title = "Top Gun: Maverick",
                     };
@@ -100,31 +101,31 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     #region Ratings
 
-                    Rating g = new Rating()
+                    s.Rating g = new s.Rating()
                     {
                         Code = "G",
                         Name = "Rated G",
                         Description = "General audiences – All ages admitted.",
                     };
-                    Rating pg = new Rating()
+                    s.Rating pg = new s.Rating()
                     {
                         Code = "PG",
                         Name = "Rated PG",
                         Description = "Parental guidance suggested – Some material may not be suitable for children.",
                     };
-                    Rating pg13 = new Rating()
+                    s.Rating pg13 = new s.Rating()
                     {
                         Code = "PG-13",
                         Name = "Rated PG-13",
                         Description = "Parents strongly cautioned – Some material may be inappropriate for children under 13.",
                     };
-                    Rating r = new Rating()
+                    s.Rating r = new s.Rating()
                     {
                         Code = "R",
                         Name = "Rated R",
                         Description = "Restricted – Under 17 requires accompanying parent or adult guardian.",
                     };
-                    Rating nc17 = new Rating()
+                    s.Rating nc17 = new s.Rating()
                     {
                         Code = "NC-17",
                         Name = "Rated NC-17",
@@ -135,39 +136,39 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     #region Persons
 
-                    Person alanTuring = new Person()
+                    s.Person alanTuring = new s.Person()
                     {
                         Name = "Alan Turing",
                     };
-                    Person dennisRitchie = new Person()
+                    s.Person dennisRitchie = new s.Person()
                     {
                         Name = "Dennis Ritchie",
                     };
-                    Person martinFowler = new Person()
+                    s.Person martinFowler = new s.Person()
                     {
                         Name = "Martin Fowler",
                     };
-                    Person uncleBob = new Person()
+                    s.Person uncleBob = new s.Person()
                     {
                         Name = "Robert C. Martin",
                     };
-                    Person adaLovelace = new Person()
+                    s.Person adaLovelace = new s.Person()
                     {
                         Name = "Ada Lovelace",
                     };
-                    Person linusTorvalds = new Person()
+                    s.Person linusTorvalds = new s.Person()
                     {
                         Name = "Linus Torvalds",
                     };
-                    Person alanKay = new Person()
+                    s.Person alanKay = new s.Person()
                     {
                         Name = "Alan Kay",
                     };
-                    Person steveWozniak = new Person()
+                    s.Person steveWozniak = new s.Person()
                     {
                         Name = "Steve Wozniak",
                     };
-                    Person billGates = new Person()
+                    s.Person billGates = new s.Person()
                     {
                         Name = "Bill Gates",
                     };
@@ -176,47 +177,47 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     #region Cities
 
-                    City london = new City()
+                    s.City london = new s.City()
                     {
                         Name = "London",
                         Country = "UK",
                     };
-                    City littleWhinging = new City()
+                    s.City littleWhinging = new s.City()
                     {
                         Name = "Little Whinging",
                         State = "Surrey",
                         Country = "UK",
                     };
-                    City springfield = new City()
+                    s.City springfield = new s.City()
                     {
                         Name = "Springfield",
                         Country = "US",
                     };
-                    City hillValley = new City()
+                    s.City hillValley = new s.City()
                     {
                         Name = "Hill Valley",
                         State = "CA",
                         Country = "US",
                     };
-                    City sunnydale = new City()
+                    s.City sunnydale = new s.City()
                     {
                         Name = "Sunnydale",
                         State = "CA",
                         Country = "US",
                     };
-                    City quahog = new City()
+                    s.City quahog = new s.City()
                     {
                         Name = "Quahog",
                         State = "Rhode Island",
                         Country = "US",
                     };
-                    City muncie = new City()
+                    s.City muncie = new s.City()
                     {
                         Name = "Muncie",
                         State = "Indiana",
                         Country = "US",
                     };
-                    City metropolis = new City()
+                    s.City metropolis = new s.City()
                     {
                         Name = "Metropolis",
                         Country = "US",
@@ -226,31 +227,31 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     #region Streaming Services
 
-                    StreamingService netflix = new StreamingService()
+                    s.StreamingService netflix = new s.StreamingService()
                     {
                         Name = "Netflix",
                     };
-                    StreamingService hulu = new StreamingService()
+                    s.StreamingService hulu = new s.StreamingService()
                     {
                         Name = "Hulu",
                     };
-                    StreamingService peacock = new StreamingService()
+                    s.StreamingService peacock = new s.StreamingService()
                     {
                         Name = "Peacock",
                     };
-                    StreamingService amazonPrimeVideo = new StreamingService()
+                    s.StreamingService amazonPrimeVideo = new s.StreamingService()
                     {
                         Name = "Amazon Prime Video",
                     };
-                    StreamingService hboMax = new StreamingService()
+                    s.StreamingService hboMax = new s.StreamingService()
                     {
                         Name = "Max",
                     };
-                    StreamingService disneyPlus = new StreamingService()
+                    s.StreamingService disneyPlus = new s.StreamingService()
                     {
                         Name = "Disney+",
                     };
-                    StreamingService historyVault = new StreamingService()
+                    s.StreamingService historyVault = new s.StreamingService()
                     {
                         Name = "History Vault",
                     };
@@ -330,16 +331,26 @@ namespace Blueprint41.UnitTest.Tests.Async
             public Ratings Ratings => ThreadSafe.LazyInit(ref _ratings, () => new Ratings(Parent))!;
             private Ratings _ratings = null;
 
-            public (Movie movie, Rating rating, RatingComponent frighteningIntense, RatingComponent violenceGore, RatingComponent profanity, RatingComponent substances, RatingComponent sexAndNudity)[] Movies => new[]
+            public (s.Movie movie, s.Rating rating, RatingComponent frighteningIntense, RatingComponent violenceGore, RatingComponent profanity, RatingComponent substances, RatingComponent sexAndNudity)[] Movies => new[]
             {
-                (Movie.Load(Aliens),          Rating.Load(Ratings.Aliens.Rating)         , Ratings.Aliens.FrighteningIntense,          Ratings.Aliens.ViolenceGore,          Ratings.Aliens.Profanity,         Ratings.Aliens.Substances,          Ratings.Aliens.SexAndNudity),
-                (Movie.Load(DieHard),         Rating.Load(Ratings.DieHard.Rating)        , Ratings.DieHard.FrighteningIntense,         Ratings.DieHard.ViolenceGore,         Ratings.DieHard.Profanity,        Ratings.DieHard.Substances,         Ratings.DieHard.SexAndNudity),
-                (Movie.Load(Matrix),          Rating.Load(Ratings.Matrix.Rating)         , Ratings.Matrix.FrighteningIntense,          Ratings.Matrix.ViolenceGore,          Ratings.Matrix.Profanity,         Ratings.Matrix.Substances,          Ratings.Matrix.SexAndNudity),
-                (Movie.Load(Serenity),        Rating.Load(Ratings.Serenity.Rating)       , Ratings.Serenity.FrighteningIntense,        Ratings.Serenity.ViolenceGore,        Ratings.Serenity.Profanity,       Ratings.Serenity.Substances,        Ratings.Serenity.SexAndNudity),
-                (Movie.Load(Terminator2),     Rating.Load(Ratings.Terminator2.Rating)    , Ratings.Terminator2.FrighteningIntense,     Ratings.Terminator2.ViolenceGore,     Ratings.Terminator2.Profanity,    Ratings.Terminator2.Substances,     Ratings.Terminator2.SexAndNudity),
-                (Movie.Load(TheFifthElement), Rating.Load(Ratings.TheFifthElement.Rating), Ratings.TheFifthElement.FrighteningIntense, Ratings.TheFifthElement.ViolenceGore, Ratings.TheFifthElement.Profanity,Ratings.TheFifthElement.Substances, Ratings.TheFifthElement.SexAndNudity),
-                (Movie.Load(TopGunMaverick),  Rating.Load(Ratings.TopGunMaverick.Rating) , Ratings.TopGunMaverick.FrighteningIntense,  Ratings.TopGunMaverick.ViolenceGore,  Ratings.TopGunMaverick.Profanity, Ratings.TopGunMaverick.Substances,  Ratings.TopGunMaverick.SexAndNudity),
-            }!;
+                (s.Movie.Load(Aliens),          s.Rating.Load(Ratings.Aliens.Rating),          Ratings.Aliens.FrighteningIntense,          Ratings.Aliens.ViolenceGore,          Ratings.Aliens.Profanity,         Ratings.Aliens.Substances,          Ratings.Aliens.SexAndNudity),
+                (s.Movie.Load(DieHard),         s.Rating.Load(Ratings.DieHard.Rating),         Ratings.DieHard.FrighteningIntense,         Ratings.DieHard.ViolenceGore,         Ratings.DieHard.Profanity,        Ratings.DieHard.Substances,         Ratings.DieHard.SexAndNudity),
+                (s.Movie.Load(Matrix),          s.Rating.Load(Ratings.Matrix.Rating),          Ratings.Matrix.FrighteningIntense,          Ratings.Matrix.ViolenceGore,          Ratings.Matrix.Profanity,         Ratings.Matrix.Substances,          Ratings.Matrix.SexAndNudity),
+                (s.Movie.Load(Serenity),        s.Rating.Load(Ratings.Serenity.Rating),        Ratings.Serenity.FrighteningIntense,        Ratings.Serenity.ViolenceGore,        Ratings.Serenity.Profanity,       Ratings.Serenity.Substances,        Ratings.Serenity.SexAndNudity),
+                (s.Movie.Load(Terminator2),     s.Rating.Load(Ratings.Terminator2.Rating),     Ratings.Terminator2.FrighteningIntense,     Ratings.Terminator2.ViolenceGore,     Ratings.Terminator2.Profanity,    Ratings.Terminator2.Substances,     Ratings.Terminator2.SexAndNudity),
+                (s.Movie.Load(TheFifthElement), s.Rating.Load(Ratings.TheFifthElement.Rating), Ratings.TheFifthElement.FrighteningIntense, Ratings.TheFifthElement.ViolenceGore, Ratings.TheFifthElement.Profanity,Ratings.TheFifthElement.Substances, Ratings.TheFifthElement.SexAndNudity),
+                (s.Movie.Load(TopGunMaverick),  s.Rating.Load(Ratings.TopGunMaverick.Rating),  Ratings.TopGunMaverick.FrighteningIntense,  Ratings.TopGunMaverick.ViolenceGore,  Ratings.TopGunMaverick.Profanity, Ratings.TopGunMaverick.Substances,  Ratings.TopGunMaverick.SexAndNudity),
+            };
+            public async Task<(a.Movie movie, a.Rating rating, RatingComponent frighteningIntense, RatingComponent violenceGore, RatingComponent profanity, RatingComponent substances, RatingComponent sexAndNudity)[]> MoviesAsync() => new[]
+            {
+                (await a.Movie.LoadAsync(Aliens),          await a.Rating.LoadAsync(Ratings.Aliens.Rating),          Ratings.Aliens.FrighteningIntense,          Ratings.Aliens.ViolenceGore,          Ratings.Aliens.Profanity,         Ratings.Aliens.Substances,          Ratings.Aliens.SexAndNudity),
+                (await a.Movie.LoadAsync(DieHard),         await a.Rating.LoadAsync(Ratings.DieHard.Rating),         Ratings.DieHard.FrighteningIntense,         Ratings.DieHard.ViolenceGore,         Ratings.DieHard.Profanity,        Ratings.DieHard.Substances,         Ratings.DieHard.SexAndNudity),
+                (await a.Movie.LoadAsync(Matrix),          await a.Rating.LoadAsync(Ratings.Matrix.Rating),          Ratings.Matrix.FrighteningIntense,          Ratings.Matrix.ViolenceGore,          Ratings.Matrix.Profanity,         Ratings.Matrix.Substances,          Ratings.Matrix.SexAndNudity),
+                (await a.Movie.LoadAsync(Serenity),        await a.Rating.LoadAsync(Ratings.Serenity.Rating),        Ratings.Serenity.FrighteningIntense,        Ratings.Serenity.ViolenceGore,        Ratings.Serenity.Profanity,       Ratings.Serenity.Substances,        Ratings.Serenity.SexAndNudity),
+                (await a.Movie.LoadAsync(Terminator2),     await a.Rating.LoadAsync(Ratings.Terminator2.Rating),     Ratings.Terminator2.FrighteningIntense,     Ratings.Terminator2.ViolenceGore,     Ratings.Terminator2.Profanity,    Ratings.Terminator2.Substances,     Ratings.Terminator2.SexAndNudity),
+                (await a.Movie.LoadAsync(TheFifthElement), await a.Rating.LoadAsync(Ratings.TheFifthElement.Rating), Ratings.TheFifthElement.FrighteningIntense, Ratings.TheFifthElement.ViolenceGore, Ratings.TheFifthElement.Profanity,Ratings.TheFifthElement.Substances, Ratings.TheFifthElement.SexAndNudity),
+                (await a.Movie.LoadAsync(TopGunMaverick),  await a.Rating.LoadAsync(Ratings.TopGunMaverick.Rating),  Ratings.TopGunMaverick.FrighteningIntense,  Ratings.TopGunMaverick.ViolenceGore,  Ratings.TopGunMaverick.Profanity, Ratings.TopGunMaverick.Substances,  Ratings.TopGunMaverick.SexAndNudity),
+            };
         }
         public record class RatingUids
         {
@@ -365,18 +376,30 @@ namespace Blueprint41.UnitTest.Tests.Async
             public string SteveWozniak;         // Inventor of the Apple computer
             public string BillGates;            // Programmed the most famous BASIC interpreter
 
-            public Person[] Persons => new[]
+            public s.Person[] Persons => new[]
             {
-                Person.Load(AlanTuring),
-                Person.Load(DennisRitchie),
-                Person.Load(MartinFowler),
-                Person.Load(UncleBob),
-                Person.Load(AdaLovelace),
-                Person.Load(LinusTorvalds),
-                Person.Load(AlanKay),
-                Person.Load(SteveWozniak),
-                Person.Load(BillGates),
-            }!;
+                s.Person.Load(AlanTuring),
+                s.Person.Load(DennisRitchie),
+                s.Person.Load(MartinFowler),
+                s.Person.Load(UncleBob),
+                s.Person.Load(AdaLovelace),
+                s.Person.Load(LinusTorvalds),
+                s.Person.Load(AlanKay),
+                s.Person.Load(SteveWozniak),
+                s.Person.Load(BillGates),
+            };
+            public async Task<a.Person[]> PersonsAsync() => new[]
+            {
+                await a.Person.LoadAsync(AlanTuring),
+                await a.Person.LoadAsync(DennisRitchie),
+                await a.Person.LoadAsync(MartinFowler),
+                await a.Person.LoadAsync(UncleBob),
+                await a.Person.LoadAsync(AdaLovelace),
+                await a.Person.LoadAsync(LinusTorvalds),
+                await a.Person.LoadAsync(AlanKay),
+                await a.Person.LoadAsync(SteveWozniak),
+                await a.Person.LoadAsync(BillGates),
+            };
         }
         public record class CityUids
         {
@@ -439,17 +462,30 @@ namespace Blueprint41.UnitTest.Tests.Async
                 }
             }
 
-            public (City city, string[] addressLines, string[] moveTo)[] Addresses => new[]
+            public (s.City city, string[] addressLines, string[] moveTo)[] Addresses => new[]
             {
-                (City.Load(London),         AddressLines.London.SherlockHolmes,        null),
-                (City.Load(London),         AddressLines.London.HerculePoirot,         null),
-                (City.Load(LittleWhinging), AddressLines.LittleWhinging.HarryPotter,   null),
-                (City.Load(Springfield),    AddressLines.Springfield.TheSimpsons,      null),
-                (City.Load(HillValley),     AddressLines.HillValley.EmmettBrown,       null),
-                (City.Load(Sunnydale),      AddressLines.Sunnydale.BuffySummers,       null),
-                (City.Load(Quahog),         AddressLines.Quahog.PeterGriffin,          null),
-                (City.Load(Muncie),         AddressLines.Muncie.Garfield,              null),
-                (City.Load(Metropolis),     AddressLines.Metropolis.ClarkKent_Earlier, AddressLines.Metropolis.ClarkKent_Later)
+                (s.City.Load(London),         AddressLines.London.SherlockHolmes,        null),
+                (s.City.Load(London),         AddressLines.London.HerculePoirot,         null),
+                (s.City.Load(LittleWhinging), AddressLines.LittleWhinging.HarryPotter,   null),
+                (s.City.Load(Springfield),    AddressLines.Springfield.TheSimpsons,      null),
+                (s.City.Load(HillValley),     AddressLines.HillValley.EmmettBrown,       null),
+                (s.City.Load(Sunnydale),      AddressLines.Sunnydale.BuffySummers,       null),
+                (s.City.Load(Quahog),         AddressLines.Quahog.PeterGriffin,          null),
+                (s.City.Load(Muncie),         AddressLines.Muncie.Garfield,              null),
+                (s.City.Load(Metropolis),     AddressLines.Metropolis.ClarkKent_Earlier, AddressLines.Metropolis.ClarkKent_Later)
+            }!;
+
+            public async Task<(a.City city, string[] addressLines, string[] moveTo)[]> AddressesAsync() => new[]
+            {
+                (await a.City.LoadAsync(London),         AddressLines.London.SherlockHolmes,        null),
+                (await a.City.LoadAsync(London),         AddressLines.London.HerculePoirot,         null),
+                (await a.City.LoadAsync(LittleWhinging), AddressLines.LittleWhinging.HarryPotter,   null),
+                (await a.City.LoadAsync(Springfield),    AddressLines.Springfield.TheSimpsons,      null),
+                (await a.City.LoadAsync(HillValley),     AddressLines.HillValley.EmmettBrown,       null),
+                (await a.City.LoadAsync(Sunnydale),      AddressLines.Sunnydale.BuffySummers,       null),
+                (await a.City.LoadAsync(Quahog),         AddressLines.Quahog.PeterGriffin,          null),
+                (await a.City.LoadAsync(Muncie),         AddressLines.Muncie.Garfield,              null),
+                (await a.City.LoadAsync(Metropolis),     AddressLines.Metropolis.ClarkKent_Earlier, AddressLines.Metropolis.ClarkKent_Later)
             }!;
         }
         public record class StreamingServiceUids
@@ -476,15 +512,26 @@ namespace Blueprint41.UnitTest.Tests.Async
                 public static readonly decimal HistoryVault = 4.99m;
             }
 
-            public (StreamingService streamingService, decimal monthlyFee, decimal? monthlyFeeChanged)[] StreamingServices => new[]
+            public (s.StreamingService streamingService, decimal monthlyFee, decimal? monthlyFeeChanged)[] StreamingServices => new[]
             {
-                (StreamingService.Load(Netflix),          Rates.Netflix,          default(decimal?)),
-                (StreamingService.Load(Hulu),             Rates.Hulu,             Rates.HuluAdFree),
-                (StreamingService.Load(Peacock),          Rates.Peacock,          default(decimal?)),
-                (StreamingService.Load(AmazonPrimeVideo), Rates.AmazonPrimeVideo, default(decimal?)),
-                (StreamingService.Load(HboMax),           Rates.HboMax,           default(decimal?)),
-                (StreamingService.Load(DisneyPlus),       Rates.DisneyPlus,       default(decimal?)),
-                (StreamingService.Load(HistoryVault),     Rates.HistoryVault,     default(decimal?)),
+                (s.StreamingService.Load(Netflix),          Rates.Netflix,          default(decimal?)),
+                (s.StreamingService.Load(Hulu),             Rates.Hulu,             Rates.HuluAdFree),
+                (s.StreamingService.Load(Peacock),          Rates.Peacock,          default(decimal?)),
+                (s.StreamingService.Load(AmazonPrimeVideo), Rates.AmazonPrimeVideo, default(decimal?)),
+                (s.StreamingService.Load(HboMax),           Rates.HboMax,           default(decimal?)),
+                (s.StreamingService.Load(DisneyPlus),       Rates.DisneyPlus,       default(decimal?)),
+                (s.StreamingService.Load(HistoryVault),     Rates.HistoryVault,     default(decimal?)),
+            }!;
+
+            public async Task<(a.StreamingService streamingService, decimal monthlyFee, decimal? monthlyFeeChanged)[]> StreamingServicesAsync() => new[]
+            {
+                (await a.StreamingService.LoadAsync(Netflix),          Rates.Netflix,          default(decimal?)),
+                (await a.StreamingService.LoadAsync(Hulu),             Rates.Hulu,             Rates.HuluAdFree),
+                (await a.StreamingService.LoadAsync(Peacock),          Rates.Peacock,          default(decimal?)),
+                (await a.StreamingService.LoadAsync(AmazonPrimeVideo), Rates.AmazonPrimeVideo, default(decimal?)),
+                (await a.StreamingService.LoadAsync(HboMax),           Rates.HboMax,           default(decimal?)),
+                (await a.StreamingService.LoadAsync(DisneyPlus),       Rates.DisneyPlus,       default(decimal?)),
+                (await a.StreamingService.LoadAsync(HistoryVault),     Rates.HistoryVault,     default(decimal?)),
             }!;
         }
 
@@ -595,10 +642,10 @@ namespace Blueprint41.UnitTest.Tests.Async
             using (MockModel.BeginTransaction())
             {
                 // Person lives in
-                foreach ((Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties) data in SampleDataLivesIn())
+                foreach ((s.Person person, List<(DateTime from, DateTime till)> relations, s.City city, Dictionary<string, object> properties) data in SampleDataLivesIn())
                 {
                     foreach ((DateTime from, DateTime till) in data.relations)
-                        WriteRelation(data.person, PERSON_LIVES_IN.Relationship, data.city, from, till, data.properties);
+                        WriteRelation(data.person, s.PERSON_LIVES_IN.Relationship, data.city, from, till, data.properties);
                 }
 
                 // Movie certifications
@@ -615,10 +662,10 @@ namespace Blueprint41.UnitTest.Tests.Async
                 }
 
                 // Subscribed streaming service
-                var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                var person = s.Person.Load(DatabaseUids.Persons.LinusTorvalds);
                 Assert.IsNotNull(person);
 
-                var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                var netflix = s.StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
                 Assert.IsNotNull(netflix);
 
                 var price = StreamingServiceUids.Rates.Netflix;
@@ -627,9 +674,9 @@ namespace Blueprint41.UnitTest.Tests.Async
                 {
                     foreach (var relation in state.relations)
                     {
-                        WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                        WriteRelation(person!, s.SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
                         {
-                            { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
+                            { nameof(s.SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
                         });
                     }
                 }
@@ -673,6 +720,36 @@ namespace Blueprint41.UnitTest.Tests.Async
             };
 
             Transaction.Run(cypher, parameters!);
+        }
+        private Task WriteRelationAsync(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till) => WriteRelationAsync(@in, relationship, @out, from, till, new Dictionary<string, object>());
+        private Task WriteRelationAsync(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till, Dictionary<string, object> properties)
+        {
+            Entity inEntity = @in.GetEntity();
+            Entity outEntity = @out.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
+            Dictionary<string, object> map = new Dictionary<string, object>(properties);
+            map!.AddOrSet(relationship.StartDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(from));
+            map!.AddOrSet(relationship.EndDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(till));
+            map!.AddOrSet(relationship.CreationDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(Transaction.RunningTransaction.TransactionDate));
+
+            string cypher = $"""
+                MATCH (in:{relationship.InEntity.Label.Name}), (out:{relationship.OutEntity.Label.Name})
+                WHERE in.{inEntity.Key.Name} = $in AND out.{outEntity.Key.Name} = $out
+                CREATE (in)-[r:{relationship.Neo4JRelationshipType}]->(out)
+                SET r = $map
+                """;
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "in", @in.GetKey()! },
+                { "out", @out.GetKey()! },
+                { "map", map },
+            };
+
+            return Transaction.RunAsync(cypher, parameters!);
         }
 
         private List<(DateTime from, DateTime till)> ReadRelations(OGM @in, Relationship relationship, OGM @out)
@@ -741,6 +818,137 @@ namespace Blueprint41.UnitTest.Tests.Async
                 return (from, till, properties);
             }).ToList();
         }
+        private List<(object inNodeKey, string[] inNodeLabels, object outNodeKey, string[] outNodeLabels, Dictionary<string, object> properties)> ReadAllRelations(Relationship relationship)
+        {
+            if (relationship.InEntity.Key is null || relationship.OutEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
+            string cypher = $"""
+                MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
+                RETURN  in.{relationship.InEntity.Key.Name} AS InNodeKey,
+                        labels(in) AS InNodeLabels,
+                        out.{relationship.OutEntity.Key.Name} AS OutNodeKey,
+                        labels(out) AS OutNodeLabels,
+                        properties(r) AS Properties
+                """;
+
+            ResultCursor result = Transaction.Run(cypher);
+
+            return result.ToList().Select(delegate (Record record)
+            {
+                object inNodeKey = record["InNodeKey"];
+                string[] inNodeLabels = record["InNodeLabels"].As<List<string>>().ToArray();
+                object outNodeKey = record["OutNodeKey"];
+                string[] outNodeLabels = record["OutNodeLabels"].As<List<string>>().ToArray();
+                Dictionary<string, object> properties = record["Properties"].As<Dictionary<string, object>>();
+
+                return (inNodeKey, inNodeLabels, outNodeKey, outNodeLabels, properties);
+            }).ToList();
+        }
+
+        private List<(s.Person person, List<(DateTime from, DateTime till)> relations, s.City city, Dictionary<string, object> properties)> SampleDataLivesIn()
+        {
+            return new List<(s.Person, List<(DateTime, DateTime)>, s.City, Dictionary<string, object>)>()
+            {
+                (s.Person.Load(DatabaseUids.Persons.AdaLovelace),   TestScenario.RelationsFromMask(0b1111), s.City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.HerculePoirot))!,
+                (s.Person.Load(DatabaseUids.Persons.AlanKay),       TestScenario.RelationsFromMask(0b0111), s.City.Load(DatabaseUids.Cities.HillValley),     GetAddrLines(CityUids.AddressLines.HillValley.EmmettBrown))!,
+                (s.Person.Load(DatabaseUids.Persons.AlanTuring),    TestScenario.RelationsFromMask(0b0011), s.City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.SherlockHolmes))!,
+                (s.Person.Load(DatabaseUids.Persons.BillGates),     TestScenario.RelationsFromMask(0b0110), s.City.Load(DatabaseUids.Cities.LittleWhinging), GetAddrLines(CityUids.AddressLines.LittleWhinging.HarryPotter))!,
+                (s.Person.Load(DatabaseUids.Persons.DennisRitchie), TestScenario.RelationsFromMask(0b1010), s.City.Load(DatabaseUids.Cities.Muncie),         GetAddrLines(CityUids.AddressLines.Muncie.Garfield))!,
+                (s.Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b1100), s.City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Earlier))!,
+                (s.Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b0011), s.City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Later))!,
+                (s.Person.Load(DatabaseUids.Persons.MartinFowler),  TestScenario.RelationsFromMask(0b0101), s.City.Load(DatabaseUids.Cities.Quahog),         GetAddrLines(CityUids.AddressLines.Quahog.PeterGriffin))!,
+                (s.Person.Load(DatabaseUids.Persons.SteveWozniak),  TestScenario.RelationsFromMask(0b0111), s.City.Load(DatabaseUids.Cities.Springfield),    GetAddrLines(CityUids.AddressLines.Springfield.TheSimpsons))!,
+                (s.Person.Load(DatabaseUids.Persons.UncleBob),      TestScenario.RelationsFromMask(0b1111), s.City.Load(DatabaseUids.Cities.Sunnydale),      GetAddrLines(CityUids.AddressLines.Sunnydale.BuffySummers))!,
+            };
+
+            Dictionary<string, object> GetAddrLines(string[] addressLines)
+            {
+                Dictionary<string, object> properties = new Dictionary<string, object>();
+                if (addressLines.Length > 0) properties.Add(nameof(s.PERSON_LIVES_IN.AddressLine1), addressLines[0]);
+                if (addressLines.Length > 1) properties.Add(nameof(s.PERSON_LIVES_IN.AddressLine2), addressLines[1]);
+                if (addressLines.Length > 2) properties.Add(nameof(s.PERSON_LIVES_IN.AddressLine3), addressLines[2]);
+
+                return properties;
+            }
+        }
+        private List<(s.Person person, s.Movie movie, int minutes, int total)> SampleDataWatchedMovies()
+        {
+            return new List<(s.Person person, s.Movie movie, int minutes, int total)>()
+            {
+                (s.Person.Load(DatabaseUids.Persons.AlanKay),       s.Movie.Load(DatabaseUids.Movies.Aliens),          137, 137)!,
+                (s.Person.Load(DatabaseUids.Persons.DennisRitchie), s.Movie.Load(DatabaseUids.Movies.DieHard),         132, 132)!,
+                (s.Person.Load(DatabaseUids.Persons.LinusTorvalds), s.Movie.Load(DatabaseUids.Movies.Aliens),          137, 137)!,
+                (s.Person.Load(DatabaseUids.Persons.LinusTorvalds), s.Movie.Load(DatabaseUids.Movies.Serenity),        34,  119)!,
+                (s.Person.Load(DatabaseUids.Persons.MartinFowler),  s.Movie.Load(DatabaseUids.Movies.Matrix),          136, 136)!,
+                (s.Person.Load(DatabaseUids.Persons.MartinFowler),  s.Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137)!,
+                (s.Person.Load(DatabaseUids.Persons.SteveWozniak),  s.Movie.Load(DatabaseUids.Movies.Matrix),          136, 136)!,
+                (s.Person.Load(DatabaseUids.Persons.SteveWozniak),  s.Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137)!,
+                (s.Person.Load(DatabaseUids.Persons.UncleBob),      s.Movie.Load(DatabaseUids.Movies.TheFifthElement), 126, 126)!,
+                (s.Person.Load(DatabaseUids.Persons.UncleBob),      s.Movie.Load(DatabaseUids.Movies.Serenity),        119, 119)!,
+                (s.Person.Load(DatabaseUids.Persons.UncleBob),      s.Movie.Load(DatabaseUids.Movies.TopGunMaverick),  130, 130)!,
+            };
+        }
+        private List<(s.Person person, s.Movie movie, int minutes)> SampleDataWatchedMoviesMutations()
+        {
+            return new List<(s.Person person, s.Movie movie, int minutes)>()
+            {
+                (s.Person.Load(DatabaseUids.Persons.LinusTorvalds), s.Movie.Load(DatabaseUids.Movies.Serenity), 52)!,
+                (s.Person.Load(DatabaseUids.Persons.LinusTorvalds), s.Movie.Load(DatabaseUids.Movies.Serenity), 33)!,
+            };
+        }
+
+        private List<(List<(DateTime from, DateTime till)> relations, s.StreamingService target, decimal price)> GetSubscribedToState(List<(DateTime from, DateTime till)> scenario, s.StreamingService item, decimal price = 0m)
+        {
+            var amazon = s.StreamingService.Load(DatabaseUids.StreamingServices.AmazonPrimeVideo);
+            var hboMax = s.StreamingService.Load(DatabaseUids.StreamingServices.HboMax);
+            var peacock = s.StreamingService.Load(DatabaseUids.StreamingServices.Peacock);
+            var hulu = s.StreamingService.Load(DatabaseUids.StreamingServices.Hulu);
+            var history = s.StreamingService.Load(DatabaseUids.StreamingServices.HistoryVault);
+
+            return new List<(List<(DateTime, DateTime)> initial, s.StreamingService, decimal)>()
+                {
+                    (scenario, item, price),
+                    (TestScenario.RelationsFromMask(0b0010), amazon,  StreamingServiceUids.Rates.AmazonPrimeVideo)!,
+                    (TestScenario.RelationsFromMask(0b0101), hboMax,  StreamingServiceUids.Rates.HboMax)!,
+                    (TestScenario.RelationsFromMask(0b1010), peacock, StreamingServiceUids.Rates.Peacock)!,
+                    (TestScenario.RelationsFromMask(0b1001), hulu,    StreamingServiceUids.Rates.Hulu)!,
+                    (TestScenario.RelationsFromMask(0b1111), history, StreamingServiceUids.Rates.HistoryVault)!,
+                };
+        }
+
+
+
+        private async Task<List<(DateTime from, DateTime till)>> ReadRelationsAsync(OGM @in, Relationship relationship, OGM @out)
+        {
+            Entity inEntity = @in.GetEntity();
+            Entity outEntity = @out.GetEntity();
+
+            if (inEntity.Key is null || outEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
+            string cypher = $"""
+                MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
+                WHERE in.{inEntity.Key.Name} = $in AND out.{outEntity.Key.Name} = $out
+                RETURN r.StartDate AS `From`, r.EndDate AS `Till`
+                """;
+
+            var parameters = new Dictionary<string, object>()
+            {
+                { "in", @in.GetKey()! },
+                { "out", @out.GetKey()! },
+            };
+
+            ResultCursor result = await Transaction.RunAsync(cypher, parameters!);
+
+            return (await result.ToListAsync()).Select(delegate (Record record)
+            {
+                DateTime from = Conversion<long?, DateTime?>.Convert(record["From"]?.As<long?>()) ?? Conversion.MinDateTime;
+                DateTime till = Conversion<long?, DateTime?>.Convert(record["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
+
+                return (from, till);
+            }).ToList();
+        }
         private async Task<List<(DateTime from, DateTime till, Dictionary<string, object> properties)>> ReadRelationsWithPropertiesAsync(OGM @in, Relationship relationship, OGM @out)
         {
             Entity inEntity = @in.GetEntity();
@@ -776,7 +984,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                 return (from, till, properties);
             }).ToList();
         }
-        private List<(object inNodeKey, string[] inNodeLabels, object outNodeKey, string[] outNodeLabels, Dictionary<string, object> properties)> ReadAllRelations(Relationship relationship)
+        private async Task<List<(object inNodeKey, string[] inNodeLabels, object outNodeKey, string[] outNodeLabels, Dictionary<string, object> properties)>> ReadAllRelationsAsync(Relationship relationship)
         {
             if (relationship.InEntity.Key is null || relationship.OutEntity.Key is null)
                 throw new InvalidOperationException("No key has been defined for this entity.");
@@ -790,9 +998,9 @@ namespace Blueprint41.UnitTest.Tests.Async
                         properties(r) AS Properties
                 """;
 
-            ResultCursor result = Transaction.Run(cypher);
+            ResultCursor result = await Transaction.RunAsync(cypher);
 
-            return result.ToList().Select(delegate (Record record)
+            return (await result.ToListAsync()).Select(delegate (Record record)
             {
                 object inNodeKey = record["InNodeKey"];
                 string[] inNodeLabels = record["InNodeLabels"].As<List<string>>().ToArray();
@@ -804,67 +1012,67 @@ namespace Blueprint41.UnitTest.Tests.Async
             }).ToList();
         }
 
-        private List<(Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties)> SampleDataLivesIn()
+        private async Task<List<(a.Person person, List<(DateTime from, DateTime till)> relations, a.City city, Dictionary<string, object> properties)>> SampleDataLivesInAsync()
         {
-            return new List<(Person, List<(DateTime, DateTime)>, City, Dictionary<string, object>)>()
+            return new List<(a.Person, List<(DateTime, DateTime)>, a.City, Dictionary<string, object>)>()
             {
-                (Person.Load(DatabaseUids.Persons.AdaLovelace),   TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.HerculePoirot))!,
-                (Person.Load(DatabaseUids.Persons.AlanKay),       TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.HillValley),     GetAddrLines(CityUids.AddressLines.HillValley.EmmettBrown))!,
-                (Person.Load(DatabaseUids.Persons.AlanTuring),    TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.SherlockHolmes))!,
-                (Person.Load(DatabaseUids.Persons.BillGates),     TestScenario.RelationsFromMask(0b0110), City.Load(DatabaseUids.Cities.LittleWhinging), GetAddrLines(CityUids.AddressLines.LittleWhinging.HarryPotter))!,
-                (Person.Load(DatabaseUids.Persons.DennisRitchie), TestScenario.RelationsFromMask(0b1010), City.Load(DatabaseUids.Cities.Muncie),         GetAddrLines(CityUids.AddressLines.Muncie.Garfield))!,
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b1100), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Earlier))!,
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Later))!,
-                (Person.Load(DatabaseUids.Persons.MartinFowler),  TestScenario.RelationsFromMask(0b0101), City.Load(DatabaseUids.Cities.Quahog),         GetAddrLines(CityUids.AddressLines.Quahog.PeterGriffin))!,
-                (Person.Load(DatabaseUids.Persons.SteveWozniak),  TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.Springfield),    GetAddrLines(CityUids.AddressLines.Springfield.TheSimpsons))!,
-                (Person.Load(DatabaseUids.Persons.UncleBob),      TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.Sunnydale),      GetAddrLines(CityUids.AddressLines.Sunnydale.BuffySummers))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.AdaLovelace),   TestScenario.RelationsFromMask(0b1111), await a.City.LoadAsync(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.HerculePoirot))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.AlanKay),       TestScenario.RelationsFromMask(0b0111), await a.City.LoadAsync(DatabaseUids.Cities.HillValley),     GetAddrLines(CityUids.AddressLines.HillValley.EmmettBrown))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.AlanTuring),    TestScenario.RelationsFromMask(0b0011), await a.City.LoadAsync(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.SherlockHolmes))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.BillGates),     TestScenario.RelationsFromMask(0b0110), await a.City.LoadAsync(DatabaseUids.Cities.LittleWhinging), GetAddrLines(CityUids.AddressLines.LittleWhinging.HarryPotter))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.DennisRitchie), TestScenario.RelationsFromMask(0b1010), await a.City.LoadAsync(DatabaseUids.Cities.Muncie),         GetAddrLines(CityUids.AddressLines.Muncie.Garfield))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b1100), await a.City.LoadAsync(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Earlier))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b0011), await a.City.LoadAsync(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Later))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.MartinFowler),  TestScenario.RelationsFromMask(0b0101), await a.City.LoadAsync(DatabaseUids.Cities.Quahog),         GetAddrLines(CityUids.AddressLines.Quahog.PeterGriffin))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.SteveWozniak),  TestScenario.RelationsFromMask(0b0111), await a.City.LoadAsync(DatabaseUids.Cities.Springfield),    GetAddrLines(CityUids.AddressLines.Springfield.TheSimpsons))!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.UncleBob),      TestScenario.RelationsFromMask(0b1111), await a.City.LoadAsync(DatabaseUids.Cities.Sunnydale),      GetAddrLines(CityUids.AddressLines.Sunnydale.BuffySummers))!,
             };
 
             Dictionary<string, object> GetAddrLines(string[] addressLines)
             {
                 Dictionary<string, object> properties = new Dictionary<string, object>();
-                if (addressLines.Length > 0) properties.Add(nameof(PERSON_LIVES_IN.AddressLine1), addressLines[0]);
-                if (addressLines.Length > 1) properties.Add(nameof(PERSON_LIVES_IN.AddressLine2), addressLines[1]);
-                if (addressLines.Length > 2) properties.Add(nameof(PERSON_LIVES_IN.AddressLine3), addressLines[2]);
+                if (addressLines.Length > 0) properties.Add(nameof(s.PERSON_LIVES_IN.AddressLine1), addressLines[0]);
+                if (addressLines.Length > 1) properties.Add(nameof(s.PERSON_LIVES_IN.AddressLine2), addressLines[1]);
+                if (addressLines.Length > 2) properties.Add(nameof(s.PERSON_LIVES_IN.AddressLine3), addressLines[2]);
 
                 return properties;
             }
         }
-        private List<(Person person, Movie movie, int minutes, int total)> SampleDataWatchedMovies()
+        private async Task<List<(a.Person person, a.Movie movie, int minutes, int total)>> SampleDataWatchedMoviesAsync()
         {
-            return new List<(Person person, Movie movie, int minutes, int total)>()
+            return new List<(a.Person person, a.Movie movie, int minutes, int total)>()
             {
-                (Person.Load(DatabaseUids.Persons.AlanKay),       Movie.Load(DatabaseUids.Movies.Aliens),          137, 137)!,
-                (Person.Load(DatabaseUids.Persons.DennisRitchie), Movie.Load(DatabaseUids.Movies.DieHard),         132, 132)!,
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Aliens),          137, 137)!,
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity),        34,  119)!,
-                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136)!,
-                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137)!,
-                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136)!,
-                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137)!,
-                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TheFifthElement), 126, 126)!,
-                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.Serenity),        119, 119)!,
-                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TopGunMaverick),  130, 130)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.AlanKay),       await a.Movie.LoadAsync(DatabaseUids.Movies.Aliens),          137, 137)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.DennisRitchie), await a.Movie.LoadAsync(DatabaseUids.Movies.DieHard),         132, 132)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds), await a.Movie.LoadAsync(DatabaseUids.Movies.Aliens),          137, 137)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds), await a.Movie.LoadAsync(DatabaseUids.Movies.Serenity),        34,  119)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.MartinFowler),  await a.Movie.LoadAsync(DatabaseUids.Movies.Matrix),          136, 136)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.MartinFowler),  await a.Movie.LoadAsync(DatabaseUids.Movies.Terminator2),     137, 137)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.SteveWozniak),  await a.Movie.LoadAsync(DatabaseUids.Movies.Matrix),          136, 136)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.SteveWozniak),  await a.Movie.LoadAsync(DatabaseUids.Movies.Terminator2),     137, 137)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.UncleBob),      await a.Movie.LoadAsync(DatabaseUids.Movies.TheFifthElement), 126, 126)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.UncleBob),      await a.Movie.LoadAsync(DatabaseUids.Movies.Serenity),        119, 119)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.UncleBob),      await a.Movie.LoadAsync(DatabaseUids.Movies.TopGunMaverick),  130, 130)!,
             };
         }
-        private List<(Person person, Movie movie, int minutes)> SampleDataWatchedMoviesMutations()
+        private async Task<List<(a.Person person, a.Movie movie, int minutes)>> SampleDataWatchedMoviesMutationsAsync()
         {
-            return new List<(Person person, Movie movie, int minutes)>()
+            return new List<(a.Person person, a.Movie movie, int minutes)>()
             {
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 52)!,
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 33)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds), await a.Movie.LoadAsync(DatabaseUids.Movies.Serenity), 52)!,
+                (await a.Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds), await a.Movie.LoadAsync(DatabaseUids.Movies.Serenity), 33)!,
             };
         }
 
-        private List<(List<(DateTime from, DateTime till)> relations, StreamingService target, decimal price)> GetSubscribedToState(List<(DateTime from, DateTime till)> scenario, StreamingService item, decimal price = 0m)
+        private async Task<List<(List<(DateTime from, DateTime till)> relations, a.StreamingService target, decimal price)>> GetSubscribedToStateAsync(List<(DateTime from, DateTime till)> scenario, a.StreamingService item, decimal price = 0m)
         {
-            var amazon = StreamingService.Load(DatabaseUids.StreamingServices.AmazonPrimeVideo);
-            var hboMax = StreamingService.Load(DatabaseUids.StreamingServices.HboMax);
-            var peacock = StreamingService.Load(DatabaseUids.StreamingServices.Peacock);
-            var hulu = StreamingService.Load(DatabaseUids.StreamingServices.Hulu);
-            var history = StreamingService.Load(DatabaseUids.StreamingServices.HistoryVault);
+            var amazon = await a.StreamingService.LoadAsync(DatabaseUids.StreamingServices.AmazonPrimeVideo);
+            var hboMax = await a.StreamingService.LoadAsync(DatabaseUids.StreamingServices.HboMax);
+            var peacock = await a.StreamingService.LoadAsync(DatabaseUids.StreamingServices.Peacock);
+            var hulu = await a.StreamingService.LoadAsync(DatabaseUids.StreamingServices.Hulu);
+            var history = await a.StreamingService.LoadAsync(DatabaseUids.StreamingServices.HistoryVault);
 
-            return new List<(List<(DateTime, DateTime)> initial, StreamingService, decimal)>()
+            return new List<(List<(DateTime, DateTime)> initial, a.StreamingService, decimal)>()
                 {
                     (scenario, item, price),
                     (TestScenario.RelationsFromMask(0b0010), amazon,  StreamingServiceUids.Rates.AmazonPrimeVideo)!,
@@ -874,6 +1082,10 @@ namespace Blueprint41.UnitTest.Tests.Async
                     (TestScenario.RelationsFromMask(0b1111), history, StreamingServiceUids.Rates.HistoryVault)!,
                 };
         }
+
+
+
+
 
         public void Execute(Action<DatastoreModel> script)
         {

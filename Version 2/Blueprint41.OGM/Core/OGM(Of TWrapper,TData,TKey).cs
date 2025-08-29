@@ -27,7 +27,7 @@ namespace Blueprint41.Core
             if (key is null)
                 return null;
 
-            TWrapper? instance = (TWrapper?)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key);
+            TWrapper? instance = (TWrapper?)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key, EntityFlavor.Blocking);
             if (instance is not null)
                 return instance;
 
@@ -51,7 +51,7 @@ namespace Blueprint41.Core
             if (key is null)
                 return null;
 
-            TWrapper? instance = (TWrapper?)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key);
+            TWrapper? instance = (TWrapper?)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key, EntityFlavor.Async);
             if (instance is not null)
                 return instance;
 
@@ -81,7 +81,7 @@ namespace Blueprint41.Core
 
             Transaction trans = Transaction.RunningTransaction;
 
-            TWrapper? instance = (TWrapper?)trans.GetEntityByKey(Entity.Name, key);
+            TWrapper? instance = (TWrapper?)trans.GetEntityByKey(Entity.Name, key, flavor);
             if (!(instance is null))
                 return instance;
 
@@ -447,7 +447,7 @@ namespace Blueprint41.Core
             if (InnerData.HasKey)
             {
                 PersistenceState = PersistenceState.NewAndChanged;
-                RunningTransaction.Register(Entity.Name, this);
+                RunningTransaction.Register(Entity.Name, Flavor, this);
             }
         }
 

@@ -204,7 +204,7 @@ namespace Blueprint41.Persistence
 
             item.SetData(args.Properties!);
             item.PersistenceState = PersistenceState.Persisted;
-            Transaction.RunningTransaction.Register(entity.Name, item, true);
+            Transaction.RunningTransaction.Register(entity.Name, item.Flavor, item, true);
         }
 
         public void Update(OGM item)
@@ -404,7 +404,7 @@ namespace Blueprint41.Persistence
                     concrete = entity;
                 }
 
-                T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
+                T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key, EntityFlavor.Blocking);
                 if (wrapper is null)
                 {
                     wrapper = (T)concrete.Activator(EntityFlavor.Blocking);
@@ -735,7 +735,7 @@ namespace Blueprint41.Persistence
 
             item.SetData(args.Properties!);
             item.PersistenceState = PersistenceState.Persisted;
-            Transaction.RunningTransaction.Register(entity.Name, item, true);
+            Transaction.RunningTransaction.Register(entity.Name, item.Flavor, item, true);
         }
 
         public async Task UpdateAsync(OGM item)
@@ -915,7 +915,7 @@ namespace Blueprint41.Persistence
                     concrete = entity;
                 }
 
-                T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
+                T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key, EntityFlavor.Async);
                 if (wrapper is null)
                 {
                     wrapper = (T)concrete.Activator(EntityFlavor.Async);

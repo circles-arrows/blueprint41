@@ -18,36 +18,36 @@ namespace Blueprint41.UnitTest.Tests.Async
     public partial class TestRelationships : TestBase
     {
         [Test]
-        public void LookupSetLegacy()
+        public async Task LookupSetLegacy()
         {
             #region Set Movie Certification
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                Rating? rating = Rating.Load(DatabaseUids.Ratings.PG);
+                Rating? rating = await Rating.LoadAsync(DatabaseUids.Ratings.PG);
                 Assert.IsNotNull(rating);
 
                 CleanupRelations(MOVIE_CERTIFICATION.Relationship);
 
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     Debug.WriteLine($"Set {certification.movie.Title} certification to {certification.rating.Name}");
                     certification.movie.Certification = rating;
                 }
 
-                Transaction.Flush();
+                await Transaction.FlushAsync();
 
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     certification.movie.Certification = certification.rating;
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     Assert.IsTrue(certification.movie.Certification == certification.rating);
                 }
@@ -58,20 +58,20 @@ namespace Blueprint41.UnitTest.Tests.Async
             #region Set NULL
 
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     Debug.WriteLine($"Set {certification.movie.Title} certification to NULL");
                     certification.movie.Certification = null;
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     Assert.IsTrue(certification.movie.Certification is null);
                 }
@@ -81,19 +81,19 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void CollAddAndRemoveLegacy()
+        public async Task CollAddAndRemoveLegacy()
         {
             #region Add Watched Movie
 
 #if NEO4J
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
 
-                var watched = SampleDataWatchedMovies().First();
+                var watched = (await SampleDataWatchedMoviesAsync()).First();
                 watched.person.WatchedMovies.Add(watched.movie);
 
-                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
+                Exception ex = Assert.Throws<AggregateException>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
 #else
@@ -108,23 +108,23 @@ namespace Blueprint41.UnitTest.Tests.Async
             #endregion
 #endif
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
 
-                foreach (var watched in SampleDataWatchedMovies())
+                foreach (var watched in await SampleDataWatchedMoviesAsync())
                 {
                     Debug.WriteLine($"Add Watched Movie {watched.movie.Title} for {watched.person.Name}");
 
                     watched.person.WatchedMovies.Add(watched.movie);
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
+                foreach (var watched in (await SampleDataWatchedMoviesAsync()).GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
                 {
                     List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
                     List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
@@ -134,28 +134,28 @@ namespace Blueprint41.UnitTest.Tests.Async
                     Assert.AreEqual(0, actual.Except(excpected).Count());
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
 #endregion
 
             #region Remove Watched Movie
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var notWatched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => item.First()))
+                foreach (var notWatched in (await SampleDataWatchedMoviesAsync()).GroupBy(item => item.person).Select(item => item.First()))
                 {
                     Debug.WriteLine($"Remove Watched Movie {notWatched.movie} for {notWatched.person.Name}");
 
                     notWatched.person.WatchedMovies.Remove(notWatched.movie);
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
+                foreach (var watched in (await SampleDataWatchedMoviesAsync()).GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
                 {
                     List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
                     List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
@@ -165,25 +165,25 @@ namespace Blueprint41.UnitTest.Tests.Async
                     Assert.AreEqual(0, actual.Except(excpected).Count());
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
             #endregion
         }
 
         [Test]
-        public void LookupSetWithProperties()
+        public async Task LookupSetWithProperties()
         {
             #region Set Movie Certification
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                Rating? rating = Rating.Load(DatabaseUids.Ratings.PG);
+                Rating? rating = await Rating.LoadAsync(DatabaseUids.Ratings.PG);
                 Assert.IsNotNull(rating);
 
                 CleanupRelations(MOVIE_CERTIFICATION.Relationship);
 
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     Debug.WriteLine($"Set {certification.movie.Title} certification to {certification.rating.Name}");
                     certification.movie.SetCertification(
@@ -195,9 +195,9 @@ namespace Blueprint41.UnitTest.Tests.Async
                         ViolenceGore: RatingComponent.None);
                 }
 
-                Transaction.Flush();
+                await Transaction.FlushAsync();
 
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     certification.movie.SetCertification(
                         certification.rating,
@@ -208,14 +208,14 @@ namespace Blueprint41.UnitTest.Tests.Async
                         ViolenceGore: certification.violenceGore);
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
-                    var details = ReadRelationsWithProperties(certification.movie, MOVIE_CERTIFICATION.Relationship, certification.rating);
+                    var details = await ReadRelationsWithPropertiesAsync(certification.movie, MOVIE_CERTIFICATION.Relationship, certification.rating);
                     Assert.AreEqual(1, details.Count);
                     Assert.AreEqual(Conversion.MinDateTime, details[0].from);
                     Assert.AreEqual(Conversion.MaxDateTime, details[0].till);
@@ -233,9 +233,9 @@ namespace Blueprint41.UnitTest.Tests.Async
             #region Set NULL
 
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     Debug.WriteLine($"Set {certification.movie.Title} certification to NULL");
                     certification.movie.SetCertification(
@@ -247,12 +247,12 @@ namespace Blueprint41.UnitTest.Tests.Async
                         ViolenceGore: certification.violenceGore);
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
                     Assert.IsTrue(certification.movie.Certification is null);
                 }
@@ -266,23 +266,23 @@ namespace Blueprint41.UnitTest.Tests.Async
         {
             #region Add Watched Movie
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
 
-                foreach (var watched in SampleDataWatchedMovies())
+                foreach (var watched in await SampleDataWatchedMoviesAsync())
                 {
                     Debug.WriteLine($"Add Watched Movie {watched.movie.Title} for {watched.person.Name}");
 
                     watched.person.AddWatchedMovie(watched.movie, MinutesWatched: watched.minutes);
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
+                foreach (var watched in (await SampleDataWatchedMoviesAsync()).GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
                 {
                     List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
                     List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
@@ -293,33 +293,33 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     foreach (var watchedMovie in watched.watchedMovies)
                     {
-                        var relations = ReadRelationsWithProperties(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
+                        var relations = await ReadRelationsWithPropertiesAsync(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
                         Assert.AreEqual(1, relations.Count);
                         Assert.That(relations.First().properties.ContainsKey("MinutesWatched"));
                         Assert.AreEqual(watchedMovie.minutes, relations.First().properties["MinutesWatched"]);
                     }
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
             #endregion
 
             #region Remove Watched Movie
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var notWatched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => item.First()))
+                foreach (var notWatched in (await SampleDataWatchedMoviesAsync()).GroupBy(item => item.person).Select(item => item.First()))
                 {
                     Debug.WriteLine($"Remove Watched Movie {notWatched.movie} for {notWatched.person.Name}");
 
                     notWatched.person.WatchedMovies.Remove(notWatched.movie);
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
                 foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
                 {
@@ -332,23 +332,23 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     foreach (var watchedMovie in watched.watchedMovies)
                     {
-                        var relations = ReadRelationsWithProperties(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
+                        var relations = await ReadRelationsWithPropertiesAsync(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
                         Assert.AreEqual(1, relations.Count);
                         Assert.That(relations.First().properties.ContainsKey("MinutesWatched"));
                         Assert.AreEqual(watchedMovie.minutes, relations.First().properties["MinutesWatched"]);
                     }
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
             #endregion
 
             #region Mutate Watched Movie
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var mutate in SampleDataWatchedMoviesMutations())
+                foreach (var mutate in await SampleDataWatchedMoviesMutationsAsync())
                 {
                     Debug.WriteLine($"Mutate Watched Movie {mutate.movie} for {mutate.person.Name}");
 
@@ -357,15 +357,15 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     mutate.person.AddWatchedMovie(mutate.movie, MinutesWatched: relations.First().MinutesWatched + mutate.minutes);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
+                foreach (var watched in (await SampleDataWatchedMoviesAsync()).GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
                 {
                     List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
                     List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
@@ -376,21 +376,21 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     foreach (var watchedMovie in watched.watchedMovies)
                     {
-                        var relations = ReadRelationsWithProperties(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
+                        var relations = await ReadRelationsWithPropertiesAsync(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
                         Assert.AreEqual(1, relations.Count);
                         Assert.That(relations.First().properties.ContainsKey("MinutesWatched"));
                         Assert.AreEqual(watchedMovie.total, relations.First().properties["MinutesWatched"]);
                     }
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
             #endregion
         }
 
         [Test]
-        public void TimeDepLookupSetLegacy()
+        public async Task TimeDepLookupSetLegacy()
         {
             #region Set Same City
 
@@ -400,28 +400,28 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Set City: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
                     
-                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    City? city = await City.LoadAsync(DatabaseUids.Cities.Metropolis);
                     Assert.IsNotNull(city);
 
                     CleanupRelations(PERSON_LIVES_IN.Relationship);
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till);
+                        await WriteRelationAsync(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till);
                     }
 
                     person!.SetCity(city, scenario.Moment);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city!));
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -437,28 +437,28 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Set NULL: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    City? city = await City.LoadAsync(DatabaseUids.Cities.Metropolis);
                     Assert.IsNotNull(city);
 
                     CleanupRelations(PERSON_LIVES_IN.Relationship);
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till);
+                        await WriteRelationAsync(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till);
                     }
 
                     person!.SetCity(null, scenario.Moment);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city!));
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -468,24 +468,24 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void TimeDepCollAddAndRemoveLegacy()
+        public async Task TimeDepCollAddAndRemoveLegacy()
         {
             #region Add Same Streaming Service
 
 #if NEO4J
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
                 CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
-                Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                 Assert.IsNotNull(person);
 
-                StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                StreamingService? netflix = await StreamingService.LoadAsync(DatabaseUids.StreamingServices.Netflix);
                 Assert.IsNotNull(netflix);
 
                 person!.StreamingServiceSubscriptions.Add(netflix!, DateTime.UtcNow);
 
-                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
+                Exception ex = Assert.Throws<AggregateException>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
 #else
@@ -506,16 +506,16 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Add Streaming Service: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    StreamingService? netflix = await StreamingService.LoadAsync(DatabaseUids.StreamingServices.Netflix);
                     Assert.IsNotNull(netflix);
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix!);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix!);
+                    var initial = await GetSubscribedToStateAsync(scenario.Initial, netflix!);
+                    var expected = await GetSubscribedToStateAsync(scenario.Expected, netflix!);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
@@ -527,7 +527,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     person!.StreamingServiceSubscriptions.Add(netflix!, scenario.Moment);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     foreach (var state in expected.Skip(1))
                     {
@@ -538,7 +538,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                     }
                     scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!));
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -554,16 +554,16 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Remove Streaming Service: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    StreamingService? netflix = await StreamingService.LoadAsync(DatabaseUids.StreamingServices.Netflix);
                     Assert.IsNotNull(netflix);
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix!);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix!);
+                    var initial = await GetSubscribedToStateAsync(scenario.Initial, netflix!);
+                    var expected = await GetSubscribedToStateAsync(scenario.Expected, netflix!);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
@@ -575,7 +575,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     person!.StreamingServiceSubscriptions.Remove(netflix!, scenario.Moment);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     foreach (var state in expected.Skip(1))
                     {
@@ -586,7 +586,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                     }
                     scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!));
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -596,7 +596,7 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void TimeDepLookupSetWithProperties()
+        public async Task TimeDepLookupSetWithProperties()
         {
             #region Set Same City
 
@@ -606,12 +606,12 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Set City: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    City? city = await City.LoadAsync(DatabaseUids.Cities.Metropolis);
                     Assert.IsNotNull(city);
 
                     string addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
@@ -631,9 +631,9 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     person!.SetCity(city, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city!);
+                    var relationsWithProperties = await ReadRelationsWithPropertiesAsync(person, PERSON_LIVES_IN.Relationship, city!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
                     foreach (Dictionary<string, object>? actual in relationsWithProperties.Select(item => item.properties))
@@ -644,7 +644,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -660,12 +660,12 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Set City: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    City? city = await City.LoadAsync(DatabaseUids.Cities.Metropolis);
                     Assert.IsNotNull(city);
 
                     string addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
@@ -680,7 +680,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     foreach (var relation in scenario.Initial)
                     {
-                        WriteRelation(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till, properties);
+                        await WriteRelationAsync(person!, PERSON_LIVES_IN.Relationship, city!, relation.from, relation.till, properties);
                     }
 
                     var addr3 = CityUids.AddressLines.Metropolis.ClarkKent_Later[0];
@@ -691,9 +691,9 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     person!.SetCity(city, scenario.Moment, AddressLine1: addr3);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city!);
+                    var relationsWithProperties = await ReadRelationsWithPropertiesAsync(person, PERSON_LIVES_IN.Relationship, city!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
                     foreach ((DateTime from, DateTime till, Dictionary<string, object> properties) actual in relationsWithProperties)
@@ -710,7 +710,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             Assert.AreEqual(value.Value, actual.properties!.GetValue(value.Key));
                     }
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -726,12 +726,12 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Set NULL: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    City? city = City.Load(DatabaseUids.Cities.Metropolis);
+                    City? city = await City.LoadAsync(DatabaseUids.Cities.Metropolis);
                     Assert.IsNotNull(city);
 
                     string addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
@@ -752,7 +752,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                     // person.SetCity(null, scenario.Moment); // We could use this overload, in theory it should do the same as below. However, it's already tested in the Legacy tests.
                     person!.SetCity(null, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
@@ -765,7 +765,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -775,7 +775,7 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void TimeDepCollAddAndRemoveWithProperties()
+        public async Task TimeDepCollAddAndRemoveWithProperties()
         {
             #region Add Same Streaming Service
 
@@ -785,12 +785,12 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Add Streaming Service: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    StreamingService? netflix = await StreamingService.LoadAsync(DatabaseUids.StreamingServices.Netflix);
                     Assert.IsNotNull(netflix);
 
                     decimal price = StreamingServiceUids.Rates.Netflix;
@@ -799,8 +799,8 @@ namespace Blueprint41.UnitTest.Tests.Async
                         { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
                     };
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix!, price);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix!, price);
+                    var initial = await GetSubscribedToStateAsync(scenario.Initial, netflix!, price);
+                    var expected = await GetSubscribedToStateAsync(scenario.Expected, netflix!, price);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
@@ -817,17 +817,17 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     person!.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     foreach (var state in expected.Skip(1))
                     {
-                        var actual = ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
+                        var actual = await ReadRelationsAsync(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
                         var expectedAsciiArt = TestScenario.DrawAsciiArtState(state.relations);
                         var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
+                    var relationsWithProperties = await ReadRelationsWithPropertiesAsync(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
                     foreach (Dictionary<string, object>? actual in relationsWithProperties.Select(item => item.properties))
@@ -838,7 +838,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -854,12 +854,12 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Add Streaming Service: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    StreamingService? netflix = await StreamingService.LoadAsync(DatabaseUids.StreamingServices.Netflix);
                     Assert.IsNotNull(netflix);
 
                     decimal price = StreamingServiceUids.Rates.Hulu;
@@ -868,8 +868,8 @@ namespace Blueprint41.UnitTest.Tests.Async
                         { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
                     };
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix!, price);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix!, price);
+                    var initial = await GetSubscribedToStateAsync(scenario.Initial, netflix!, price);
+                    var expected = await GetSubscribedToStateAsync(scenario.Expected, netflix!, price);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
@@ -877,7 +877,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                     {
                         foreach (var relation in state.relations)
                         {
-                            WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                            await WriteRelationAsync(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
                             {
                                 { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
                             });
@@ -891,17 +891,17 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                     person!.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price2);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     foreach (var state in expected.Skip(1))
                     {
-                        var actual = ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
+                        var actual = await ReadRelationsAsync(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
                         var expectedAsciiArt = TestScenario.DrawAsciiArtState(state.relations);
                         var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
+                    var relationsWithProperties = await ReadRelationsWithPropertiesAsync(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
                     foreach ((DateTime from, DateTime till, Dictionary<string, object> properties) actual in relationsWithProperties)
@@ -917,7 +917,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                         foreach (var value in p)
                             Assert.AreEqual(value.Value, actual.properties!.GetValue(value.Key));
                     }
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
@@ -933,12 +933,12 @@ namespace Blueprint41.UnitTest.Tests.Async
             {
                 Debug.WriteLine($"Remove Streaming Service: {scenario}");
 
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    Person? person = await Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                     Assert.IsNotNull(person);
 
-                    StreamingService? netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    StreamingService? netflix = await StreamingService.LoadAsync(DatabaseUids.StreamingServices.Netflix);
                     Assert.IsNotNull(netflix);
 
                     decimal price = StreamingServiceUids.Rates.Netflix;
@@ -947,30 +947,30 @@ namespace Blueprint41.UnitTest.Tests.Async
                         { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
                     };
 
-                    var initial = GetSubscribedToState(scenario.Initial, netflix!, price);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix!, price);
+                    var initial = await GetSubscribedToStateAsync(scenario.Initial, netflix!, price);
+                    var expected = await GetSubscribedToStateAsync(scenario.Expected, netflix!, price);
 
                     CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
                     foreach (var state in initial)
                     {
                         foreach (var relation in state.relations)
-                            WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
+                            await WriteRelationAsync(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
                     }
 
                     person!.RemoveStreamingServiceSubscription(netflix, scenario.Moment);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     foreach (var state in expected.Skip(1))
                     {
-                        var actual = ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
+                        var actual = await ReadRelationsAsync(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
                         var expectedAsciiArt = TestScenario.DrawAsciiArtState(state.relations);
                         var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
 
-                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
+                    var relationsWithProperties = await ReadRelationsWithPropertiesAsync(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix!);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
                     foreach (Dictionary<string, object>? actual in relationsWithProperties.Select(item => item.properties))
@@ -981,7 +981,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             Assert.AreEqual(value.Value, actual!.GetValue(value.Key));
                     }
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 

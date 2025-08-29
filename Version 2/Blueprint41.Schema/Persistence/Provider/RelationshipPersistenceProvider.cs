@@ -253,7 +253,7 @@ namespace Blueprint41.Persistence
             OGM? item = null;
             if (keyObject is not null)
             {
-                item = Transaction.RunningTransaction.GetEntityByKey(entity.Name, keyObject);
+                item = Transaction.RunningTransaction.GetEntityByKey(entity.Name, keyObject, parent.Flavor);
                 if (item is not null &&
                     (item.PersistenceState == PersistenceState.HasUid
                         ||

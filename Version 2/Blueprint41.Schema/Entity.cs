@@ -1691,7 +1691,7 @@ namespace Blueprint41
             if (key is null)
                 return null;
 
-            OGM? instance = (OGM?)Transaction.RunningTransaction.GetEntityByKey(Name, key);
+            OGM? instance = (OGM?)Transaction.RunningTransaction.GetEntityByKey(Name, key, EntityFlavor.Blocking);
             if (instance is not null)
                 return instance;
 

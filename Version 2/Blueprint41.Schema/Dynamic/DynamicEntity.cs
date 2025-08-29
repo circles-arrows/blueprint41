@@ -79,9 +79,9 @@ namespace Blueprint41.Dynamic
                 return;
 
             if (item.Relationship.IsTimeDependent)
-                DynamicEntityLinks.Add(item.Name, new EntityTimeCollection<DynamicEntity>(this, item, EntityFlavor.Blocking));
+                DynamicEntityLinks.Add(item.Name, new EntityTimeCollection<DynamicEntity>(this, item, EntityFlavor.Dynamic));
             else
-                DynamicEntityLinks.Add(item.Name, new EntityCollection<DynamicEntity>(this, item, EntityFlavor.Blocking));
+                DynamicEntityLinks.Add(item.Name, new EntityCollection<DynamicEntity>(this, item, EntityFlavor.Dynamic));
         }
         internal void RefactorActionPropertyRenamed(string oldname, Property item, MergeAlgorithm mergeAlgorithm = MergeAlgorithm.NotApplicable)
         {
@@ -507,7 +507,7 @@ namespace Blueprint41.Dynamic
             PersistenceState = PersistenceState.HasUid;
 
             if (ShouldExecute)
-                Transaction.RunningTransaction.Register(DynamicEntityType.Name, this);
+                Transaction.RunningTransaction.Register(DynamicEntityType.Name, EntityFlavor.Dynamic, this);
         }
         void OGM.SetRowVersion(DateTime? value)
         {
@@ -544,7 +544,7 @@ namespace Blueprint41.Dynamic
             if (ShouldExecute && GetKey() is not null)
             {
                 PersistenceState = PersistenceState.NewAndChanged;
-                Transaction.RunningTransaction.Register(DynamicEntityType.Name, this);
+                Transaction.RunningTransaction.Register(DynamicEntityType.Name, EntityFlavor.Dynamic, this);
             }
         }
 
@@ -776,7 +776,7 @@ namespace Blueprint41.Dynamic
             if (key is null)
                 return null;
 
-            DynamicEntity? instance = (DynamicEntity?)transaction.GetEntityByKey(entity.Name, key);
+            DynamicEntity? instance = (DynamicEntity?)transaction.GetEntityByKey(entity.Name, key, EntityFlavor.Dynamic);
             if (instance is not null)
                 return instance;
 

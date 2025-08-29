@@ -359,7 +359,7 @@ namespace Blueprint41
                 }
             }
 
-            List<KeyValuePair<string, Dictionary<OGM, OGM>>> sortedItems = registeredEntities.OrderBy(item => item.Key).ToList(); // key is entity name
+            List<KeyValuePair<(string name, EntityFlavor flavor), Dictionary<OGM, OGM>>> sortedItems = registeredEntities.OrderBy(item => item.Key.name).ThenBy(item => item.Key.flavor).ToList(); // key is entity name
             if (!DisableForeignKeyChecks)
             {
                 foreach (var entitySet in sortedItems)
@@ -427,7 +427,7 @@ namespace Blueprint41
                         entity.Save();
                         object? key = entity.GetKey();
                         Dictionary<object, OGM>? cache;
-                        if (!(key is null) && entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
+                        if (!(key is null) && entitiesByKey.TryGetValue((entity.GetEntity().Name, entity.Flavor), out cache))
                             cache.Remove(key);
                         //entitySet.Remove(entity);
                     }
@@ -473,7 +473,7 @@ namespace Blueprint41
                 }
             }
 
-            List<KeyValuePair<string, Dictionary<OGM, OGM>>> sortedItems = registeredEntities.OrderBy(item => item.Key).ToList(); // key is entity name
+            List<KeyValuePair<(string name, EntityFlavor flavor), Dictionary<OGM, OGM>>> sortedItems = registeredEntities.OrderBy(item => item.Key.name).ThenBy(item => item.Key.flavor).ToList(); // key is entity name
             if (!DisableForeignKeyChecks)
             {
                 foreach (var entitySet in sortedItems)
@@ -541,7 +541,7 @@ namespace Blueprint41
                         await entity.SaveAsync();
                         object? key = entity.GetKey();
                         Dictionary<object, OGM>? cache;
-                        if (!(key is null) && entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
+                        if (!(key is null) && entitiesByKey.TryGetValue((entity.GetEntity().Name, entity.Flavor), out cache))
                             cache.Remove(key);
                         //entitySet.Remove(entity);
                     }
@@ -819,8 +819,8 @@ namespace Blueprint41
         #region Registration
 
         private Dictionary<OGM, PersistenceState> beforeCommitEntityState = new Dictionary<OGM, PersistenceState>();
-        private Dictionary<string, Dictionary<OGM, OGM>> registeredEntities = new Dictionary<string, Dictionary<OGM, OGM>>(50);
-        private Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>> registeredCollections = new Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>>(100);
+        private Dictionary<(string name, EntityFlavor flavor), Dictionary<OGM, OGM>> registeredEntities = new Dictionary<(string, EntityFlavor), Dictionary<OGM, OGM>>(50);
+        private Dictionary<(string name, EntityFlavor flavor), Dictionary<string, HashSet<Core.EntityCollectionBase>>> registeredCollections = new Dictionary<(string, EntityFlavor), Dictionary<string, HashSet<Core.EntityCollectionBase>>>(100);
 
         internal void Register(OGM item)
         {
@@ -830,12 +830,13 @@ namespace Blueprint41
             item.Transaction = this;
 
             string entityName = item.GetEntity().Name;
+            EntityFlavor flavor = item.Flavor;
 
             Dictionary<OGM, OGM>? values;
-            if (!registeredEntities.TryGetValue(entityName, out values))
+            if (!registeredEntities.TryGetValue((entityName, flavor), out values))
             {
                 values = new Dictionary<OGM, OGM>(1000);
-                registeredEntities.Add(entityName, values);
+                registeredEntities.Add((entityName, flavor), values);
             }
 
             OGM? inSet;
@@ -850,17 +851,17 @@ namespace Blueprint41
             }
         }
 
-        internal void Register(string type, OGM item, bool noError = false)
+        internal void Register(string type, EntityFlavor flavor, OGM item, bool noError = false)
         {
             object? key = item.GetKey();
             if (key is null)
                 return;
 
             Dictionary<object, OGM>? values;
-            if (!entitiesByKey.TryGetValue(type, out values))
+            if (!entitiesByKey.TryGetValue((type, flavor), out values))
             {
                 values = new Dictionary<object, OGM>(1000);
-                entitiesByKey.Add(type, values);
+                entitiesByKey.Add((type, flavor), values);
             }
 
             if (values.ContainsKey(key))
@@ -883,12 +884,13 @@ namespace Blueprint41
             item.Transaction = this;
 
             string relationshipName = item.Relationship.Name;
+            EntityFlavor flavor = item.Parent.Flavor;
 
             Dictionary<string, HashSet<Core.EntityCollectionBase>>? properties;
-            if (!registeredCollections.TryGetValue(relationshipName, out properties))
+            if (!registeredCollections.TryGetValue((relationshipName, flavor), out properties))
             {
                 properties = new Dictionary<string, HashSet<Core.EntityCollectionBase>>();
-                registeredCollections.Add(relationshipName, properties);
+                registeredCollections.Add((relationshipName, flavor), properties);
             }
 
             string propertyName = string.Concat(item.Parent.GetEntity().Name, ".", item.ParentProperty?.Name ?? "NonExisting");
@@ -924,15 +926,15 @@ namespace Blueprint41
         }
 
 
-        private Dictionary<string, Dictionary<object, OGM>> entitiesByKey = new Dictionary<string, Dictionary<object, OGM>>(50);
+        private Dictionary<(string name, EntityFlavor flavor), Dictionary<object, OGM>> entitiesByKey = new Dictionary<(string, EntityFlavor), Dictionary<object, OGM>>(50);
 
-        public OGM? GetEntityByKey(string type, object key)
+        public OGM? GetEntityByKey(string type, object key, EntityFlavor flavor)
         {
             if (key is null)
                 return null;
 
             Dictionary<object, OGM>? values;
-            if (!entitiesByKey.TryGetValue(type, out values))
+            if (!entitiesByKey.TryGetValue((type, flavor), out values))
                 return null;
 
             OGM? item;
@@ -978,12 +980,13 @@ namespace Blueprint41
                 return;
 
             string relationshipName = collection.Relationship.Name;
+            EntityFlavor flavor = collection.Parent.Flavor;
 
             Dictionary<string, HashSet<Core.EntityCollectionBase>>? properties;
-            if (!registeredCollections.TryGetValue(relationshipName, out properties))
+            if (!registeredCollections.TryGetValue((relationshipName, flavor), out properties))
             {
                 properties = new Dictionary<string, HashSet<Core.EntityCollectionBase>>();
-                registeredCollections.Add(relationshipName, properties);
+                registeredCollections.Add((relationshipName, flavor), properties);
             }
 
             string propertyName = string.Concat(collection.Parent.GetEntity().Name, ".", collection.ParentProperty?.Name ?? "NonExisting");

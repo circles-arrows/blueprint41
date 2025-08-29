@@ -56,7 +56,7 @@ namespace Blueprint41.Core
 
             Transaction trans = Transaction.RunningTransaction;
 
-            TInterface? instance = (TInterface?)trans.GetEntityByKey(entity.Name, key);
+            TInterface? instance = (TInterface?)trans.GetEntityByKey(entity.Name, key, flavor);
             if (!(instance is null))
                 return instance;
 
