@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
@@ -350,7 +351,7 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void OGMImplQuery()
+        public async Task OGMImplQuery()
         {
             // Exception will throw in line 424 -> Person.LoadWhere(compiled);
             // In the NodePersistenceProvider.Load in line 368 -> var node = record["node"]?.As<driver.NodeResult>();
@@ -358,7 +359,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using(MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -394,11 +395,11 @@ namespace Blueprint41.UnitTest.Tests.Async
                     p2.Restaurants.AddRange(p2.City.Restaurants);
                     p3.Restaurants.AddRange(p1.City.Restaurants);
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
-            using (MockModel.BeginTransaction())
+            await using(MockModel.BeginTransactionAsync())
             {
 #pragma warning disable CS0168 // Variable is declared but never used
                 ICompiled compiled;
@@ -421,8 +422,9 @@ namespace Blueprint41.UnitTest.Tests.Async
 #if NEO4J
                 compiled = query.Compile();
 
-                var result = compiled.GetExecutionContext().Execute();
-                List<Person> searchResult = Person.LoadWhere(compiled);
+
+                var result = await compiled.GetExecutionContext().ExecuteAsync();
+                List<Person> searchResult = await Person.LoadWhereAsync(compiled);
                 Assert.Greater(searchResult.Count, 0);
 
                 Assert.AreEqual(
@@ -443,7 +445,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                     .Limit(1)
                     .Compile();
 
-                searchResult = Person.LoadWhere(compiled);
+                searchResult = await Person.LoadWhereAsync(compiled);
                 Assert.AreEqual(1, searchResult.Count);
 
                 Assert.AreEqual(
@@ -462,7 +464,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                     .OrderBy(pR.Name)
                     .Compile();
 
-                searchResult = Person.LoadWhere(compiled);
+                searchResult = await Person.LoadWhereAsync(compiled);
                 Assert.AreEqual(2, searchResult.Count);
 
                 Assert.AreEqual("Bob Smith", searchResult[0].Name);

@@ -120,6 +120,20 @@ namespace Blueprint41.Core
             return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TWrapper>(Entity, page, pageSize, ascending, orderBy);
         }
 
+        public static Task<List<TWrapper>> GetAllAsync()
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.GetAllAsync<TWrapper>(Entity);
+        }
+        public static Task<List<TWrapper>> GetAllAsync(int page, int pageSize, params Property[] orderBy)
+        {
+            return GetAllAsync(page, pageSize, true, orderBy);
+        }
+        public static Task<List<TWrapper>> GetAllAsync(int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.GetAllAsync<TWrapper>(Entity, page, pageSize, ascending, orderBy);
+        }
+
+
         [Obsolete("This method will be made internal in the next release.", false)]
         public static List<TWrapper> LoadWhere(string conditions, IParameter[] parameters)
         {
@@ -163,6 +177,48 @@ namespace Blueprint41.Core
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties, page, pageSize, ascending, properties);
         }
+
+        internal static Task<List<TWrapper>> LoadWhereAsync(string conditions, IParameter[] parameters)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, conditions, parameters, 0, 0);
+        }
+        internal static Task<List<TWrapper>> LoadWhereAsync(string conditions, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
+        {
+            return LoadWhereAsync(conditions, parameters, page, pageSize, true, orderBy);
+        }
+        internal static Task<List<TWrapper>> LoadWhereAsync(string conditions, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
+        }
+        public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query)
+        {
+            return LoadWhereAsync(query, new IParameter[0]);
+        }
+        public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query, params IParameter[] parameters)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, query, parameters);
+        }
+        public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
+        {
+            return LoadWhereAsync(query, parameters, page, pageSize, true, orderBy);
+        }
+        public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, query, parameters, page, pageSize, ascending, orderBy);
+        }
+        public static Task<List<TWrapper>> SearchAsync(string text, params Property[] properties)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.SearchAsync<TWrapper>(Entity, text, properties);
+        }
+        public static Task<List<TWrapper>> SearchAsync(string text, int page = 0, int pageSize = 0, params Property[] properties)
+        {
+            return SearchAsync(text, page, pageSize, true, properties);
+        }
+        public static Task<List<TWrapper>> SearchAsync(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.SearchAsync<TWrapper>(Entity, text, properties, page, pageSize, ascending, properties);
+        }
+
 
         internal abstract void SetKey(TKey key);
 
