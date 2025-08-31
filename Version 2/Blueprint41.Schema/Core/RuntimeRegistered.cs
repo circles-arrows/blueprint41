@@ -12,83 +12,135 @@ namespace Blueprint41.Core
     {
         internal RuntimeRegistered()
         {
-            Blocking = default(T);
-            Async = default(T);
         }
         internal RuntimeRegistered(T blocking, T async)
         {
-            Blocking = blocking;
-            Async = async;
+            _blockingValue = blocking;
+            _blockingSet = true;
+
+            _asyncValue = async;
+            _asyncSet = true;
+        }
+        internal RuntimeRegistered(Func<T> blocking, Func<T> async)
+        {
+            _blockingFactory = blocking;
+            _asyncFactory = async;
         }
 
-        public virtual T Blocking { get; internal set; }
-        public virtual T Async { get; internal set; }
+        #region Blocking
+
+        public T Blocking
+        {
+            get
+            {
+                if (!_blockingSet && _blockingFactory is not null)
+                {
+                    lock (this)
+                    {
+                        if (!_blockingSet)
+                        {
+                            _blockingValue = _blockingFactory.Invoke();
+                            _blockingSet = true;
+                        }
+                    }
+                }
+                return _blockingValue;
+            }
+            set
+            {
+                if (_blockingFactory is not null)
+                    throw new InvalidOperationException("You cannot set a value when a factory has been provided.");
+
+                _blockingValue = value;
+                _blockingSet = true;
+            }
+        }
+        public bool IsBlockingSet => _blockingSet;
+
+        private bool _blockingSet = false;
+        private T _blockingValue = default;
+        private Func<T> _blockingFactory = null;
+
+        #endregion
+
+        #region Async
+
+        public T Async
+        {
+            get
+            {
+                if (!_asyncSet && _asyncFactory is not null)
+                {
+                    lock (this)
+                    {
+                        if (!_asyncSet)
+                        {
+                            _asyncValue = _asyncFactory.Invoke();
+                            _asyncSet = true;
+                        }
+                    }
+                }
+                return _asyncValue;
+            }
+            set
+            {
+                if (_asyncFactory is not null)
+                    throw new InvalidOperationException("You cannot set a value when a factory has been provided.");
+
+                _asyncValue = value;
+                _asyncSet = true;
+            }
+        }
+        public bool IsAsyncSet => _asyncSet;
+
+        private bool _asyncSet = false;
+        private T _asyncValue = default;
+        private Func<T> _asyncFactory = null;
+
+        #endregion
 
         public T Get(EntityFlavor flavor) => flavor switch
         {
             EntityFlavor.Blocking => Blocking,
-            EntityFlavor.Async => Async,
+            EntityFlavor.Async    => Async,
+            _                     => throw new NotSupportedException(),
+        };
+        public bool IsSet(EntityFlavor flavor) => flavor switch
+        {
+            EntityFlavor.Blocking => IsBlockingSet,
+            EntityFlavor.Async => IsAsyncSet,
             _ => throw new NotSupportedException(),
         };
-        internal void Set(EntityFlavor flavor, T type)
+        internal void Set(EntityFlavor flavor, T value)
         {
             switch (flavor)
             {
                 case EntityFlavor.Blocking:
-                    Blocking = type;
+                    _blockingValue = value;
+                    _blockingSet = true;
                     break;
                 case EntityFlavor.Async:
-                    Async = type;
+                    _asyncValue = value;
+                    _asyncSet = true;
                     break;
                 default:
                     throw new NotSupportedException();
             }
         }
+        internal T GetOrSet(EntityFlavor flavor, Func<T> valueFactory)
+        {
+            switch (flavor)
+            {
+                case EntityFlavor.Blocking:
+                    _blockingFactory = valueFactory;
+                    return Blocking;
+                case EntityFlavor.Async:
+                    _asyncFactory = valueFactory;
+                    return Async;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
 #nullable enable
-    }
-    public class RuntimeReturnTypes : RuntimeRegistered<Type?>
-    {
-        internal RuntimeReturnTypes()
-        {
-            _returnTypes = null;
-        }
-        internal RuntimeReturnTypes(RuntimeReturnTypes returnTypes)
-        {
-            _returnTypes = returnTypes;
-        }
-
-#pragma warning disable CS8764
-        public override Type? Blocking
-        {
-            get
-            {
-                if (_returnTypes?.Blocking is not null && base.Blocking is null)
-                {
-                    lock (this)
-                    {
-                        if (base.Blocking is null)
-                            base.Blocking = typeof(EntityEventArgs<>).MakeGenericType(_returnTypes.Blocking);
-                    }
-                }
-                return base.Blocking;
-            }
-        }
-        public override Type? Async
-        {
-            get
-            {
-                if (_returnTypes?.Async is not null && base.Async is null)
-                {
-                    lock (this)
-                    {
-                        if (base.Async is null)
-                            base.Async = typeof(EntityEventArgs<>).MakeGenericType(_returnTypes.Async);
-                    }
-                }
-                return base.Async;
-            }
-        }
-
-        private readonly RuntimeReturnTypes? _returnTypes;
     }
 }

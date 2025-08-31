@@ -1286,48 +1286,43 @@ namespace Blueprint41
             {
                 if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
                 {
-                    if (getValueWithMoment is null)
+                    Func<OGM, DateTime?, object>? method = getValueWithMoment.GetOrSet(instance.Flavor, delegate ()
                     {
-                        lock (this)
-                        {
-                            if (getValueWithMoment is null)
-                            {
-                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
-                                if (type is null)
-                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+                        Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                        if (type is null)
+                            return null;
 
-                                string name = string.Concat("Get", Name);
-                                MethodInfo? method = type.GetMethods().FirstOrDefault(item => item.Name == name);
-                                if (method is null)
-                                    throw new NotSupportedException("No get accessor exists");
+                        string name = string.Concat("Get", Name);
+                        MethodInfo? method = type.GetMethods().FirstOrDefault(item => item.Name == name);
+                        if (method is null)
+                            throw new NotSupportedException("No get accessor exists");
 
-                                getValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, DateTime?, object>>(method, DelegateHelper.CreateOptions.Downcasting);
-                            }
-                        }
-                    }
-                    return getValueWithMoment.Invoke(instance, moment ?? DateTime.UtcNow);
+                        return DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, DateTime?, object>>(method, DelegateHelper.CreateOptions.Downcasting);
+
+                    });
+                    if (method is null)
+                        throw new NotSupportedException($"{instance.Flavor} code not generated.");
+
+                    return method.Invoke(instance, moment ?? DateTime.UtcNow);
                 }
                 else
                 {
-                    if (getValue is null)
+                    Func<OGM, object>? method = getValue.GetOrSet(instance.Flavor, delegate ()
                     {
-                        lock (this)
-                        {
-                            if (getValue is null)
-                            {
-                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
-                                if (type is null)
-                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+                        Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                        if (type is null)
+                            return null;
 
-                                MethodInfo? method = type.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
-                                if (method is null)
-                                    throw new NotSupportedException("No get accessor exists");
+                        MethodInfo? method = type.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
+                        if (method is null)
+                            throw new NotSupportedException("No get accessor exists");
 
-                                getValue = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, object>>(method, DelegateHelper.CreateOptions.Downcasting);
-                            }
-                        }
-                    }
-                    return getValue.Invoke(instance);
+                        return DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, object>>(method, DelegateHelper.CreateOptions.Downcasting);
+                    });
+                    if (method is null)
+                        throw new NotSupportedException($"{instance.Flavor} code not generated.");
+                    
+                    return method.Invoke(instance);
                 }
             }
             else
@@ -1335,8 +1330,8 @@ namespace Blueprint41
                 throw new NotSupportedException("There is no OGM mapping generated for relationships or their properties.");
             }
         }
-        private Func<OGM, object>? getValue = null;
-        private Func<OGM, DateTime?, object>? getValueWithMoment = null;
+        private readonly RuntimeRegistered<Func<OGM, object>?> getValue = new RuntimeRegistered<Func<OGM, object>?>();
+        private readonly RuntimeRegistered<Func<OGM, DateTime?, object>?> getValueWithMoment = new RuntimeRegistered<Func<OGM, DateTime?, object>?>();
 
         /// <summary>
         /// Sets the value of the property
@@ -1351,53 +1346,49 @@ namespace Blueprint41
             {
                 if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
                 {
-                    if (setValueWithMoment is null)
+                    Action<OGM, object?, DateTime?>? method = setValueWithMoment.GetOrSet(instance.Flavor, delegate ()
                     {
-                        lock (this)
-                        {
-                            if (setValueWithMoment is null)
-                            {
-                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
-                                if (type is null)
-                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+                        Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                        if (type is null)
+                            return null;
 
-                                string name = string.Concat("Set", Name);
-                                MethodInfo? method = type.GetMethods().FirstOrDefault(item => item.Name == name);
-                                if (method is null)
-                                    throw new NotSupportedException("No set accessor exists");
+                        string name = string.Concat("Set", Name);
+                        MethodInfo? method = type.GetMethods().FirstOrDefault(item => item.Name == name);
+                        if (method is null)
+                            throw new NotSupportedException("No set accessor exists");
 
-                                setValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?, DateTime?>>(method, DelegateHelper.CreateOptions.Downcasting);
-                            }
-                        }
-                    }
-                    setValueWithMoment.Invoke(instance, value, moment);
+                        return DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?, DateTime?>>(method, DelegateHelper.CreateOptions.Downcasting);
+                    });
+
+                    if (method is null)
+                        throw new NotSupportedException($"{instance.Flavor} code not generated.");
+
+                    method.Invoke(instance, value, moment);
                 }
                 else
                 {
-                    if (setValue is null)
+                    Action<OGM, object?>? method = setValue.GetOrSet(instance.Flavor, delegate ()
                     {
-                        lock (this)
+                        Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
+                        if (type is null)
+                            return null;
+
+                        MethodInfo? method = type.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
+                        if (method is null)
                         {
-                            if (setValue is null)
-                            {
-                                Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
-                                if (type is null)
-                                    throw new NotSupportedException($"{instance.Flavor} code not generated.");
+                            if (IsRowVersion)
+                                method = typeof(OGM).GetMethod("SetRowVersion");
 
-                                MethodInfo? method = type.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
-                                if (method is null)
-                                {
-                                    if (IsRowVersion)
-                                        method = typeof(OGM).GetMethod("SetRowVersion");
-
-                                    if (method is null)
-                                        throw new NotSupportedException("No set accessor exists");
-                                }
-                                setValue = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?>>(method, DelegateHelper.CreateOptions.Downcasting);
-                            }
+                            if (method is null)
+                                throw new NotSupportedException("No set accessor exists");
                         }
-                    }
-                    setValue.Invoke(instance, value);
+                        return DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?>>(method, DelegateHelper.CreateOptions.Downcasting);
+                    });
+
+                    if (method is null)
+                        throw new NotSupportedException($"{instance.Flavor} code not generated.");
+
+                    method.Invoke(instance, value);
                 }
             }
             else
@@ -1405,8 +1396,8 @@ namespace Blueprint41
                 throw new NotSupportedException("There is no OGM mapping generated for relationships or their properties.");
             }
         }
-        private Action<OGM, object?>? setValue = null;
-        private Action<OGM, object?, DateTime?>? setValueWithMoment = null;
+        private RuntimeRegistered<Action<OGM, object?>?> setValue = new RuntimeRegistered<Action<OGM, object?>?>();
+        private RuntimeRegistered<Action<OGM, object?, DateTime?>?> setValueWithMoment = new RuntimeRegistered<Action<OGM, object?, DateTime?>?>();
 
         internal void ClearLookup(OGM instance, DateTime? moment = null)
         {
@@ -1537,11 +1528,11 @@ namespace Blueprint41
         internal Type GetPropertyEventArgsType(Type senderType, EntityFlavor flavor)
         {
             Type? type;
-            if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
+            if (!propertyEventArgsType.TryGetValue((senderType.Name, flavor), out type))
             {
                 lock (this)
                 {
-                    if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
+                    if (!propertyEventArgsType.TryGetValue((senderType.Name, flavor), out type))
                     {
                         Type? innerType = SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType.Get(flavor);
                         if (innerType is null)
@@ -1549,14 +1540,14 @@ namespace Blueprint41
 
                         type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, innerType);
 
-                        propertyEventArgsType.Add(senderType.Name, type);
+                        propertyEventArgsType.Add((senderType.Name, flavor), type);
                     }
                 }
             }
             return type;
         }
 
-        private Dictionary<string, Type> propertyEventArgsType = new Dictionary<string, Type>();
+        private Dictionary<(string, EntityFlavor), Type> propertyEventArgsType = new Dictionary<(string, EntityFlavor), Type>();
 
         #endregion
     }

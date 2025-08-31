@@ -556,18 +556,17 @@ namespace Blueprint41
         /// <summary>
         /// The dot-net type at runtime that was generated (either a class or an interface)
         /// </summary>
-        public readonly RuntimeReturnTypes RuntimeReturnType = new RuntimeReturnTypes();
+        public readonly RuntimeRegistered<Type> RuntimeReturnType = new RuntimeRegistered<Type>();
 
         /// <summary>
         /// The dot-net type at runtime that was generated (the class, not the interface)
         /// </summary>
-        public readonly RuntimeReturnTypes RuntimeClassType = new RuntimeReturnTypes();
+        public readonly RuntimeRegistered<Type> RuntimeClassType = new RuntimeRegistered<Type>();
 
         void ISetRuntimeType.SetRuntimeTypes(Type returnType, Type classType, EntityFlavor flavor)
         {
             RuntimeReturnType.Set(flavor, returnType);
             RuntimeClassType.Set(flavor, classType);
-            Parent.TypesRegistered.Set(flavor, true);
         }
 
         #region Refactor Actions
@@ -938,7 +937,7 @@ namespace Blueprint41
         /// </summary>
         public IEntityEvents Events { get { return this; } }
 
-        internal RuntimeReturnTypes EntityEventArgsType
+        internal RuntimeRegistered<Type> EntityEventArgsType
         {
             get
             {
@@ -946,13 +945,27 @@ namespace Blueprint41
                 {
                     lock (this)
                     {
-                        _entityEventArgsType ??= new RuntimeReturnTypes(RuntimeReturnType);
+                        _entityEventArgsType ??= new RuntimeRegistered<Type>(
+                            delegate ()
+                            {
+                                if (!RuntimeReturnType.IsBlockingSet)
+                                    throw new InvalidOperationException("Runtime-type not set.");
+
+                                return typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType.Blocking);
+                            },
+                            delegate ()
+                            {
+                                if (!RuntimeReturnType.IsAsyncSet)
+                                    throw new InvalidOperationException("Runtime-type not set.");
+
+                                return typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType.Async);
+                            });
                     }
                 }
                 return _entityEventArgsType;
             }
         }
-        private RuntimeReturnTypes? _entityEventArgsType = null;
+        private RuntimeRegistered<Type>? _entityEventArgsType = null;
 
         /// <summary>
         /// True when a OnNew event is registered
@@ -1652,22 +1665,21 @@ namespace Blueprint41
             if (IsAbstract)
                 throw new NotSupportedException($"You cannot instantiate the abstract entity {Name}.");
 
-            if (activator is null)
+            Func<OGM>? method = activator.GetOrSet(flavor, delegate ()
             {
                 Type? type = RuntimeReturnType.Get(flavor);
                 if (type is null)
-                    throw new NotSupportedException($"{flavor} code not generated.");
+                    return null;
 
-                lock (this)
-                {
-                    if (activator is null)
-                        activator = Expression.Lambda<Func<OGM>>(Expression.New(type)).Compile();
-                }
-            }
+                return Expression.Lambda<Func<OGM>>(Expression.New(type)).Compile();
+            });
 
-            return Transaction.Execute(() => activator.Invoke(), eventOptions);
+            if (method is null)
+                throw new NotSupportedException($"{flavor} code not generated.");
+
+            return Transaction.Execute(() => method.Invoke(), eventOptions);
         }
-        private Func<OGM>? activator = null;
+        private readonly RuntimeRegistered<Func<OGM>?> activator = new RuntimeRegistered<Func<OGM>?>();
 
         internal OGM? Load(object? key, bool locked = false)
         {
@@ -1721,28 +1733,24 @@ namespace Blueprint41
         {
             return Map(node, null!, null!, mappingMode, flavor);
         }
-
         internal OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode, EntityFlavor flavor)
         {
-            if (mapMethod is null)
+            Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>? method = mapMethod.GetOrSet(flavor, delegate ()
             {
-                lock (this)
-                {
-                    if (mapMethod is null)
-                    {
-                        Type? type = RuntimeClassType.Get(flavor);
-                        if (type is null)
-                            throw new NotSupportedException($"{flavor} code not generated.");
+                Type? type = RuntimeClassType.Get(flavor);
+                if (type is null)
+                    return null;
 
-                        MethodInfo? method = type.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping), typeof(EntityFlavor) }, null);
-                        mapMethod = (method is null) ? null : (Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>), method, true);
-                    }
-                }
-            }
+                MethodInfo? method = type.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping), typeof(EntityFlavor) }, null);
+                return (method is null) ? null : (Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>), method, true);
+            });
 
-            return mapMethod?.Invoke(node, cypher, parameters, mappingMode, flavor);
+            if (method is null)
+                throw new NotSupportedException($"{flavor} code not generated.");
+
+            return method.Invoke(node, cypher, parameters, mappingMode, flavor);
         }
-        private Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>? mapMethod = null;
+        private readonly RuntimeRegistered<Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?> mapMethod = new RuntimeRegistered<Func<NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>?>();
 
         #region IEntityAdvancedFeatures
 
