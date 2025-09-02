@@ -26,7 +26,7 @@ namespace Blueprint41.Persistence
             }
         }
 
-        protected override void InMemoryLogic(EntityCollectionBase target)
+        protected override void InMemoryLogic(IReplayableCollection target)
         {
             target.ForEach(delegate (int index, CollectionItem item)
             {

@@ -21,10 +21,9 @@ namespace Blueprint41.Core
             _asyncValue = async;
             _asyncSet = true;
         }
-        internal RuntimeRegistered(Func<T> blocking, Func<T> async)
+        internal RuntimeRegistered(Func<EntityFlavor, T> valueFactory)
         {
-            _blockingFactory = blocking;
-            _asyncFactory = async;
+            _factory = valueFactory;
         }
 
         #region Blocking
@@ -33,13 +32,13 @@ namespace Blueprint41.Core
         {
             get
             {
-                if (!_blockingSet && _blockingFactory is not null)
+                if (!_blockingSet && _factory is not null)
                 {
                     lock (this)
                     {
                         if (!_blockingSet)
                         {
-                            _blockingValue = _blockingFactory.Invoke();
+                            _blockingValue = _factory.Invoke(EntityFlavor.Blocking);
                             _blockingSet = true;
                         }
                     }
@@ -48,7 +47,7 @@ namespace Blueprint41.Core
             }
             set
             {
-                if (_blockingFactory is not null)
+                if (_factory is not null)
                     throw new InvalidOperationException("You cannot set a value when a factory has been provided.");
 
                 _blockingValue = value;
@@ -59,7 +58,6 @@ namespace Blueprint41.Core
 
         private bool _blockingSet = false;
         private T _blockingValue = default;
-        private Func<T> _blockingFactory = null;
 
         #endregion
 
@@ -69,13 +67,13 @@ namespace Blueprint41.Core
         {
             get
             {
-                if (!_asyncSet && _asyncFactory is not null)
+                if (!_asyncSet && _factory is not null)
                 {
                     lock (this)
                     {
                         if (!_asyncSet)
                         {
-                            _asyncValue = _asyncFactory.Invoke();
+                            _asyncValue = _factory.Invoke(EntityFlavor.Async);
                             _asyncSet = true;
                         }
                     }
@@ -84,7 +82,7 @@ namespace Blueprint41.Core
             }
             set
             {
-                if (_asyncFactory is not null)
+                if (_factory is not null)
                     throw new InvalidOperationException("You cannot set a value when a factory has been provided.");
 
                 _asyncValue = value;
@@ -95,7 +93,6 @@ namespace Blueprint41.Core
 
         private bool _asyncSet = false;
         private T _asyncValue = default;
-        private Func<T> _asyncFactory = null;
 
         #endregion
 
@@ -127,20 +124,14 @@ namespace Blueprint41.Core
                     throw new NotSupportedException();
             }
         }
-        internal T GetOrSet(EntityFlavor flavor, Func<T> valueFactory)
+        internal T GetOrSet(EntityFlavor flavor, Func<EntityFlavor, T> valueFactory)
         {
-            switch (flavor)
-            {
-                case EntityFlavor.Blocking:
-                    _blockingFactory = valueFactory;
-                    return Blocking;
-                case EntityFlavor.Async:
-                    _asyncFactory = valueFactory;
-                    return Async;
-                default:
-                    throw new NotSupportedException();
-            }
+            _factory = valueFactory;
+            return Get(flavor);
         }
+
+        private Func<EntityFlavor, T> _factory = null;
+
 #nullable enable
     }
 }

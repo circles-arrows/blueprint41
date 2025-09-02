@@ -367,6 +367,75 @@ namespace Blueprint41.Core
             LazySet();
             return true;
         }
+        internal protected override async Task LazySetAsync()
+        {
+            if (PersistenceState == PersistenceState.OutOfScope)
+                throw new InvalidOperationException("The transaction for this object has already ended.");
+
+            await LazyGetAsync();
+
+            if (PersistenceState == PersistenceState.New)
+                PersistenceState = PersistenceState.NewAndChanged;
+            else if (PersistenceState == PersistenceState.Loaded || PersistenceState == PersistenceState.Persisted)
+                PersistenceState = PersistenceState.LoadedAndChanged;
+        }
+        internal protected Task<bool> LazySetAsync<T>(Property property, T previousValue, T assignValue) => LazySetAsync<T>(property, previousValue, assignValue, Transaction.RunningTransaction.TransactionDate);
+        internal protected override async Task<bool> LazySetAsync<T>(Property property, T previousValue, T assignValue, DateTime? moment)
+        {
+            if (previousValue is null && assignValue is null)
+                return false;
+
+            if (previousValue is not null && previousValue.Equals(assignValue))
+                return false;
+
+            if (property.PropertyType == PropertyType.Attribute && previousValue is IList)
+            {
+                if (assignValue is null)
+                    throw new InvalidOperationException("You cannot assign null to a list property.");
+
+                IList pv = (IList)previousValue;
+                IList av = (IList)assignValue;
+                if (pv.Count == 0 && av.Count == 0)
+                    return false;
+
+                if (pv.Count == av.Count)
+                {
+                    bool equal = true;
+                    foreach (var item in pv)
+                    {
+                        if (!av.Contains(item))
+                            equal = false;
+                    }
+
+                    if (equal)
+                        return false;
+                }
+            }
+
+            if (await base.LazySetAsync(property, previousValue, assignValue, moment))
+                return false;
+
+            await LazySetAsync();
+            return true;
+        }
+        internal protected override async Task<bool> LazySetAsync<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+        {
+            if (!previousValues.Any() && assignValue is null)
+                return false;
+
+            if (previousValues.Take(2).Count() == 1 && previousValues.First().Item.Equals(assignValue) && (previousValues.First().StartDate.IsMin() || previousValues.First().StartDate <= moment) && previousValues.First().EndDate.IsMax())
+                return false;
+
+            if (property.PropertyType == PropertyType.Attribute)
+                throw new NotSupportedException("Don't use this overload for attributes.");
+
+            if (await base.LazySetAsync(property, previousValues!, assignValue, moment))
+                return false;
+
+            await LazySetAsync();
+            return true;
+        }
+
 
         public override int GetHashCode()
         {
@@ -534,6 +603,20 @@ namespace Blueprint41.Core
 
             ICompiledQuery query = StoredQueries![name];
             return LoadWhere(query, parameters, page, size, ascending, orderBy);
+        }
+        public static Task<List<TWrapper>> FromQueryAsync(string name, params IParameter[] parameters)
+        {
+            InitializeStoredQueries();
+
+            ICompiledQuery query = StoredQueries![name];
+            return LoadWhereAsync(query, parameters);
+        }
+        public static Task<List<TWrapper>> FromQueryAsync(string name, IParameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
+        {
+            InitializeStoredQueries();
+
+            ICompiledQuery query = StoredQueries![name];
+            return LoadWhereAsync(query, parameters, page, size, ascending, orderBy);
         }
 
         private static void InitializeStoredQueries()

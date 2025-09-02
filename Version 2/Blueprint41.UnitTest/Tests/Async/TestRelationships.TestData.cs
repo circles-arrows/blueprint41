@@ -635,23 +635,31 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             Transaction.Run(cypher);
         }
-
-        private Task SetupTestDataSetAsync() => Task.Run(SetupTestDataSet);
-        private void SetupTestDataSet()
+        private Task CleanupRelationsAsync(Relationship relationship)
         {
-            using (MockModel.BeginTransaction())
+            string cypher = $"""
+                MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name})
+                DELETE r
+                """;
+
+            return Transaction.RunAsync(cypher);
+        }
+
+        private async Task SetupTestDataSetAsync()
+        {
+            await using (MockModel.BeginTransactionAsync())
             {
                 // Person lives in
                 foreach ((s.Person person, List<(DateTime from, DateTime till)> relations, s.City city, Dictionary<string, object> properties) data in SampleDataLivesIn())
                 {
                     foreach ((DateTime from, DateTime till) in data.relations)
-                        WriteRelation(data.person, s.PERSON_LIVES_IN.Relationship, data.city, from, till, data.properties);
+                        await WriteRelationAsync(data.person, s.PERSON_LIVES_IN.Relationship, data.city, from, till, data.properties);
                 }
 
                 // Movie certifications
-                foreach (var certification in DatabaseUids.Movies.Movies)
+                foreach (var certification in await DatabaseUids.Movies.MoviesAsync())
                 {
-                    certification.movie.SetCertification(
+                    await certification.movie.SetCertificationAsync(
                         certification.rating,
                         FrighteningIntense: certification.frighteningIntense,
                         Profanity: certification.profanity,
@@ -687,7 +695,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                     watched.person.AddWatchedMovie(watched.movie, MinutesWatched: watched.minutes);
                 }
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
         }
 
@@ -846,7 +854,7 @@ namespace Blueprint41.UnitTest.Tests.Async
             }).ToList();
         }
 
-        private List<(s.Person person, List<(DateTime from, DateTime till)> relations, s.City city, Dictionary<string, object> properties)> SampleDataLivesIn()
+         private List<(s.Person person, List<(DateTime from, DateTime till)> relations, s.City city, Dictionary<string, object> properties)> SampleDataLivesIn()
         {
             return new List<(s.Person, List<(DateTime, DateTime)>, s.City, Dictionary<string, object>)>()
             {
@@ -916,8 +924,6 @@ namespace Blueprint41.UnitTest.Tests.Async
                     (TestScenario.RelationsFromMask(0b1111), history, StreamingServiceUids.Rates.HistoryVault)!,
                 };
         }
-
-
 
         private async Task<List<(DateTime from, DateTime till)>> ReadRelationsAsync(OGM @in, Relationship relationship, OGM @out)
         {

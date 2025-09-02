@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 using NUnit.Framework;
 
 using Blueprint41.Core;
@@ -14,7 +16,7 @@ namespace Blueprint41.UnitTest.Tests.Async
     internal class TestOptimizeFor : TestBase
     {
         [Test]
-        public void TestOptimize()
+        public async Task TestOptimize()
         {
             Connect<MockModel>(true).Execute(true);
 
@@ -23,7 +25,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                 string? key = null;
 
                 string outputConsole;
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -60,28 +62,28 @@ namespace Blueprint41.UnitTest.Tests.Async
                         Title = "Starwars"
                     };
 
-                    p1.ActedInMovies.Add(tap);
-                    p1.ActedInMovies.Add(wallstreet);
+                    (await p1.ActedInMoviesAsync()).Add(tap);
+                    (await p1.ActedInMoviesAsync()).Add(wallstreet);
 
-                    p2.ActedInMovies.Add(tap);
-                    p2.ActedInMovies.Add(wallstreet);
+                    (await p2.ActedInMoviesAsync()).Add(tap);
+                    (await p2.ActedInMoviesAsync()).Add(wallstreet);
 
-                    p3.DirectedMovies.Add(wallstreet);
-                    p4.DirectedMovies.Add(tap);
+                    (await p3.DirectedMoviesAsync()).Add(wallstreet);
+                    (await p4.DirectedMoviesAsync()).Add(tap);
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
 
                     key = p2.Uid;
                 }
 
-                using (MockModel.BeginTransaction(OptimizeFor.RecursiveSubGraphAccess))
+                await using (MockModel.BeginTransactionAsync(OptimizeFor.RecursiveSubGraphAccess))
                 {
-                    Person? p = Person.Load(key);
+                    Person? p = await Person.LoadAsync(key);
                     Assert.IsNotNull(p);
-                    Assert.Zero(p!.DirectedMovies.Count);
-                    Assert.Greater(p.ActedInMovies.Count, 0);
-                    Assert.IsNotNull(p.ActedInMovies[0]);
-                    Assert.Greater(p.ActedInMovies[0]!.Actors.Count, 0);
+                    Assert.Zero((await p!.DirectedMoviesAsync()).Count);
+                    Assert.Greater((await p.ActedInMoviesAsync()).Count, 0);
+                    Assert.IsNotNull((await p.ActedInMoviesAsync())[0]);
+                    Assert.Greater((await (await p.ActedInMoviesAsync())[0]!.ActorsAsync()).Count, 0);
 
                     outputConsole = output.GetOutput();
 
@@ -91,14 +93,14 @@ namespace Blueprint41.UnitTest.Tests.Async
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Movie)<-[rel:ACTORS]-(out:Person) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
                 }
 
-                using (MockModel.BeginTransaction(OptimizeFor.PartialSubGraphAccess))
+                await using (MockModel.BeginTransactionAsync(OptimizeFor.PartialSubGraphAccess))
                 {
-                    Person? p = Person.Load(key);
+                    Person? p = await Person.LoadAsync(key);
                     Assert.IsNotNull(p);
-                    Assert.Zero(p!.DirectedMovies.Count);
-                    Assert.Greater(p.ActedInMovies.Count, 0);
-                    Assert.IsNotNull(p.ActedInMovies[0]);
-                    Assert.Greater(p.ActedInMovies[0]!.Actors.Count, 0);
+                    Assert.Zero((await p!.DirectedMoviesAsync()).Count);
+                    Assert.Greater((await p.ActedInMoviesAsync()).Count, 0);
+                    Assert.IsNotNull((await p.ActedInMoviesAsync())[0]);
+                    Assert.Greater((await (await p.ActedInMoviesAsync())[0]!.ActorsAsync()).Count, 0);
 
                     outputConsole = output.GetOutput();
 

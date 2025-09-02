@@ -24,7 +24,7 @@ namespace Datastore.Manipulation.Async
     public interface IStreamingServiceOriginalData : IBaseEntityOriginalData
     {
         string Name { get; }
-        IEnumerable<Person> Subscribers { get; }
+        Task<IEnumerable<Person>> SubscribersAsync();
     }
 
     public partial class StreamingService : OGM<StreamingService, StreamingService.StreamingServiceData, System.String>, IBaseEntity, IStreamingServiceOriginalData
@@ -44,40 +44,40 @@ namespace Datastore.Manipulation.Async
         {
             #region LoadByKeys
             
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+            RegisterQuery(nameof(LoadByKeysAsync), (query, alias) => query.
                 Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
             #endregion
 
             #region LoadByName
 
-            RegisterQuery(nameof(LoadByName), (query, alias) => query.
+            RegisterQuery(nameof(LoadByNameAsync), (query, alias) => query.
                 Where(alias.Name == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             #region LoadByUid
 
-            RegisterQuery(nameof(LoadByUid), (query, alias) => query.
+            RegisterQuery(nameof(LoadByUidAsync), (query, alias) => query.
                 Where(alias.Uid == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             AdditionalGeneratedStoredQueries();
         }
-        public static StreamingService LoadByName(System.String name)
+        public async static Task<StreamingService> LoadByNameAsync(System.String name)
         {
-            return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByNameAsync), new Parameter(Param0, name)).ConfigureAwait(false)).FirstOrDefault();
         }
-        public static StreamingService LoadByUid(System.String uid)
+        public async static Task<StreamingService> LoadByUidAsync(System.String uid)
         {
-            return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByUidAsync), new Parameter(Param0, uid)).ConfigureAwait(false)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, StreamingService> LoadByKeys(IEnumerable<System.String> uids)
+        public static async Task<Dictionary<System.String, StreamingService>> LoadByKeysAsync(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return (await FromQueryAsync(nameof(LoadByKeysAsync), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ConfigureAwait(false)).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.StreamingServiceAlias, IWhereQuery> query)
@@ -154,7 +154,7 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "StreamingService";
 
-                Subscribers = new EntityTimeCollection<Person>(Wrapper, Members.Subscribers, EntityFlavor.Async, item => { if (Members.Subscribers.Events.HasRegisteredChangeHandlers) { int loadHack = item.StreamingServiceSubscriptions.CountAll; } });
+                Subscribers = new EntityTimeCollectionAsync<Person>(Wrapper, Members.Subscribers, EntityFlavor.Async, async item => { if (Members.Subscribers.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.StreamingServiceSubscriptionsAsync()).CountAll; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -188,7 +188,7 @@ namespace Datastore.Manipulation.Async
             #region Members for interface IStreamingService
 
             public string Name { get; set; }
-            public EntityTimeCollection<Person> Subscribers { get; private set; }
+            public EntityTimeCollectionAsync<Person> Subscribers { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -206,10 +206,10 @@ namespace Datastore.Manipulation.Async
         #region Members for interface IStreamingService
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public EntityTimeCollection<Person> Subscribers { get { return InnerData.Subscribers; } }
-        private void ClearSubscribers(DateTime? moment)
+        public Task<EntityTimeCollectionAsync<Person>> SubscribersAsync() { return InnerData.Subscribers.LoadAsync(); }
+        private Task ClearSubscribersAsync(DateTime? moment)
         {
-            ((ILookupHelper<Person>)InnerData.Subscribers).ClearLookup(moment);
+            return ((ILookupHelperAsync<Person>)InnerData.Subscribers).ClearLookupAsync(moment);
         }
 
         #endregion
@@ -281,18 +281,18 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddSubscriber(Person person, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
+        public Task AddSubscriberAsync(Person person, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);
-            ((ILookupHelper<Person>)InnerData.Subscribers).AddItem(person, moment, properties);
+            return ((ILookupHelperAsync<Person>)InnerData.Subscribers).AddItemAsync(person, moment, properties);
         }
-        public void RemoveSubscriber(Person person, DateTime? moment)
+        public async Task RemoveSubscriberAsync(Person person, DateTime? moment)
         {
-            Subscribers.Remove(person, moment);
+            (await SubscribersAsync()).Remove(person, moment);
         }
 
         #endregion
@@ -757,7 +757,7 @@ namespace Datastore.Manipulation.Async
         #region Members for interface IStreamingService
 
         string IStreamingServiceOriginalData.Name { get { return OriginalData.Name; } }
-        IEnumerable<Person> IStreamingServiceOriginalData.Subscribers { get { return OriginalData.Subscribers.OriginalData; } }
+        Task<IEnumerable<Person>> IStreamingServiceOriginalData.SubscribersAsync() { return OriginalData.Subscribers.OriginalDataAsync(); }
 
         #endregion
         #region Members for interface IBaseEntity

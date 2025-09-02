@@ -24,9 +24,9 @@ namespace Datastore.Manipulation.Async
     public interface IMovieOriginalData : IBaseEntityOriginalData
     {
         string Title { get; }
-        Person Director { get; }
-        IEnumerable<Person> Actors { get; }
-        Rating Certification { get; }
+        Task<Person> GetDirectorAsync();
+        Task<IEnumerable<Person>> ActorsAsync();
+        Task<Rating> GetCertificationAsync();
     }
 
     public partial class Movie : OGM<Movie, Movie.MovieData, System.String>, IBaseEntity, IMovieOriginalData
@@ -46,40 +46,40 @@ namespace Datastore.Manipulation.Async
         {
             #region LoadByKeys
             
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+            RegisterQuery(nameof(LoadByKeysAsync), (query, alias) => query.
                 Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
             #endregion
 
             #region LoadByTitle
 
-            RegisterQuery(nameof(LoadByTitle), (query, alias) => query.
+            RegisterQuery(nameof(LoadByTitleAsync), (query, alias) => query.
                 Where(alias.Title == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             #region LoadByUid
 
-            RegisterQuery(nameof(LoadByUid), (query, alias) => query.
+            RegisterQuery(nameof(LoadByUidAsync), (query, alias) => query.
                 Where(alias.Uid == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             AdditionalGeneratedStoredQueries();
         }
-        public static Movie LoadByTitle(System.String title)
+        public async static Task<Movie> LoadByTitleAsync(System.String title)
         {
-            return FromQuery(nameof(LoadByTitle), new Parameter(Param0, title)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByTitleAsync), new Parameter(Param0, title)).ConfigureAwait(false)).FirstOrDefault();
         }
-        public static Movie LoadByUid(System.String uid)
+        public async static Task<Movie> LoadByUidAsync(System.String uid)
         {
-            return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByUidAsync), new Parameter(Param0, uid)).ConfigureAwait(false)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Movie> LoadByKeys(IEnumerable<System.String> uids)
+        public static async Task<Dictionary<System.String, Movie>> LoadByKeysAsync(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return (await FromQueryAsync(nameof(LoadByKeysAsync), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ConfigureAwait(false)).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.MovieAlias, IWhereQuery> query)
@@ -158,9 +158,9 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Movie";
 
-                Director = new EntityCollection<Person>(Wrapper, Members.Director, EntityFlavor.Async, item => { if (Members.Director.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedMovies.Count; } });
-                Actors = new EntityCollection<Person>(Wrapper, Members.Actors, EntityFlavor.Async, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedInMovies.Count; } });
-                Certification = new EntityCollection<Rating>(Wrapper, Members.Certification, EntityFlavor.Async);
+                Director = new EntityCollectionAsync<Person>(Wrapper, Members.Director, EntityFlavor.Async, async item => { if (Members.Director.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.DirectedMoviesAsync()).Count; } });
+                Actors = new EntityCollectionAsync<Person>(Wrapper, Members.Actors, EntityFlavor.Async, async item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.ActedInMoviesAsync()).Count; } });
+                Certification = new EntityCollectionAsync<Rating>(Wrapper, Members.Certification, EntityFlavor.Async);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -194,9 +194,9 @@ namespace Datastore.Manipulation.Async
             #region Members for interface IMovie
 
             public string Title { get; set; }
-            public EntityCollection<Person> Director { get; private set; }
-            public EntityCollection<Person> Actors { get; private set; }
-            public EntityCollection<Rating> Certification { get; private set; }
+            public EntityCollectionAsync<Person> Director { get; private set; }
+            public EntityCollectionAsync<Person> Actors { get; private set; }
+            public EntityCollectionAsync<Rating> Certification { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -214,32 +214,22 @@ namespace Datastore.Manipulation.Async
         #region Members for interface IMovie
 
         public string Title { get { LazyGet(); return InnerData.Title; } set { if (LazySet(Members.Title, InnerData.Title, value)) InnerData.Title = value; } }
-        public Person Director
+        public Task<Person> GetDirectorAsync()
         {
-            get { return ((ILookupHelper<Person>)InnerData.Director).GetItem(null); }
-            set 
-            { 
-                if (LazySet(Members.Director, ((ILookupHelper<Person>)InnerData.Director).GetItem(null), value))
-                    ((ILookupHelper<Person>)InnerData.Director).SetItem(value, null); 
-            }
+            return ((ILookupHelperAsync<Person>)InnerData.Director).GetItemAsync(null);
         }
-        private void ClearDirector(DateTime? moment)
+        private Task ClearDirectorAsync(DateTime? moment)
         {
-            ((ILookupHelper<Person>)InnerData.Director).ClearLookup(moment);
+            return ((ILookupHelperAsync<Person>)InnerData.Director).ClearLookupAsync(moment);
         }
-        public EntityCollection<Person> Actors { get { return InnerData.Actors; } }
-        private void ClearActors(DateTime? moment)
+        public Task<EntityCollectionAsync<Person>> ActorsAsync() { return InnerData.Actors.LoadAsync(); }
+        private Task ClearActorsAsync(DateTime? moment)
         {
-            ((ILookupHelper<Person>)InnerData.Actors).ClearLookup(moment);
+            return ((ILookupHelperAsync<Person>)InnerData.Actors).ClearLookupAsync(moment);
         }
-        public Rating Certification
+        public Task<Rating> GetCertificationAsync()
         {
-            get { return ((ILookupHelper<Rating>)InnerData.Certification).GetItem(null); }
-            set 
-            { 
-                if (LazySet(Members.Certification, ((ILookupHelper<Rating>)InnerData.Certification).GetItem(null), value))
-                    ((ILookupHelper<Rating>)InnerData.Certification).SetItem(value, null); 
-            }
+            return ((ILookupHelperAsync<Rating>)InnerData.Certification).GetItemAsync(null);
         }
 
         #endregion
@@ -309,11 +299,11 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void SetDirector(Person person)
+        public Task SetDirectorAsync(Person person)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
-            ((ILookupHelper<Person>)InnerData.Director).SetItem(person, null, properties);
+            return ((ILookupHelperAsync<Person>)InnerData.Director).SetItemAsync(person, null, properties);
         }
 
         #endregion
@@ -365,14 +355,14 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddActor(Person person)
+        public Task AddActorAsync(Person person)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            ((ILookupHelper<Person>)InnerData.Actors).AddItem(person, null, properties);
+            return ((ILookupHelperAsync<Person>)InnerData.Actors).AddItemAsync(person, null, properties);
         }
-        public void RemoveActor(Person person)
+        public async Task RemoveActorAsync(Person person)
         {
-            Actors.Remove(person);
+            (await ActorsAsync()).Remove(person);
         }
 
         #endregion
@@ -429,7 +419,7 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void SetCertification(Rating rating, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public Task SetCertificationAsync(Rating rating, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (FrighteningIntense.HasValue) properties.Add("FrighteningIntense", FrighteningIntense.Value?.ToString());
@@ -438,7 +428,7 @@ namespace Datastore.Manipulation.Async
             if (Substances.HasValue) properties.Add("Substances", Substances.Value?.ToString());
             if (SexAndNudity.HasValue) properties.Add("SexAndNudity", SexAndNudity.Value?.ToString());
 
-            ((ILookupHelper<Rating>)InnerData.Certification).SetItem(rating, null, properties);
+            return ((ILookupHelperAsync<Rating>)InnerData.Certification).SetItemAsync(rating, null, properties);
         }
 
         #endregion
@@ -991,9 +981,9 @@ namespace Datastore.Manipulation.Async
         #region Members for interface IMovie
 
         string IMovieOriginalData.Title { get { return OriginalData.Title; } }
-        Person IMovieOriginalData.Director { get { return ((ILookupHelper<Person>)OriginalData.Director).GetOriginalItem(null); } }
-        IEnumerable<Person> IMovieOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
-        Rating IMovieOriginalData.Certification { get { return ((ILookupHelper<Rating>)OriginalData.Certification).GetOriginalItem(null); } }
+        Task<Person> IMovieOriginalData.GetDirectorAsync() { return ((ILookupHelperAsync<Person>)OriginalData.Director).GetOriginalItemAsync(null); }
+        Task<IEnumerable<Person>> IMovieOriginalData.ActorsAsync() { return OriginalData.Actors.OriginalDataAsync(); }
+        Task<Rating> IMovieOriginalData.GetCertificationAsync() { return ((ILookupHelperAsync<Rating>)OriginalData.Certification).GetOriginalItemAsync(null); }
 
         #endregion
         #region Members for interface IBaseEntity

@@ -24,12 +24,13 @@ namespace Datastore.Manipulation.Async
     public interface IPersonOriginalData : IBaseEntityOriginalData
     {
         string Name { get; }
-        IEnumerable<Restaurant> Restaurants { get; }
-        IEnumerable<Movie> DirectedMovies { get; }
-        IEnumerable<Movie> ActedInMovies { get; }
-        IEnumerable<StreamingService> StreamingServiceSubscriptions { get; }
-        IEnumerable<Movie> WatchedMovies { get; }
-        City City { get; }
+        Task<IEnumerable<Restaurant>> RestaurantsAsync();
+        Task<IEnumerable<Movie>> DirectedMoviesAsync();
+        Task<IEnumerable<Movie>> ActedInMoviesAsync();
+        Task<IEnumerable<StreamingService>> StreamingServiceSubscriptionsAsync();
+        Task<IEnumerable<Movie>> WatchedMoviesAsync();
+        Task<City> GetCityAsync();
+        Task<City> GetCityAsync(DateTime moment);
     }
 
     public partial class Person : OGM<Person, Person.PersonData, System.String>, IBaseEntity, IPersonOriginalData
@@ -49,29 +50,29 @@ namespace Datastore.Manipulation.Async
         {
             #region LoadByKeys
             
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+            RegisterQuery(nameof(LoadByKeysAsync), (query, alias) => query.
                 Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
             #endregion
 
             #region LoadByUid
 
-            RegisterQuery(nameof(LoadByUid), (query, alias) => query.
+            RegisterQuery(nameof(LoadByUidAsync), (query, alias) => query.
                 Where(alias.Uid == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             AdditionalGeneratedStoredQueries();
         }
-        public static Person LoadByUid(System.String uid)
+        public async static Task<Person> LoadByUidAsync(System.String uid)
         {
-            return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByUidAsync), new Parameter(Param0, uid)).ConfigureAwait(false)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Person> LoadByKeys(IEnumerable<System.String> uids)
+        public static async Task<Dictionary<System.String, Person>> LoadByKeysAsync(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return (await FromQueryAsync(nameof(LoadByKeysAsync), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ConfigureAwait(false)).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.PersonAlias, IWhereQuery> query)
@@ -153,12 +154,12 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Person";
 
-                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { int loadHack = item.Persons.Count; } });
-                DirectedMovies = new EntityCollection<Movie>(Wrapper, Members.DirectedMovies, EntityFlavor.Async, item => { if (Members.DirectedMovies.Events.HasRegisteredChangeHandlers) { object loadHack = item.Director; } });
-                ActedInMovies = new EntityCollection<Movie>(Wrapper, Members.ActedInMovies, EntityFlavor.Async, item => { if (Members.ActedInMovies.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
-                StreamingServiceSubscriptions = new EntityTimeCollection<StreamingService>(Wrapper, Members.StreamingServiceSubscriptions, EntityFlavor.Async, item => { if (Members.StreamingServiceSubscriptions.Events.HasRegisteredChangeHandlers) { int loadHack = item.Subscribers.CountAll; } });
-                WatchedMovies = new EntityCollection<Movie>(Wrapper, Members.WatchedMovies, EntityFlavor.Async);
-                City = new EntityTimeCollection<City>(Wrapper, Members.City, EntityFlavor.Async);
+                Restaurants = new EntityCollectionAsync<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async, async item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.PersonsAsync()).Count; } });
+                DirectedMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.DirectedMovies, EntityFlavor.Async, async item => { if (Members.DirectedMovies.Events.HasRegisteredChangeHandlers) { object loadHack = await item.GetDirectorAsync(); } });
+                ActedInMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.ActedInMovies, EntityFlavor.Async, async item => { if (Members.ActedInMovies.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.ActorsAsync()).Count; } });
+                StreamingServiceSubscriptions = new EntityTimeCollectionAsync<StreamingService>(Wrapper, Members.StreamingServiceSubscriptions, EntityFlavor.Async, async item => { if (Members.StreamingServiceSubscriptions.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.SubscribersAsync()).CountAll; } });
+                WatchedMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.WatchedMovies, EntityFlavor.Async);
+                City = new EntityTimeCollectionAsync<City>(Wrapper, Members.City, EntityFlavor.Async);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -192,12 +193,12 @@ namespace Datastore.Manipulation.Async
             #region Members for interface IPerson
 
             public string Name { get; set; }
-            public EntityCollection<Restaurant> Restaurants { get; private set; }
-            public EntityCollection<Movie> DirectedMovies { get; private set; }
-            public EntityCollection<Movie> ActedInMovies { get; private set; }
-            public EntityTimeCollection<StreamingService> StreamingServiceSubscriptions { get; private set; }
-            public EntityCollection<Movie> WatchedMovies { get; private set; }
-            public EntityTimeCollection<City> City { get; private set; }
+            public EntityCollectionAsync<Restaurant> Restaurants { get; private set; }
+            public EntityCollectionAsync<Movie> DirectedMovies { get; private set; }
+            public EntityCollectionAsync<Movie> ActedInMovies { get; private set; }
+            public EntityTimeCollectionAsync<StreamingService> StreamingServiceSubscriptions { get; private set; }
+            public EntityCollectionAsync<Movie> WatchedMovies { get; private set; }
+            public EntityTimeCollectionAsync<City> City { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -215,41 +216,39 @@ namespace Datastore.Manipulation.Async
         #region Members for interface IPerson
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
-        private void ClearRestaurants(DateTime? moment)
+        public Task<EntityCollectionAsync<Restaurant>> RestaurantsAsync() { return InnerData.Restaurants.LoadAsync(); }
+        private Task ClearRestaurantsAsync(DateTime? moment)
         {
-            ((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
+            return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).ClearLookupAsync(moment);
         }
-        public EntityCollection<Movie> DirectedMovies { get { return InnerData.DirectedMovies; } }
-        private void ClearDirectedMovies(DateTime? moment)
+        public Task<EntityCollectionAsync<Movie>> DirectedMoviesAsync() { return InnerData.DirectedMovies.LoadAsync(); }
+        private Task ClearDirectedMoviesAsync(DateTime? moment)
         {
-            ((ILookupHelper<Movie>)InnerData.DirectedMovies).ClearLookup(moment);
+            return ((ILookupHelperAsync<Movie>)InnerData.DirectedMovies).ClearLookupAsync(moment);
         }
-        public EntityCollection<Movie> ActedInMovies { get { return InnerData.ActedInMovies; } }
-        private void ClearActedInMovies(DateTime? moment)
+        public Task<EntityCollectionAsync<Movie>> ActedInMoviesAsync() { return InnerData.ActedInMovies.LoadAsync(); }
+        private Task ClearActedInMoviesAsync(DateTime? moment)
         {
-            ((ILookupHelper<Movie>)InnerData.ActedInMovies).ClearLookup(moment);
+            return ((ILookupHelperAsync<Movie>)InnerData.ActedInMovies).ClearLookupAsync(moment);
         }
-        public EntityTimeCollection<StreamingService> StreamingServiceSubscriptions { get { return InnerData.StreamingServiceSubscriptions; } }
-        private void ClearStreamingServiceSubscriptions(DateTime? moment)
+        public Task<EntityTimeCollectionAsync<StreamingService>> StreamingServiceSubscriptionsAsync() { return InnerData.StreamingServiceSubscriptions.LoadAsync(); }
+        private Task ClearStreamingServiceSubscriptionsAsync(DateTime? moment)
         {
-            ((ILookupHelper<StreamingService>)InnerData.StreamingServiceSubscriptions).ClearLookup(moment);
+            return ((ILookupHelperAsync<StreamingService>)InnerData.StreamingServiceSubscriptions).ClearLookupAsync(moment);
         }
-        public EntityCollection<Movie> WatchedMovies { get { return InnerData.WatchedMovies; } }
-        public City City { get { return GetCity(Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } set { SetCity(value, Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } }
-        public City GetCity(DateTime moment)
+        public Task<EntityCollectionAsync<Movie>> WatchedMoviesAsync() { return InnerData.WatchedMovies.LoadAsync(); }
+        public Task<City> GetCityAsync()
         {
-            return ((ILookupHelper<City>)InnerData.City).GetItem(moment);
+            return GetCityAsync(Transaction.Current?.TransactionDate ?? DateTime.UtcNow);
         }
-        public IEnumerable<CollectionItem<City>> GetCities(DateTime? from, DateTime? till)
+        public Task<City> GetCityAsync(DateTime moment)
         {
-            return ((ILookupHelper<City>)InnerData.City).GetItems(from, till);
+            return ((ILookupHelperAsync<City>)InnerData.City).GetItemAsync(moment);
         }
-        //public void SetCity(City value, DateTime? moment)
-        //{
-        //    if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), value, moment))
-        //        ((ILookupHelper<City>)InnerData.City).SetItem(value, moment);
-        //}
+        public Task<IEnumerable<CollectionItem<City>>> GetCitiesAsync(DateTime? from, DateTime? till)
+        {
+            return ((ILookupHelperAsync<City>)InnerData.City).GetItemsAsync(from, till);
+        }
 
         #endregion
         #region Members for interface IBaseEntity
@@ -318,14 +317,14 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddRestaurant(Restaurant restaurant)
+        public Task AddRestaurantAsync(Restaurant restaurant)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            ((ILookupHelper<Restaurant>)InnerData.Restaurants).AddItem(restaurant, null, properties);
+            return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).AddItemAsync(restaurant, null, properties);
         }
-        public void RemoveRestaurant(Restaurant restaurant)
+        public async Task RemoveRestaurantAsync(Restaurant restaurant)
         {
-            Restaurants.Remove(restaurant);
+            (await RestaurantsAsync()).Remove(restaurant);
         }
 
         #endregion
@@ -377,14 +376,14 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddDirectedMovie(Movie movie)
+        public Task AddDirectedMovieAsync(Movie movie)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            ((ILookupHelper<Movie>)InnerData.DirectedMovies).AddItem(movie, null, properties);
+            return ((ILookupHelperAsync<Movie>)InnerData.DirectedMovies).AddItemAsync(movie, null, properties);
         }
-        public void RemoveDirectedMovie(Movie movie)
+        public async Task RemoveDirectedMovieAsync(Movie movie)
         {
-            DirectedMovies.Remove(movie);
+            (await DirectedMoviesAsync()).Remove(movie);
         }
 
         #endregion
@@ -436,14 +435,14 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddActedInMovie(Movie movie)
+        public Task AddActedInMovieAsync(Movie movie)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            ((ILookupHelper<Movie>)InnerData.ActedInMovies).AddItem(movie, null, properties);
+            return ((ILookupHelperAsync<Movie>)InnerData.ActedInMovies).AddItemAsync(movie, null, properties);
         }
-        public void RemoveActedInMovie(Movie movie)
+        public async Task RemoveActedInMovieAsync(Movie movie)
         {
-            ActedInMovies.Remove(movie);
+            (await ActedInMoviesAsync()).Remove(movie);
         }
 
         #endregion
@@ -497,18 +496,18 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddStreamingServiceSubscription(StreamingService streamingService, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
+        public Task AddStreamingServiceSubscriptionAsync(StreamingService streamingService, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);
-            ((ILookupHelper<StreamingService>)InnerData.StreamingServiceSubscriptions).AddItem(streamingService, moment, properties);
+            return ((ILookupHelperAsync<StreamingService>)InnerData.StreamingServiceSubscriptions).AddItemAsync(streamingService, moment, properties);
         }
-        public void RemoveStreamingServiceSubscription(StreamingService streamingService, DateTime? moment)
+        public async Task RemoveStreamingServiceSubscriptionAsync(StreamingService streamingService, DateTime? moment)
         {
-            StreamingServiceSubscriptions.Remove(streamingService, moment);
+            (await StreamingServiceSubscriptionsAsync()).Remove(streamingService, moment);
         }
 
         #endregion
@@ -561,15 +560,15 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddWatchedMovie(Movie movie, JsNotation<int> MinutesWatched = default)
+        public Task AddWatchedMovieAsync(Movie movie, JsNotation<int> MinutesWatched = default)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MinutesWatched.HasValue) properties.Add("MinutesWatched", MinutesWatched.Value);
-            ((ILookupHelper<Movie>)InnerData.WatchedMovies).AddItem(movie, null, properties);
+            return ((ILookupHelperAsync<Movie>)InnerData.WatchedMovies).AddItemAsync(movie, null, properties);
         }
-        public void RemoveWatchedMovie(Movie movie)
+        public async Task RemoveWatchedMovieAsync(Movie movie)
         {
-            WatchedMovies.Remove(movie);
+            (await WatchedMoviesAsync()).Remove(movie);
         }
 
         #endregion
@@ -685,7 +684,7 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void SetCity(City city, DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
+        public Task SetCityAsync(City city, DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -695,7 +694,7 @@ namespace Datastore.Manipulation.Async
             if (AddressLine2.HasValue) properties.Add("AddressLine2", AddressLine2.Value);
             if (AddressLine3.HasValue) properties.Add("AddressLine3", AddressLine3.Value);
         
-            ((ILookupHelper<City>)InnerData.City).SetItem(city, moment, properties);
+            return ((ILookupHelperAsync<City>)InnerData.City).SetItemAsync(city, moment, properties);
         }
 
         #endregion
@@ -1380,12 +1379,13 @@ namespace Datastore.Manipulation.Async
         #region Members for interface IPerson
 
         string IPersonOriginalData.Name { get { return OriginalData.Name; } }
-        IEnumerable<Restaurant> IPersonOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
-        IEnumerable<Movie> IPersonOriginalData.DirectedMovies { get { return OriginalData.DirectedMovies.OriginalData; } }
-        IEnumerable<Movie> IPersonOriginalData.ActedInMovies { get { return OriginalData.ActedInMovies.OriginalData; } }
-        IEnumerable<StreamingService> IPersonOriginalData.StreamingServiceSubscriptions { get { return OriginalData.StreamingServiceSubscriptions.OriginalData; } }
-        IEnumerable<Movie> IPersonOriginalData.WatchedMovies { get { return OriginalData.WatchedMovies.OriginalData; } }
-        City IPersonOriginalData.City { get { return ((ILookupHelper<City>)OriginalData.City).GetOriginalItem(DateTime.UtcNow); } }
+        Task<IEnumerable<Restaurant>> IPersonOriginalData.RestaurantsAsync() { return OriginalData.Restaurants.OriginalDataAsync(); }
+        Task<IEnumerable<Movie>> IPersonOriginalData.DirectedMoviesAsync() { return OriginalData.DirectedMovies.OriginalDataAsync(); }
+        Task<IEnumerable<Movie>> IPersonOriginalData.ActedInMoviesAsync() { return OriginalData.ActedInMovies.OriginalDataAsync(); }
+        Task<IEnumerable<StreamingService>> IPersonOriginalData.StreamingServiceSubscriptionsAsync() { return OriginalData.StreamingServiceSubscriptions.OriginalDataAsync(); }
+        Task<IEnumerable<Movie>> IPersonOriginalData.WatchedMoviesAsync() { return OriginalData.WatchedMovies.OriginalDataAsync(); }
+        Task<City> IPersonOriginalData.GetCityAsync() { return ((ILookupHelperAsync<City>)OriginalData.City).GetOriginalItemAsync(DateTime.UtcNow); }
+        Task<City> IPersonOriginalData.GetCityAsync(DateTime moment) { return ((ILookupHelperAsync<City>)OriginalData.City).GetOriginalItemAsync(moment); }
 
         #endregion
         #region Members for interface IBaseEntity

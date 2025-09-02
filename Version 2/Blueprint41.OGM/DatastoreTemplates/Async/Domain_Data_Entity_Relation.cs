@@ -154,14 +154,14 @@ using q = ");
             this.Write(" = (");
             
             #line 49 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeAsync));
             
             #line default
             #line hidden
             this.Write(")Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(");
             
             #line 49 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeAsync));
             
             #line default
             #line hidden
@@ -237,7 +237,7 @@ using q = ");
             this.Write("        public ");
             
             #line 70 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeAsync));
             
             #line default
             #line hidden

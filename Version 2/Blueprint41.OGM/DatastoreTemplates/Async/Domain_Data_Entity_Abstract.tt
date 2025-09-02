@@ -40,13 +40,13 @@ if (DALModel.IsAbstract)
         if (attr.IsKey)
         {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> <#= attr.Name #> { get; }
 <#
         }
         else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
         {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> <#= attr.Name #> { get; }
 <#
             if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
             {
@@ -64,20 +64,20 @@ if (DALModel.IsAbstract)
             if (attr.Relationship.IsTimeDependent)
             {
 #>
-        <#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeReadOnlyAsync #> <#= attr.Name #> { get; }
 <#
             }
             else
             {
 #>
-        <#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeReadOnlyAsync #> <#= attr.Name #> { get; }
 <#
             }
         }
         else
         {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> <#= attr.Name #> { get; }
 <#
         }
     }
@@ -114,20 +114,20 @@ if (DALModel.IsAbstract)
         if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
         {
 #>
-        <#= attr.OuterReturnType #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeAsync #> <#= attr.Name #> { get; }
 <#
         }
         else
         {
             string accessors = (attr.HideSetter) ? "get;" : "get; set;";
 #>
-        <#= attr.OuterReturnType #> <#= attr.Name #> { <#= accessors #> }
+        <#= attr.OuterReturnTypeAsync #> <#= attr.Name #> { <#= accessors #> }
 <#
             if (attr.PropertyType == PropertyType.Lookup && attr.Relationship.IsTimeDependent)
             {
 #>
-        <#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime moment);
-        //void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment);
+        <#= attr.OuterReturnTypeAsync #> Get<#= attr.Name #>(DateTime moment);
+        //void Set<#= attr.Name #>(<#= attr.OuterReturnTypeAsync #> value, DateTime? moment);
 <#
             }
         }
@@ -157,8 +157,8 @@ if (DALModel.IsAbstract)
         Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
         Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
         Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(<#= attr.Relationship.Properties.ToJsonNotation() #>);
-        void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
-        void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>);
+        Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
+        Task Remove<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>);
 
         #endregion
 <#
@@ -178,8 +178,8 @@ if (DALModel.IsAbstract)
         Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
         Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
         Task<List<<#= attr.Relationship.Name #>>> <#= attr.Name #>WhereAsync(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
-        void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
-        void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment);
+        Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
+        Task Remove<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment);
 
         #endregion
 <#

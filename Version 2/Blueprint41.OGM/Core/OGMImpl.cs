@@ -280,8 +280,8 @@ namespace Blueprint41.Core
 
         internal protected abstract void LazyGet(bool locked = false);
         internal protected abstract Task LazyGetAsync(bool locked = false);
-        internal protected abstract void LazySet();
         internal protected abstract void AfterSetData();
+        internal protected abstract void LazySet();
         internal protected virtual bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)
         {
             return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
@@ -294,6 +294,22 @@ namespace Blueprint41.Core
 
             return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
         }
+        internal protected abstract Task LazySetAsync();
+        internal protected virtual Task<bool> LazySetAsync<T>(Property property, T previousValue, T assignValue, DateTime? moment)
+        {
+            //TODO: Make this async too!!!
+            return Task.FromResult(property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set));
+        }
+        internal protected virtual Task<bool> LazySetAsync<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+            where T : OGM
+        {
+            CollectionItem<T>? prevColItem = previousValues.FirstOrDefault(item => item.Overlaps(moment ?? Conversion.MinDateTime));
+            T? previousValue = (prevColItem is null) ? default : prevColItem.Item;
+
+            //TODO: Make this async too!!!
+            return Task.FromResult(property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set));
+        }
+
 
         protected static TEnum? Parse<TEnum>(string self)
             where TEnum : struct

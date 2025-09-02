@@ -15,4 +15,15 @@ namespace Blueprint41.Core
         bool IsNull(bool isUpdate);
         void ClearLookup(DateTime? moment);
     }
+    public interface ILookupHelperAsync<TInterface>
+    where TInterface : class, OGM
+    {
+        Task<TInterface?> GetOriginalItemAsync(DateTime? moment);
+        Task<TInterface?> GetItemAsync(DateTime? moment);
+        Task<IEnumerable<CollectionItem<TInterface>>> GetItemsAsync(DateTime? from, DateTime? till);
+        Task AddItemAsync(TInterface item, DateTime? moment, Dictionary<string, object>? properties = null);
+        Task SetItemAsync(TInterface? item, DateTime? moment, Dictionary<string, object>? properties = null);
+        bool IsNull(bool isUpdate);
+        Task ClearLookupAsync(DateTime? moment);
+    }
 }

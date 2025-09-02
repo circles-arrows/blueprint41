@@ -116,6 +116,71 @@ namespace Blueprint41.Persistence
 
             return items;
         }
+        public async Task<IEnumerable<CollectionItem>> LoadAsync(OGM parent, Core.EntityCollectionAsyncBase target)
+        {
+            Entity targetEntity = target.ForeignEntity;
+            if (targetEntity.Key is null || target.ParentEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
+            string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");
+            string[] outNames = targetEntity.GetDbNames("out");
+
+            if (nodeNames.Length > 1 && outNames.Length > 1)
+                throw new InvalidOperationException("Both ends are virtual entities, this is too expensive to query...");
+
+            List<string> fullMatch = new List<string>();
+            for (int nodeIndex = 0; nodeIndex < nodeNames.Length; nodeIndex++)
+            {
+                for (int outIndex = 0; outIndex < outNames.Length; outIndex++)
+                {
+                    string pattern = string.Empty;
+                    if (target.Direction == DirectionEnum.In)
+                        pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = $key RETURN out, rel";
+                    else if (target.Direction == DirectionEnum.Out)
+                        pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = $key RETURN out, rel";
+
+                    string match = string.Format(pattern,
+                       nodeNames[nodeIndex],
+                       target.ParentEntity.Key.Name,
+                       target.Relationship.Neo4JRelationshipType,
+                       outNames[outIndex]);
+
+                    fullMatch.Add(match);
+                }
+            }
+
+            Dictionary<string, object?> parameters2 = new Dictionary<string, object?>();
+            parameters2.Add("key", parent.GetKey());
+
+            List<CollectionItem> items = new List<CollectionItem>();
+            var result = await Transaction.RunAsync(string.Join(" UNION ", fullMatch), parameters2);
+
+            foreach (var record in result.ToList())
+            {
+                driver.NodeResult node = record["out"].As<driver.NodeResult>();
+                if (node is null)
+                    continue;
+
+                OGM item = ReadNode(parent, targetEntity, node, parent.Flavor);
+                driver.RelationshipResult rel = record["rel"].As<driver.RelationshipResult>();
+
+                DateTime? startDate = null;
+                DateTime? endDate = null;
+
+                if (target.Relationship.IsTimeDependent)
+                {
+                    object? value;
+                    if (rel.Properties.TryGetValue(target.Relationship.StartDate, out value))
+                        startDate = Conversion<long, DateTime>.Convert((long?)value ?? Conversion.MinDateTimeInMS);
+                    if (rel.Properties.TryGetValue(target.Relationship.EndDate, out value))
+                        endDate = Conversion<long, DateTime>.Convert((long?)value ?? Conversion.MaxDateTimeInMS);
+                }
+
+                items.Add(target.NewCollectionItem(parent, item, startDate, endDate));
+            }
+
+            return items;
+        }
 
         public Dictionary<OGM, CollectionItemList> Load(IEnumerable<OGM> parents, Core.EntityCollectionBase target)
         {
@@ -170,6 +235,80 @@ namespace Blueprint41.Persistence
             var result = Transaction.Run(cypher, parameters);
             List<CollectionItem> items = new List<CollectionItem>();
             foreach (var record in result.ToList())
+            {
+                DateTime? startDate = null;
+                DateTime? endDate = null;
+
+                if (target.Relationship.IsTimeDependent)
+                {
+                    startDate = (record["StartDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["StartDate"].As<long>()) : (DateTime?)null;
+                    endDate = (record["EndDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["EndDate"].As<long>()) : (DateTime?)null;
+                }
+                OGM? parent = target.Parent.GetEntity().Map(record["Parent"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity, target.Parent.Flavor);
+                OGM? item = targetEntity.Map(record["Item"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity, target.Parent.Flavor);
+
+                if (parent is null || item is null)
+                    throw new NotSupportedException("The cypher query expected to have a parent node and a child node.");
+
+                if (parentHashset.Contains(parent))
+                    items.Add(target.NewCollectionItem(parent, item, startDate, endDate));
+            }
+
+            return CollectionItemList.Get(items);
+        }
+        public async Task<Dictionary<OGM, CollectionItemList>> LoadAsync(IEnumerable<OGM> parents, Core.EntityCollectionAsyncBase target)
+        {
+            if (parents.Count() == 0)
+                return new Dictionary<OGM, CollectionItemList>();
+
+            HashSet<OGM> parentHashset = new HashSet<OGM>(parents);
+
+            string matchClause = string.Empty;
+            if (target.Direction == DirectionEnum.In)
+                matchClause = "MATCH ({0})-[rel:{2}]->({3})";
+            else if (target.Direction == DirectionEnum.Out)
+                matchClause = "MATCH ({0})<-[rel:{2}]-({3})";
+
+            string whereClause = " WHERE node.{1} in ($keys) ";
+            string returnClause = " RETURN node as Parent, out as Item ";
+            if (target.Relationship.IsTimeDependent)
+                returnClause = $" RETURN node as Parent, out as Item, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
+
+            Entity targetEntity = target.ForeignEntity;
+            if (targetEntity.Key is null || target.ParentEntity.Key is null)
+                throw new InvalidOperationException("No key has been defined for this entity.");
+
+            string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");
+            string[] outNames = targetEntity.GetDbNames("out");
+
+            if (nodeNames.Length > 1 && outNames.Length > 1)
+                throw new InvalidOperationException("Both ends are virtual entities, this is too expensive to query...");
+
+            List<string> fullMatch = new List<string>();
+            for (int nodeIndex = 0; nodeIndex < nodeNames.Length; nodeIndex++)
+            {
+                for (int outIndex = 0; outIndex < outNames.Length; outIndex++)
+                {
+                    string match = string.Format(string.Concat(matchClause, whereClause, returnClause),
+                        nodeNames[nodeIndex],
+                        target.ParentEntity.Key.Name,
+                        target.Relationship.Neo4JRelationshipType,
+                        outNames[outIndex]);
+
+                    fullMatch.Add(match);
+                }
+            }
+
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
+            parameters.Add("keys", parents.Select(item => item.GetKey()).ToArray());
+
+            if (parents.Any(parent => parent.GetEntity() != target.Parent.GetEntity()))
+                throw new InvalidOperationException("This code should only load collections of the same concrete parent class.");
+
+            string cypher = string.Join(" UNION ", fullMatch);
+            var result = await Transaction.RunAsync(cypher, parameters);
+            List<CollectionItem> items = new List<CollectionItem>();
+            foreach (var record in await result.ToListAsync())
             {
                 DateTime? startDate = null;
                 DateTime? endDate = null;

@@ -26,7 +26,7 @@ namespace Datastore.Manipulation.Async
         string Name { get; }
         string State { get; }
         string Country { get; }
-        IEnumerable<Restaurant> Restaurants { get; }
+        Task<IEnumerable<Restaurant>> RestaurantsAsync();
     }
 
     public partial class City : OGM<City, City.CityData, System.String>, IBaseEntity, ICityOriginalData
@@ -46,40 +46,40 @@ namespace Datastore.Manipulation.Async
         {
             #region LoadByKeys
             
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+            RegisterQuery(nameof(LoadByKeysAsync), (query, alias) => query.
                 Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
             #endregion
 
             #region LoadByName
 
-            RegisterQuery(nameof(LoadByName), (query, alias) => query.
+            RegisterQuery(nameof(LoadByNameAsync), (query, alias) => query.
                 Where(alias.Name == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             #region LoadByUid
 
-            RegisterQuery(nameof(LoadByUid), (query, alias) => query.
+            RegisterQuery(nameof(LoadByUidAsync), (query, alias) => query.
                 Where(alias.Uid == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             AdditionalGeneratedStoredQueries();
         }
-        public static City LoadByName(System.String name)
+        public async static Task<City> LoadByNameAsync(System.String name)
         {
-            return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByNameAsync), new Parameter(Param0, name)).ConfigureAwait(false)).FirstOrDefault();
         }
-        public static City LoadByUid(System.String uid)
+        public async static Task<City> LoadByUidAsync(System.String uid)
         {
-            return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByUidAsync), new Parameter(Param0, uid)).ConfigureAwait(false)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, City> LoadByKeys(IEnumerable<System.String> uids)
+        public static async Task<Dictionary<System.String, City>> LoadByKeysAsync(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return (await FromQueryAsync(nameof(LoadByKeysAsync), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ConfigureAwait(false)).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.CityAlias, IWhereQuery> query)
@@ -158,7 +158,7 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "City";
 
-                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
+                Restaurants = new EntityCollectionAsync<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async, async item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = await item.GetCityAsync(); } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -200,7 +200,7 @@ namespace Datastore.Manipulation.Async
             public string Name { get; set; }
             public string State { get; set; }
             public string Country { get; set; }
-            public EntityCollection<Restaurant> Restaurants { get; private set; }
+            public EntityCollectionAsync<Restaurant> Restaurants { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -220,10 +220,10 @@ namespace Datastore.Manipulation.Async
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
         public string State { get { LazyGet(); return InnerData.State; } set { if (LazySet(Members.State, InnerData.State, value)) InnerData.State = value; } }
         public string Country { get { LazyGet(); return InnerData.Country; } set { if (LazySet(Members.Country, InnerData.Country, value)) InnerData.Country = value; } }
-        public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
-        private void ClearRestaurants(DateTime? moment)
+        public Task<EntityCollectionAsync<Restaurant>> RestaurantsAsync() { return InnerData.Restaurants.LoadAsync(); }
+        private Task ClearRestaurantsAsync(DateTime? moment)
         {
-            ((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
+            return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).ClearLookupAsync(moment);
         }
 
         #endregion
@@ -293,14 +293,14 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public void AddRestaurant(Restaurant restaurant)
+        public Task AddRestaurantAsync(Restaurant restaurant)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            ((ILookupHelper<Restaurant>)InnerData.Restaurants).AddItem(restaurant, null, properties);
+            return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).AddItemAsync(restaurant, null, properties);
         }
-        public void RemoveRestaurant(Restaurant restaurant)
+        public async Task RemoveRestaurantAsync(Restaurant restaurant)
         {
-            Restaurants.Remove(restaurant);
+            (await RestaurantsAsync()).Remove(restaurant);
         }
 
         #endregion
@@ -855,7 +855,7 @@ namespace Datastore.Manipulation.Async
         string ICityOriginalData.Name { get { return OriginalData.Name; } }
         string ICityOriginalData.State { get { return OriginalData.State; } }
         string ICityOriginalData.Country { get { return OriginalData.Country; } }
-        IEnumerable<Restaurant> ICityOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
+        Task<IEnumerable<Restaurant>> ICityOriginalData.RestaurantsAsync() { return OriginalData.Restaurants.OriginalDataAsync(); }
 
         #endregion
         #region Members for interface IBaseEntity

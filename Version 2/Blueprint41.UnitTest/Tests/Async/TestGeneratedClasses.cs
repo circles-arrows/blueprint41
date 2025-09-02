@@ -36,21 +36,21 @@ namespace Blueprint41.UnitTest.Tests.Async
 
 
         [Test]
-        public void OGMImplCRUD()
+        public async Task OGMImplCRUD()
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 // Insert
                 Person a;
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
 
                     a = new Person()
                     {
                         Name = "Joe Smith",
-                        City = new City() { Name = "New York" }
                     };
-                    Transaction.Commit();
+                    await a.SetCityAsync(new City() { Name = "New York" }, null);
+                    await Transaction.CommitAsync();
                 }
 
                 output.AssertNodeCreated("Person");
@@ -59,38 +59,38 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                 Assert.IsInstanceOf<OGMImpl>(a);
                 Assert.AreEqual(a.Name, "Joe Smith");
-                Assert.AreEqual(a.City.Name, "New York");
+                Assert.AreEqual((await a.GetCityAsync()).Name, "New York");
 
                 // Database assigned a valid Uid
                 string key = GetAndCheckKey(a);
 
                 // Without transaction
-                Assert.Throws<InvalidOperationException>(() => Person.Load(key));
+                Assert.ThrowsAsync<InvalidOperationException>(async () => await Person.LoadAsync(key));
 
                 Person? b;
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     // Load
-                    b = Person.Load(key);
+                    b = await Person.LoadAsync(key);
                     Assert.IsNotNull(b);
                     Assert.AreEqual(a, b);
 
                     // Update
                     b!.Name = "Jaden Smith";
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
 
                 Assert.AreEqual(b.Name, "Jaden Smith");
                 output.AssertNodeUpdated("Person");
 
                 Person? c;
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
-                    c = Person.Load(key);
+                    c = await Person.LoadAsync(key);
                     Assert.IsNotNull(c);
 
                     c!.Delete();
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
 
                 output.AssertNodeDeleted("Person");
@@ -98,17 +98,17 @@ namespace Blueprint41.UnitTest.Tests.Async
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
 
                 Person? d;
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
                     // Load
-                    d = Person.Load(key);
+                    d = await Person.LoadAsync(key);
                     Assert.IsNull(d);
                 }
             }
         }
 
         [Test]
-        public void OGMImplCRUDWithRelationship()
+        public async Task OGMImplCRUDWithRelationship()
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
@@ -118,7 +118,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                 Restaurant r1, r2;
 
                 // adding relationships per entity
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     p1 = new Person()
                     {
@@ -135,17 +135,17 @@ namespace Blueprint41.UnitTest.Tests.Async
                         Name = "Pizza House Inc."
                     };
 
-                    p1.City = c1;
-                    r1.City = c1;
-                    p1.Restaurants.Add(r1);
+                    await p1.SetCityAsync(c1, null);
+                    await r1.SetCityAsync(c1);
+                    (await p1.RestaurantsAsync()).Add(r1);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
-                    Assert.AreEqual(p1.City, c1);
-                    Assert.AreEqual(r1.City, c1);
-                    Assert.AreEqual(p1.Restaurants[0], r1);
+                    Assert.AreEqual(await p1.GetCityAsync(), c1);
+                    Assert.AreEqual(await r1.GetCityAsync(), c1);
+                    Assert.AreEqual((await p1.RestaurantsAsync())[0], r1);
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
 
 
@@ -157,12 +157,12 @@ namespace Blueprint41.UnitTest.Tests.Async
                 output.AssertRelationshipCreated("Person", "EATS_AT", "Restaurant");
 
                 // Database assigned a valid Uids
-                string key2 = GetAndCheckKey(p1); 
-                string key3 = GetAndCheckKey(c1); 
+                string key2 = GetAndCheckKey(p1);
+                string key3 = GetAndCheckKey(c1);
                 string key4 = GetAndCheckKey(r1);
 
 
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     p2 = new Person()
                     {
@@ -179,11 +179,11 @@ namespace Blueprint41.UnitTest.Tests.Async
                         Name = "Tadich Grill",
                     };
 
-                    p2.City = c2;
-                    r2.City = c2;
-                    p2.Restaurants.Add(r2);
+                    await p2.SetCityAsync(c2, null);
+                    await r2.SetCityAsync(c2);
+                    (await p2.RestaurantsAsync()).Add(r2);
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
 
                 output.AssertNodeCreated("Person");
@@ -200,21 +200,21 @@ namespace Blueprint41.UnitTest.Tests.Async
 
 
                 // Update
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
 
-                    Person? person = Person.Load(key5);
+                    Person? person = await Person.LoadAsync(key5);
                     Assert.IsNotNull(person);
                     person!.Name = "Janice Smith";
-                    person.City.Name = "California";
-                    Assert.IsNotEmpty(person.Restaurants);
-                    person.Restaurants[0]!.Name = "Shakeys Pizza";
+                    (await person.GetCityAsync()).Name = "California";
+                    Assert.IsNotEmpty(await person.RestaurantsAsync());
+                    (await person.RestaurantsAsync())[0]!.Name = "Shakeys Pizza";
 
-                    City city = person.City;
-                    Assert.IsNotEmpty(person.Restaurants);
-                    Restaurant restaurant = person.Restaurants[0]!;
+                    City city = await person.GetCityAsync();
+                    Assert.IsNotEmpty(await person.RestaurantsAsync());
+                    Restaurant restaurant = (await person.RestaurantsAsync())[0]!;
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
 
                 output.AssertNodeLoaded("Person");
@@ -225,13 +225,13 @@ namespace Blueprint41.UnitTest.Tests.Async
                 output.AssertNodeUpdated("Restaurant");
 
                 // Check properties are updated after reloading
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
-                    Person? p = Person.Load(key5);
+                    Person? p = await Person.LoadAsync(key5);
                     Assert.IsNotNull(p);
-                    City? c = City.Load(key6);
+                    City? c = await City.LoadAsync(key6);
                     Assert.IsNotNull(c);
-                    Restaurant? r = Restaurant.Load(key7);
+                    Restaurant? r = await Restaurant.LoadAsync(key7);
                     Assert.IsNotNull(r);
 
                     Assert.AreEqual(p!.Name, "Janice Smith");
@@ -240,19 +240,19 @@ namespace Blueprint41.UnitTest.Tests.Async
                 }
 
                 // Removing relationships by setting
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
-                    Person? p = Person.Load(key5);
+                    Person? p = await Person.LoadAsync(key5);
                     Assert.IsNotNull(p);
-                    p!.City = null;
-                    p.Restaurants.Clear();
+                    await p!.SetCityAsync(null, null);
+                    (await p.RestaurantsAsync()).Clear();
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
-                    Assert.IsNull(p.City);
-                    Assert.IsTrue(p.Restaurants.Count == 0);
+                    Assert.IsNull(await p.GetCityAsync());
+                    Assert.IsTrue((await p.RestaurantsAsync()).Count == 0);
 
-                    Transaction.Rollback();
+                    await Transaction.RollbackAsync();
                 }
 
                 output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
@@ -260,27 +260,27 @@ namespace Blueprint41.UnitTest.Tests.Async
 
 
                 // Removing relationships via properties
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
-                    Person? p = Person.Load(key5);
+                    Person? p = await Person.LoadAsync(key5);
                     Assert.IsNotNull(p);
-                    City? c = p!.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
+                    City? c = await p!.GetCityAsync(); // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
                     Assert.IsNotNull(c);
-                    Restaurant? r = p.Restaurants[0];
+                    Restaurant? r = (await p.RestaurantsAsync())[0];
                     Assert.IsNotNull(r);
 
-                    p.City = null;
-                    p.Restaurants.Remove(r!);
+                    await p.SetCityAsync(null, null);
+                    (await p.RestaurantsAsync()).Remove(r!);
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     Assert.IsTrue(c.PersistenceState == PersistenceState.Loaded);
                     Assert.IsTrue(r!.PersistenceState == PersistenceState.Loaded);
- 
-                    Assert.IsNull(p.City);
-                    Assert.True(p.Restaurants.Count == 0);
 
-                    Transaction.Rollback();
+                    Assert.IsNull(await p.GetCityAsync());
+                    Assert.True((await p.RestaurantsAsync()).Count == 0);
+
+                    await Transaction.RollbackAsync();
                 }
 
                 output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
@@ -288,21 +288,21 @@ namespace Blueprint41.UnitTest.Tests.Async
 
 
                 // Removing relationships and nodes via properties
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
-                    Person? p = Person.Load(key5);
+                    Person? p = await Person.LoadAsync(key5);
                     Assert.IsNotNull(p);
-                    City? c = p!.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
+                    City? c = await p!.GetCityAsync(); // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
                     Assert.IsNotNull(c);
-                    Restaurant? r = p.Restaurants[0];
+                    Restaurant? r = (await p.RestaurantsAsync())[0];
                     Assert.IsNotNull(r);
 
-                    p.City = null;
-                    p.Restaurants.Delete(r!);
+                    await p.SetCityAsync(null, null);
+                    (await p.RestaurantsAsync()).Delete(r!);
 
                     c.Delete();
 
-                    Transaction.Flush();
+                    await Transaction.FlushAsync();
 
                     Assert.IsTrue(c.PersistenceState == PersistenceState.Deleted);
                     Assert.Throws<InvalidOperationException>(() => c.Name = "New Name", "The object has been deleted, you cannot make changes to it anymore.");
@@ -310,10 +310,10 @@ namespace Blueprint41.UnitTest.Tests.Async
                     Assert.IsTrue(r!.PersistenceState == PersistenceState.Deleted);
                     Assert.Throws<InvalidOperationException>(() => r.Name = "New Name", "The object has been deleted, you cannot make changes to it anymore.");
 
-                    Assert.IsNull(p.City);
+                    Assert.IsNull(await p.GetCityAsync());
                     //Assert.True(p.Restaurants.Count == 0); //TODO: Expected 0?
 
-                    Transaction.Rollback();
+                    await Transaction.RollbackAsync();
                 }
 
                 output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
@@ -325,24 +325,24 @@ namespace Blueprint41.UnitTest.Tests.Async
 
 
                 // Removing node with existing relationship
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     //load before deleting
-                    Person? p = Person.Load(key5);
+                    Person? p = await Person.LoadAsync(key5);
 
-                    City.Load(key6)?.ForceDelete(); // Side-effect Person NOT lazy loaded here yet, because it's properties were never accessed.
-                    Transaction.Flush(); // Persist in DB & change PersistenceState from Delete to Deleted
+                    (await City.LoadAsync(key6))?.ForceDelete(); // Side-effect Person NOT lazy loaded here yet, because it's properties were never accessed.
+                    await Transaction.FlushAsync(); // Persist in DB & change PersistenceState from Delete to Deleted
 
                     //load after deleting
-                    Restaurant? r = Restaurant.Load(key7);
+                    Restaurant? r = await Restaurant.LoadAsync(key7);
 
                     Assert.IsNotNull(p);
                     Assert.IsNotNull(r);
 
-                    Assert.IsNull(p?.City);
-                    Assert.IsNull(r?.City);
+                    Assert.IsNull(p is null ? null : await p.GetCityAsync());
+                    Assert.IsNull(r is null ? null : await r.GetCityAsync());
 
-                    Transaction.Rollback();
+                    await Transaction.RollbackAsync();
                 }
 
                 output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
@@ -359,47 +359,47 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                await using(MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
                         Name = "Joe Smith",
-                        City = new City() { Name = "New York" }
                     };
+                    await p1.SetCityAsync(new City() { Name = "New York" }, null);
 
-                    p1.City.Restaurants.Add(new Restaurant { Name = "Mcdonalds" });
-                    p1.City.Restaurants.Add(new Restaurant { Name = "Shakeys" });
-                    p1.City.Restaurants.Add(new Restaurant { Name = "Starbucks" });
-                    p1.City.Restaurants.Add(new Restaurant { Name = "Bo's Coffee" });
-                    p1.City.Restaurants.Add(new Restaurant { Name = "Chattime" });
+                    (await (await p1.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Mcdonalds" });
+                    (await (await p1.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Shakeys" });
+                    (await (await p1.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Starbucks" });
+                    (await (await p1.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Bo's Coffee" });
+                    (await (await p1.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Chattime" });
 
                     Person p2 = new Person
                     {
                         Name = "Jane Smith",
-                        City = new City() { Name = "California" }
                     };
+                    await p2.SetCityAsync(new City() { Name = "California" }, null);
 
                     Person p3 = new Person
                     {
                         Name = "Bob Smith",
-                        City = p1.City
                     };
+                    await p3.SetCityAsync(await p1.GetCityAsync(), null);
 
-                    p2.City.Restaurants.Add(new Restaurant { Name = "Pink's Hot Dogs" });
-                    p2.City.Restaurants.Add(new Restaurant { Name = "World Famous" });
-                    p2.City.Restaurants.Add(new Restaurant { Name = "Barone's" });
-                    p2.City.Restaurants.Add(new Restaurant { Name = "Providence" });
-                    p2.City.Restaurants.Add(new Restaurant { Name = "La Taqueria" });
+                    (await (await p2.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Pink's Hot Dogs" });
+                    (await (await p2.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "World Famous" });
+                    (await (await p2.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Barone's" });
+                    (await (await p2.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "Providence" });
+                    (await (await p2.GetCityAsync()).RestaurantsAsync()).Add(new Restaurant { Name = "La Taqueria" });
 
-                    p1.Restaurants.AddRange(p1.City.Restaurants);
-                    p2.Restaurants.AddRange(p2.City.Restaurants);
-                    p3.Restaurants.AddRange(p1.City.Restaurants);
+                    (await p1.RestaurantsAsync()).AddRange(await (await p1.GetCityAsync()).RestaurantsAsync());
+                    (await p2.RestaurantsAsync()).AddRange(await (await p2.GetCityAsync()).RestaurantsAsync());
+                    (await p3.RestaurantsAsync()).AddRange(await (await p1.GetCityAsync()).RestaurantsAsync());
 
                     await Transaction.CommitAsync();
                 }
             }
 
-            await using(MockModel.BeginTransactionAsync())
+            await using (MockModel.BeginTransactionAsync())
             {
 #pragma warning disable CS0168 // Variable is declared but never used
                 ICompiled compiled;
@@ -486,11 +486,11 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void OGMImplQueryOptionalMatch()
+        public async Task OGMImplQueryOptionalMatch()
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -522,22 +522,22 @@ namespace Blueprint41.UnitTest.Tests.Async
                         Title = "The American President"
                     };
 
-                    p1.ActedInMovies.Add(tap);
-                    p1.ActedInMovies.Add(wallstreet);
+                    (await p1.ActedInMoviesAsync()).Add(tap);
+                    (await p1.ActedInMoviesAsync()).Add(wallstreet);
 
-                    p2.ActedInMovies.Add(tap);
-                    p2.ActedInMovies.Add(wallstreet);
+                    (await p2.ActedInMoviesAsync()).Add(tap);
+                    (await p2.ActedInMoviesAsync()).Add(wallstreet);
 
-                    p3.DirectedMovies.Add(wallstreet);
-                    p4.DirectedMovies.Add(tap);
+                    (await p3.DirectedMoviesAsync()).Add(wallstreet);
+                    (await p4.DirectedMoviesAsync()).Add(tap);
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
                     ICompiled compiled = Cypher
                                 .Match(node.Person.Alias(out PersonAlias p))
@@ -547,7 +547,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                                 .OrderBy(m.Title)
                                 .Compile();
 
-                    List<dynamic> result = compiled.GetExecutionContext().Execute();
+                    List<dynamic> result = await compiled.GetExecutionContext().ExecuteAsync();
 
                     IDictionary<string, object>? a = result[0] as IDictionary<string, object>;
                     IDictionary<string, object>? b = result[1] as IDictionary<string, object>;
@@ -575,10 +575,10 @@ namespace Blueprint41.UnitTest.Tests.Async
                             .OrderBy(ma.Title)
                             .Compile();
 
-                    result = compiled.GetExecutionContext().Execute();
+                    result = await compiled.GetExecutionContext().ExecuteAsync();
 
                     a = result[0] as IDictionary<string, object>;
-                    
+
                     Assert.IsNotNull(a);
 
                     Assert.AreEqual(a!["Column1"], "Martin Sheen");
@@ -605,7 +605,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                                 .OrderBy(mam.Title)
                                 .Compile();
 
-                    result = compiled.GetExecutionContext().Execute();
+                    result = await compiled.GetExecutionContext().ExecuteAsync();
                     Assert.Zero(result.Count);
 
                     //TODO: Check why this throws???
@@ -639,11 +639,11 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void OGMImplPlannerHitsUsing()
+        public async Task OGMImplPlannerHitsUsing()
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -675,22 +675,22 @@ namespace Blueprint41.UnitTest.Tests.Async
                         Title = "The American President"
                     };
 
-                    p1.ActedInMovies.Add(tap);
-                    p1.ActedInMovies.Add(wallstreet);
+                    (await p1.ActedInMoviesAsync()).Add(tap);
+                    (await p1.ActedInMoviesAsync()).Add(wallstreet);
 
-                    p2.ActedInMovies.Add(tap);
-                    p2.ActedInMovies.Add(wallstreet);
+                    (await p2.ActedInMoviesAsync()).Add(tap);
+                    (await p2.ActedInMoviesAsync()).Add(wallstreet);
 
-                    p3.DirectedMovies.Add(wallstreet);
-                    p4.DirectedMovies.Add(tap);
+                    (await p3.DirectedMoviesAsync()).Add(wallstreet);
+                    (await p4.DirectedMoviesAsync()).Add(tap);
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
                 }
             }
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
                     // Force to use index
                     ICompiled compiled = Cypher
@@ -700,12 +700,12 @@ namespace Blueprint41.UnitTest.Tests.Async
                             .Return(m.Title)
                             .Compile();
 
-                    var result = compiled.GetExecutionContext().Execute();
+                    var result = await compiled.GetExecutionContext().ExecuteAsync();
 
                     var a = result[0] as IDictionary<string, object>;
-                    
+
                     Assert.IsNotNull(a);
-                    
+
                     Assert.AreEqual(a!["Column1"], "Wall Street");
 
 #if NEO4J
@@ -734,7 +734,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                                 .Return(ma.Title, p.Name)
                                 .Compile();
 
-                    result = compiled.GetExecutionContext().Execute();
+                    result = await compiled.GetExecutionContext().ExecuteAsync();
 
                     a = result[0] as IDictionary<string, object>;
 
@@ -778,7 +778,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             .Return(mas.Title)
                             .Compile();
 
-                    result = compiled.GetExecutionContext().Execute();
+                    result = await compiled.GetExecutionContext().ExecuteAsync();
 
                     a = result[0] as IDictionary<string, object>;
 
@@ -803,7 +803,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             .Return(mar.Title, par.Name)
                             .Compile();
 
-                    result = compiled.GetExecutionContext().Execute();
+                    result = await compiled.GetExecutionContext().ExecuteAsync();
 
                     a = result[0] as IDictionary<string, object>;
 
@@ -830,7 +830,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                             .Return(msi.Title, psi.Name)
                             .Compile();
 
-                    result = compiled.GetExecutionContext().Execute();
+                    result = await compiled.GetExecutionContext().ExecuteAsync();
 
                     a = result[0] as IDictionary<string, object>;
 

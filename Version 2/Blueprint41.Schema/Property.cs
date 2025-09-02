@@ -17,7 +17,7 @@ namespace Blueprint41
     [DebuggerDisplay("{Parent.Name}.{Name}")]
     public abstract partial class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
     {
-        private protected Property(IEntity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
+        private protected Property(IEntity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType) : this()
         {
             Parent = parent;
             PropertyType = storage;
@@ -30,7 +30,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = null;
         }
-        private protected Property(IEntity parent, PropertyType storage, string name, EntityProperty reference)
+        private protected Property(IEntity parent, PropertyType storage, string name, EntityProperty reference) : this()
         {
             Parent = parent;
             PropertyType = storage;
@@ -43,7 +43,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = null;
         }
-        private protected Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
+        private protected Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null) : this()
         {
             Parent = parent;
             PropertyType = storage;
@@ -56,7 +56,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(this, enumeration);
         }
-        private protected Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
+        private protected Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration) : this()
         {
             Parent = parent;
             PropertyType = storage;
@@ -70,6 +70,87 @@ namespace Blueprint41
             Enumeration = enumeration;
             Enumeration.PropertyReference = this;
         }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        private Property()
+        {
+            innerReturnType = new RuntimeRegistered<string>(delegate(EntityFlavor flavor)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                if (PropertyType == PropertyType.Collection || PropertyType == PropertyType.Lookup)
+                {
+                    if (Relationship?.IsTimeDependent ?? false)
+                        sb.Append(flavor == EntityFlavor.Blocking ? "EntityTimeCollection<" : "EntityTimeCollectionAsync<");
+                    else
+                        sb.Append(flavor == EntityFlavor.Blocking ? "EntityCollection<" : "EntityCollectionAsync<");
+                }
+
+                if (SystemReturnType is not null)
+                    sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
+                else if (EntityReturnType is not null)
+                    sb.Append(EntityReturnType.ClassName);
+                else
+                    sb.Append(Reference!.InnerReturnType);
+
+                if (PropertyType == PropertyType.Collection || PropertyType == PropertyType.Lookup)
+                    sb.Append(">");
+
+                return sb.ToString();
+            });
+            outerReturnType = new RuntimeRegistered<string>(delegate (EntityFlavor flavor)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                if (PropertyType == PropertyType.Collection)
+                {
+                    if (Relationship?.IsTimeDependent ?? false)
+                        sb.Append(flavor == EntityFlavor.Blocking ? "EntityTimeCollection<" : "EntityTimeCollectionAsync<");
+                    else
+                        sb.Append(flavor == EntityFlavor.Blocking ? "EntityCollection<" : "EntityCollectionAsync<");
+                }
+
+                if (SystemReturnType == typeof(string) && EnumValues is not null)
+                    sb.Append($"{this.Parent!.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
+                else if (SystemReturnType is not null)
+                    sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
+                else if (EntityReturnType is not null)
+                    sb.Append(EntityReturnType.ClassName);
+                else
+                    sb.Append(Reference!.OuterReturnType);
+
+                if (PropertyType == PropertyType.Collection)
+                    sb.Append(">");
+
+                return sb.ToString();
+            });
+            outerReturnTypeReadOnly = new RuntimeRegistered<string>(delegate (EntityFlavor flavor)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                if (PropertyType == PropertyType.Collection)
+                {
+                    if (PropertyType == PropertyType.Collection)
+                    {
+                        sb.Append("IEnumerable<");
+                    }
+                }
+
+                if (SystemReturnType == typeof(string) && EnumValues is not null)
+                    sb.Append($"{this.Parent!.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
+                else if (SystemReturnType is not null)
+                    sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
+                else if (EntityReturnType is not null)
+                    sb.Append(EntityReturnType.ClassName);
+                else
+                    sb.Append(Reference!.OuterReturnType);
+
+                if (PropertyType == PropertyType.Collection)
+                    sb.Append(">");
+
+                return sb.ToString();
+            });
+        }
+#pragma warning restore CS8618
 
         #region Properties
 
@@ -170,111 +251,17 @@ namespace Blueprint41
         /// </summary>
         public Guid Guid { get; private set; }
 
-        private string? innerReturnType = null;
-        public string InnerReturnType
-        {
-            get
-            {
-                if (innerReturnType is null)
-                {
+        private readonly RuntimeRegistered<string> innerReturnType;
+        public string InnerReturnType => innerReturnType.Blocking;
+        public string InnerReturnTypeAsync => innerReturnType.Async;
 
-                    StringBuilder sb = new StringBuilder();
+        private readonly RuntimeRegistered<string> outerReturnType;
+        public string OuterReturnType => outerReturnType.Blocking;
+        public string OuterReturnTypeAsync => outerReturnType.Async;
 
-                    if (PropertyType == PropertyType.Collection || PropertyType == PropertyType.Lookup)
-                    {
-                        if (Relationship?.IsTimeDependent ?? false)
-                            sb.Append("EntityTimeCollection<");
-                        else
-                            sb.Append("EntityCollection<");
-                    }
-
-                    if (SystemReturnType is not null)
-                        sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
-                    else if (EntityReturnType is not null)
-                        sb.Append(EntityReturnType.ClassName);
-                    else
-                        sb.Append(Reference!.InnerReturnType);
-
-                    if (PropertyType == PropertyType.Collection || PropertyType == PropertyType.Lookup)
-                        sb.Append(">");
-
-                    innerReturnType = sb.ToString();
-                }
-
-                return innerReturnType;
-            }
-        }
-
-        private string? outerReturnType = null;
-        public string OuterReturnType
-        {
-            get
-            {
-                if (outerReturnType is null)
-                {
-
-                    StringBuilder sb = new StringBuilder();
-
-                    if (PropertyType == PropertyType.Collection)
-                    {
-                        if (Relationship?.IsTimeDependent ?? false)
-                            sb.Append("EntityTimeCollection<");
-                        else
-                            sb.Append("EntityCollection<");
-                    }
-
-                    if (SystemReturnType == typeof(string) && EnumValues is not null)
-                        sb.Append($"{this.Parent.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
-                    else if (SystemReturnType is not null)
-                        sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
-                    else if (EntityReturnType is not null)
-                        sb.Append(EntityReturnType.ClassName);
-                    else
-                        sb.Append(Reference!.OuterReturnType);
-
-                    if (PropertyType == PropertyType.Collection)
-                        sb.Append(">");
-
-                    outerReturnType = sb.ToString();
-                }
-
-                return outerReturnType;
-            }
-        }
-
-        private string? outerReturnTypeReadOnly = null;
-        public string OuterReturnTypeReadOnly
-        {
-            get
-            {
-                if (outerReturnTypeReadOnly is null)
-                {
-
-                    StringBuilder sb = new StringBuilder();
-
-                    if (PropertyType == PropertyType.Collection)
-                    {
-                        sb.Append("IEnumerable<");
-                    }
-
-                    if (SystemReturnType == typeof(string) && EnumValues is not null)
-                        sb.Append($"{this.Parent.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
-                    else if (SystemReturnType is not null)
-                        sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
-                    else if (EntityReturnType is not null)
-                        sb.Append(EntityReturnType.ClassName);
-                    else
-                        sb.Append(Reference!.OuterReturnTypeReadOnly);
-
-                    if (PropertyType == PropertyType.Collection)
-                        sb.Append(">");
-
-                    outerReturnTypeReadOnly = sb.ToString();
-                }
-
-                return outerReturnTypeReadOnly;
-            }
-        }
+        private readonly RuntimeRegistered<string> outerReturnTypeReadOnly;
+        public string OuterReturnTypeReadOnly => outerReturnTypeReadOnly.Blocking;
+        public string OuterReturnTypeReadOnlyAsync => outerReturnTypeReadOnly.Async;
 
         public Relationship? Relationship { get; internal set; } = null;
         public DirectionEnum Direction { get; internal set; } = DirectionEnum.None;
@@ -1286,7 +1273,7 @@ namespace Blueprint41
             {
                 if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
                 {
-                    Func<OGM, DateTime?, object>? method = getValueWithMoment.GetOrSet(instance.Flavor, delegate ()
+                    Func<OGM, DateTime?, object>? method = getValueWithMoment.GetOrSet(instance.Flavor, delegate (EntityFlavor flavor)
                     {
                         Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
                         if (type is null)
@@ -1307,7 +1294,7 @@ namespace Blueprint41
                 }
                 else
                 {
-                    Func<OGM, object>? method = getValue.GetOrSet(instance.Flavor, delegate ()
+                    Func<OGM, object>? method = getValue.GetOrSet(instance.Flavor, delegate (EntityFlavor flavor)
                     {
                         Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
                         if (type is null)
@@ -1346,7 +1333,7 @@ namespace Blueprint41
             {
                 if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
                 {
-                    Action<OGM, object?, DateTime?>? method = setValueWithMoment.GetOrSet(instance.Flavor, delegate ()
+                    Action<OGM, object?, DateTime?>? method = setValueWithMoment.GetOrSet(instance.Flavor, delegate (EntityFlavor flavor)
                     {
                         Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
                         if (type is null)
@@ -1367,7 +1354,7 @@ namespace Blueprint41
                 }
                 else
                 {
-                    Action<OGM, object?>? method = setValue.GetOrSet(instance.Flavor, delegate ()
+                    Action<OGM, object?>? method = setValue.GetOrSet(instance.Flavor, delegate (EntityFlavor flavor)
                     {
                         Type? type = entity.RuntimeReturnType.Get(instance.Flavor);
                         if (type is null)

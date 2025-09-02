@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Blueprint41.Core;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.Persistence;
+using System.Threading.Tasks;
 
 namespace Blueprint41.UnitTest.Tests.Async
 {
@@ -20,36 +21,36 @@ namespace Blueprint41.UnitTest.Tests.Async
         [Test]
         public void EnsureThereShouldBeATransactionWhenRunningNeo4jCypher()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            InvalidOperationException exception = Assert.ThrowsAsync<InvalidOperationException>(() =>
             {
-                Transaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                return Transaction.RunAsync("CREATE (n:Person { name: 'Address', title: 'Developer' })");
             });
 
             Assert.That(exception.Message, Contains.Substring("There is no transaction, you should create one first -> using (DatastoreModel.BeginTransaction()) { ... Transaction.Commit(); }"));
         }
 
         [Test]
-        public void EnsureRunningTransactionIsNeo4jTransaction()
+        public async Task EnsureRunningTransactionIsNeo4jTransaction()
         {
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
                 Assert.IsInstanceOf<Transaction>(Transaction.RunningTransaction);
         }
 
         [Test]
         public void EnsureNotAbleToTransactAfterCommit()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            InvalidOperationException exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    Transaction.Commit();
+                    await Transaction.CommitAsync();
 
                     // This statement should throw invalid operation exception
-                    ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                    Record record = result.First();
+                    ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                    Record record = await result.FirstAsync();
                     NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -61,46 +62,46 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void EnsureCanCreateAnEntity()
+        public async Task EnsureCanCreateAnEntity()
         {
-            using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+            await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
             {
                 // Let us try to create an entity
-                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.First();
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record record = await result.FirstAsync();
                 NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
         }
 
         [Test]
-        public void EnsureEntityShouldNotBeAddedAfterRollback()
+        public async Task EnsureEntityShouldNotBeAddedAfterRollback()
         {
-            using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+            await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
             {
                 // Let us try to create an entity
-                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.First();
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record record = await result.FirstAsync();
                 NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
-                Transaction.Rollback();
+                await Transaction.RollbackAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record? record = result.FirstOrDefault();
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record? record = await result.FirstOrDefaultAsync();
                 Assert.IsNull(record);
             }
         }
@@ -108,43 +109,43 @@ namespace Blueprint41.UnitTest.Tests.Async
         [Test]
         public void EnsureEntityShouldNotBeRollbackedAfterCommitedAndViceVersa()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            InvalidOperationException exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                    Record record = result.First();
+                    ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                    Record record = await result.FirstAsync();
                     NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
 
-                    Transaction.Commit();
-                    Transaction.Rollback();
+                    await Transaction.CommitAsync();
+                    await Transaction.RollbackAsync();
                 }
             });
 
             Assert.That(exception.Message, Contains.Substring("The transaction was already committed or rolled back."));
 
-            InvalidOperationException exception2 = Assert.Throws<InvalidOperationException>(() =>
+            InvalidOperationException exception2 = Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                    Record record = result.First();
+                    ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                    Record record = await result.FirstAsync();
                     NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
 
-                    Transaction.Rollback();
-                    Transaction.Commit();
+                    await Transaction.RollbackAsync();
+                    await Transaction.CommitAsync();
                 }
             });
 
@@ -152,23 +153,23 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void EnsureEntityIsCreatedRegardlessAnExceptionIsThrown()
+        public async Task EnsureEntityIsCreatedRegardlessAnExceptionIsThrown()
         {
-            Assert.Throws<Exception>(() =>
+            Assert.ThrowsAsync<Exception>(async () =>
             {
-                using (MockModel.BeginTransaction())
+                await using (MockModel.BeginTransactionAsync())
                 {
                     // Let us try to create an entity
-                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                    Transaction.Commit();
+                    await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    await Transaction.CommitAsync();
                     throw new Exception();
                 }
             });
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.First();
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record record = await result.FirstAsync();
                 NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -177,76 +178,75 @@ namespace Blueprint41.UnitTest.Tests.Async
         }
 
         [Test]
-        public void EnsureEntityIsRolledbackWhenExceptionIsThrown()
+        public async Task EnsureEntityIsRolledbackWhenExceptionIsThrown()
         {
-            Assert.Throws<Exception>(() =>
+            Assert.ThrowsAsync<Exception>(async () =>
             {
-                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+                await using (MockModel.BeginTransactionAsync(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                     throw new Exception();
                 }
             });
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record? record = result.FirstOrDefault();
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record? record = await result.FirstOrDefaultAsync();
                 Assert.IsNull(record);
             }
         }
 
         [Test]
-        public void EnsureEntityIsFlushedAfterTransaction()
+        public async Task EnsureEntityIsFlushedAfterTransaction()
         {
-            using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
+            await using (MockModel.BeginTransactionAsync (ReadWriteMode.ReadWrite))
             {
-                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.First();
+                await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record record = await result.FirstAsync();
 
                 NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
-                Transaction.Flush();
+                await Transaction.FlushAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record? record = result.FirstOrDefault();
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record? record = await result.FirstOrDefaultAsync();
                 Assert.IsNull(record);
             }
         }
 
         [Test]
-        public void EnsureEntityIsCreatedEvenFlushedWithoutTransaction()
+        public async Task EnsureEntityIsCreatedEvenFlushedWithoutTransaction()
         {
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.First();
+                await Transaction.RunAsync("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record record = await result.FirstAsync();
 
                 NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
-                Transaction.Commit();
+                await Transaction.CommitAsync();
             }
 
-            using (MockModel.BeginTransaction())
+            await using (MockModel.BeginTransactionAsync())
             {
-                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.First();
+                ResultCursor result = await Transaction.RunAsync("Match (n:SampleEntity) Return n");
+                Record record = await result.FirstAsync();
 
                 NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
             }
         }
-
     }
 }

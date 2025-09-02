@@ -23,6 +23,7 @@ namespace Blueprint41.Core
         }
         protected abstract void InitializeCollections();
 
+
         private OGM? wrapper = null;
         public OGM Wrapper
         {

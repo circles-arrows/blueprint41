@@ -23,7 +23,7 @@ namespace Blueprint41.Persistence
             PersistenceProvider.AddUnmanaged(relationship, InItem!, OutItem!, Moment, EndDate, Properties);
         }
 
-        protected override void InMemoryLogic(EntityCollectionBase target)
+        protected override void InMemoryLogic(IReplayableCollection target)
         {
             DateTime minStartDate = Moment;
             DateTime maxEndDate = EndDate;

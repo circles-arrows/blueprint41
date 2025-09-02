@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41.Dynamic;
 using Blueprint41.Persistence;
 
 namespace Blueprint41.Core
 {
-    public abstract class EntityCollectionBase : IItteratable<CollectionItem>, IInternalListAccess, IReplayableCollection
+    public abstract class EntityCollectionAsyncBase : IItteratable<CollectionItem>, IInternalListAccess, IReplayableCollection
     {
-        protected EntityCollectionBase(OGM parent, Property property)
+        protected EntityCollectionAsyncBase(OGM parent, Property property)
         {
             if (property.Relationship is null)
                 throw new NotSupportedException("The property is not a relationship property.");
@@ -161,7 +162,8 @@ namespace Blueprint41.Core
         }
 
         private static readonly List<CollectionItem> empty = new List<CollectionItem>();
-        protected virtual void LazyLoad()
+
+        protected void LazyLoad()
         {
             if (IsLoaded)
                 return;
@@ -175,13 +177,37 @@ namespace Blueprint41.Core
             Transaction trans = Transaction.RunningTransaction;
             if (trans.OptimizeFor == OptimizeFor.RecursiveSubGraphAccess)
             {
-                trans.LoadAll(this);
+                // TODO: This should be awaited, but that would require all calling methods to be async as well.
+                Task.Run(() => trans.LoadAllAsync(this)).Wait();
                 return;
             }
 
-            IEnumerable<CollectionItem> items = RelationshipPersistenceProvider.Load(Parent, this);
+            // TODO: This should be awaited, but that would require all calling methods to be async as well.
+            IEnumerable<CollectionItem> items = Task.Run(() => RelationshipPersistenceProvider.LoadAsync(Parent, this)).Result;
             InitialLoad(items);
         }
+        protected virtual async Task LazyLoadAsync()
+        {
+            if (IsLoaded)
+                return;
+
+            if (Parent.PersistenceState == PersistenceState.New || Parent.PersistenceState == PersistenceState.NewAndChanged)
+            {
+                InitialLoad(empty);
+                return;
+            }
+
+            Transaction trans = Transaction.RunningTransaction;
+            if (trans.OptimizeFor == OptimizeFor.RecursiveSubGraphAccess)
+            {
+                await trans.LoadAllAsync(this);
+                return;
+            }
+
+            IEnumerable<CollectionItem> items = await RelationshipPersistenceProvider.LoadAsync(Parent, this);
+            InitialLoad(items);
+        }
+
         internal protected abstract void AfterFlush();
         internal abstract void InitialLoad(IEnumerable<CollectionItem> items);
         void IReplayableCollection.InitialLoad(IEnumerable<CollectionItem> items)
@@ -195,6 +221,7 @@ namespace Blueprint41.Core
 
         public Transaction? Transaction { get; internal set; }
         Transaction? IReplayableCollection.Transaction { get => Transaction; set => Transaction = value; }
+
         protected private Transaction RunningTransaction
         {
             get

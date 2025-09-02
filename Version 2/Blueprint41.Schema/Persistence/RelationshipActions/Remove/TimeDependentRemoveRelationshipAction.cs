@@ -18,7 +18,7 @@ namespace Blueprint41.Persistence
             PersistenceProvider.Remove(relationship, InItem, OutItem, Moment, true);
         }
 
-        protected override void InMemoryLogic(EntityCollectionBase target)
+        protected override void InMemoryLogic(IReplayableCollection target)
         {
             OGM? foreignItem = target.ForeignItem(this);
             if (foreignItem is null)

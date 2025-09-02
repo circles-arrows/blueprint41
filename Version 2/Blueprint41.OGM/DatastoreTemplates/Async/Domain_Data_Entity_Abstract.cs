@@ -101,7 +101,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 43 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnlyAsync));
             
             #line default
             #line hidden
@@ -126,7 +126,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 49 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnlyAsync));
             
             #line default
             #line hidden
@@ -189,7 +189,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 67 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnlyAsync));
             
             #line default
             #line hidden
@@ -214,7 +214,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 73 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnlyAsync));
             
             #line default
             #line hidden
@@ -240,7 +240,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 80 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnlyAsync));
             
             #line default
             #line hidden
@@ -336,7 +336,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 117 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeAsync));
             
             #line default
             #line hidden
@@ -362,7 +362,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 124 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeAsync));
             
             #line default
             #line hidden
@@ -393,7 +393,7 @@ if (DALModel.IsAbstract)
             this.Write("        ");
             
             #line 129 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeAsync));
             
             #line default
             #line hidden
@@ -414,7 +414,7 @@ if (DALModel.IsAbstract)
             this.Write("(");
             
             #line 130 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeAsync));
             
             #line default
             #line hidden
@@ -532,14 +532,14 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(");\r\n        void Add");
+            this.Write(");\r\n        Task Add");
             
             #line 160 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToSingular()));
             
             #line default
             #line hidden
-            this.Write("(");
+            this.Write("Async(");
             
             #line 160 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.ForeignEntity.ClassName));
@@ -559,14 +559,14 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(");\r\n        void Remove");
+            this.Write(");\r\n        Task Remove");
             
             #line 161 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToSingular()));
             
             #line default
             #line hidden
-            this.Write("(");
+            this.Write("Async(");
             
             #line 161 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.ForeignEntity.ClassName));
@@ -680,14 +680,14 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(");\r\n        void Add");
+            this.Write(");\r\n        Task Add");
             
             #line 181 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToSingular()));
             
             #line default
             #line hidden
-            this.Write("(");
+            this.Write("Async(");
             
             #line 181 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.ForeignEntity.ClassName));
@@ -708,14 +708,14 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(");\r\n        void Remove");
+            this.Write(");\r\n        Task Remove");
             
             #line 182 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToSingular()));
             
             #line default
             #line hidden
-            this.Write("(");
+            this.Write("Async(");
             
             #line 182 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.ForeignEntity.ClassName));

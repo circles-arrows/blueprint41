@@ -44,13 +44,13 @@ if (!DALModel.IsAbstract)
         if (attr.IsKey)
         {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> <#= attr.Name #> { get; }
 <#
         }
         else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
         {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync #>> <#= attr.Name #>Async();
 <#
             if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
             {
@@ -58,7 +58,7 @@ if (!DALModel.IsAbstract)
                 {
                     string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
 #>
-        <#= concreteOuterType  #> <#= attr.Name #>_<#= concrete.Name #> { get; }
+        Task<<#= concreteOuterType #>> <#= attr.Name #>_<#= concrete.Name #>Async();
 <#
                 }
             }
@@ -68,20 +68,21 @@ if (!DALModel.IsAbstract)
             if (attr.Relationship.IsTimeDependent)
             {
 #>
-        <#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync #>> Get<#= attr.Name #>Async();
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync #>> Get<#= attr.Name #>Async(DateTime moment);
 <#
             }
             else
             {
 #>
-        <#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync #>> Get<#= attr.Name #>Async();
 <#
             }
         }
         else
         {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> <#= attr.Name #> { get; }
 <#
         }
     }
@@ -131,9 +132,9 @@ if (!DALModel.IsAbstract)
         public <#= DALModel.ClassName #>() : base()
         {
 <#
-        foreach(Property attr in DALModel.Properties.Where(item => item.PropertyType == PropertyType.Attribute && item.MandatoryDefaultValue is not null && !string.IsNullOrEmpty(item.MandatoryDefaultValue.ToString())))
+        foreach (Property attr in DALModel.Properties.Where(item => item.PropertyType == PropertyType.Attribute && item.MandatoryDefaultValue is not null && !string.IsNullOrEmpty(item.MandatoryDefaultValue.ToString())))
         {
-            if(attr.EnumValues is null)
+            if (attr.EnumValues is null)
             {
                 if(attr.SystemReturnType == typeof(string))
                 {
@@ -171,7 +172,7 @@ if (!DALModel.IsAbstract)
         {
             #region LoadByKeys
             
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+            RegisterQuery(nameof(LoadByKeysAsync), (query, alias) => query.
                 Where(alias.<#= DALModel.Key.Name #>.In(Parameter.New<<#= DALModel.Key.SystemReturnType #>>(Param0))));
 
             #endregion
@@ -184,7 +185,7 @@ if (!DALModel.IsAbstract)
 
             #region LoadBy<#= attr.Name #>
 
-            RegisterQuery(nameof(LoadBy<#= attr.Name #>), (query, alias) => query.
+            RegisterQuery(nameof(LoadBy<#= attr.Name #>Async), (query, alias) => query.
                 Where(alias.<#= attr.Name #> == Parameter.New<<#= attr.SystemReturnType #>>(Param0)));
 
             #endregion
@@ -200,18 +201,18 @@ if (!DALModel.IsAbstract)
         if (attr.PropertyType != PropertyType.Attribute || attr.IndexType != IndexType.Unique)
             continue;
 #>
-        public static <#= DALModel.ClassName #> LoadBy<#= attr.Name #>(<#= attr.SystemReturnType #> <#= attr.Name.ToCamelCase() #>)
+        public async static Task<<#= DALModel.ClassName #>> LoadBy<#= attr.Name #>Async(<#= attr.SystemReturnType #> <#= attr.Name.ToCamelCase() #>)
         {
-            return FromQuery(nameof(LoadBy<#= attr.Name #>), new Parameter(Param0, <#= attr.Name.ToCamelCase() #>)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadBy<#= attr.Name #>Async), new Parameter(Param0, <#= attr.Name.ToCamelCase() #>)).ConfigureAwait(false)).FirstOrDefault();
         }
 <#
     }
 #>
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<<#= DALModel.Key.SystemReturnType #>, <#= DALModel.ClassName #>> LoadByKeys(IEnumerable<<#= DALModel.Key.SystemReturnType #>> <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>)
+        public static async Task<Dictionary<<#= DALModel.Key.SystemReturnType #>, <#= DALModel.ClassName #>>> LoadByKeysAsync(IEnumerable<<#= DALModel.Key.SystemReturnType #>> <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
+            return (await FromQueryAsync(nameof(LoadByKeysAsync), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ConfigureAwait(false)).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
         }
 
 <#
@@ -310,14 +311,14 @@ if (!DALModel.IsAbstract)
                 if(attr.EntityReturnType.IsAbstract)
                 {
 #>
-            if (((ILookupHelper<I<#= attr.EntityReturnType.Name #>>)InnerData.<#= attr.Name #>).IsNull(isUpdate))
+            if (((ILookupHelperAsync<I<#= attr.EntityReturnType.Name #>>)InnerData.<#= attr.Name #>).IsNull(isUpdate))
                 throw new PersistenceException(string.Format("Cannot save <#= DALModel.ClassName #> with key '{0}' because the <#= attr.Name #> cannot be null.", this.<#= DALModel.Key.Name #>?.ToString() ?? "<null>"));
 <#
                 }
                 else
                 {
 #>
-            if (((ILookupHelper<<#= attr.EntityReturnType.Name #>>)InnerData.<#= attr.Name #>).IsNull(isUpdate))
+            if (((ILookupHelperAsync<<#= attr.EntityReturnType.Name #>>)InnerData.<#= attr.Name #>).IsNull(isUpdate))
                 throw new PersistenceException(string.Format("Cannot save <#= DALModel.ClassName #> with key '{0}' because the <#= attr.Name #> cannot be null.", this.<#= DALModel.Key.Name #>?.ToString() ?? "<null>"));
 <#                
                 }
@@ -413,20 +414,20 @@ if (!DALModel.IsAbstract)
                 if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { object loadHack = item.<#= attr.ForeignProperty.Name #>; } });
+                <#= attr.Name #> = new <#= attr.InnerReturnTypeAsync #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async, async item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { object loadHack = await item.Get<#= attr.ForeignProperty.Name #>Async(); } });
 <#
                 }
                 else if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Collection)
                 {
                     string countMethod = (attr.Relationship.IsTimeDependent) ? "CountAll" : "Count";
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = item.<#= attr.ForeignProperty.Name #>.<#= countMethod #>; } });
+                <#= attr.Name #> = new <#= attr.InnerReturnTypeAsync #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async, async item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = (await item.<#= attr.ForeignProperty.Name #>Async()).<#= countMethod #>; } });
 <#
                 }
                 else
                 {
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async);
+                <#= attr.Name #> = new <#= attr.InnerReturnTypeAsync #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async);
 <#
                 }
             }
@@ -443,7 +444,7 @@ if (!DALModel.IsAbstract)
     }
 #>
             sealed public override <#= DALModel.Key.SystemReturnType #> GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<<#= DALModel.Key.SystemReturnType #>>(<#= DALModel.Key.Name #>); }
-            sealed protected override void SetKey(<#= DALModel.Key.SystemReturnType #> key) { <#= DALModel.Key.Name #> = (<#= DALModel.Key.InnerReturnType #>)Entity.Parent.PersistenceProvider.ConvertToStoredType<<#= DALModel.Key.SystemReturnType #>>(key); base.SetKey(<#= DALModel.Key.Name #>); }
+            sealed protected override void SetKey(<#= DALModel.Key.SystemReturnType #> key) { <#= DALModel.Key.Name #> = (<#= DALModel.Key.InnerReturnTypeAsync #>)Entity.Parent.PersistenceProvider.ConvertToStoredType<<#= DALModel.Key.SystemReturnType #>>(key); base.SetKey(<#= DALModel.Key.Name #>); }
 
             #endregion
 <#
@@ -571,13 +572,13 @@ if (!DALModel.IsAbstract)
             if (attr.PropertyType == PropertyType.Collection || attr.PropertyType == PropertyType.Lookup)
             {
 #>
-            public <#= attr.InnerReturnType #> <#= attr.Name #> { get; private set; }
+            public <#= attr.InnerReturnTypeAsync #> <#= attr.Name #> { get; private set; }
 <#
             }
             else
             {
 #>
-            public <#= attr.InnerReturnType #> <#= attr.Name #> { get; set; }
+            public <#= attr.InnerReturnTypeAsync #> <#= attr.Name #> { get; set; }
 <#
             }
         }
@@ -605,14 +606,14 @@ if (!DALModel.IsAbstract)
             if (attr.IsKey)
             {
 #>
-        public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { return InnerData.<#= attr.Name #>; } set { KeySet(() => InnerData.<#= attr.Name #> = value); } }
+        public <#= attr.OuterReturnTypeAsync  #> <#= attr.Name #> { get { return InnerData.<#= attr.Name #>; } set { KeySet(() => InnerData.<#= attr.Name #> = value); } }
 <#
             }
             else if (attr.IsRowVersion)
             {
                 string setter = (attr.HideSetter) ? "private set" : "set";
 #>
-        public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value; } }
+        public <#= attr.OuterReturnTypeAsync  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value; } }
         protected override DateTime GetRowVersion() { return <#= attr.Name #>; }
         protected override void SetRowVersion(DateTime? value) { <#= attr.Name #> = value ?? DateTime.MinValue; }
 <#
@@ -620,7 +621,7 @@ if (!DALModel.IsAbstract)
             else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
             {
 #>
-        public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { return InnerData.<#= attr.Name #>; } }
+        public Task<<#= attr.OuterReturnTypeAsync  #>> <#= attr.Name #>Async() { return InnerData.<#= attr.Name #>.LoadAsync(); }
 <#
                 if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
                 {
@@ -628,16 +629,16 @@ if (!DALModel.IsAbstract)
                     {
                         string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
 #>
-        public <#= concreteOuterType  #> <#= attr.Name #>_<#= concrete.Name #> { get { return InnerData.<#= attr.Name #>.Where(item => item is <#= concrete.ClassName #>).Cast<<#= concrete.ClassName #>>(); } }
+        public Task<<#= concreteOuterType  #>> <#= attr.Name #>_<#= concrete.Name #>Async() { return InnerData.<#= attr.Name #>.WhereAsync(item => item is <#= concrete.ClassName #>).Cast<<#= concrete.ClassName #>>(); }
 <#
                     }
                 }
                 if (attr.ForeignProperty is not null)
                 {
 #>
-        private void Clear<#= attr.Name #>(DateTime? moment)
+        private Task Clear<#= attr.Name #>Async(DateTime? moment)
         {
-            ((ILookupHelper<<#= attr.EntityReturnType.ClassName #>>)InnerData.<#= attr.Name #>).ClearLookup(moment);
+            return ((ILookupHelperAsync<<#= attr.EntityReturnType.ClassName #>>)InnerData.<#= attr.Name #>).ClearLookupAsync(moment);
         }
 <#
                 }
@@ -647,33 +648,26 @@ if (!DALModel.IsAbstract)
                 if (attr.Relationship.IsTimeDependent)
                 {
 #>
-        public <#= attr.OuterReturnType #> <#= attr.Name #> { get { return Get<#= attr.Name #>(Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } set { Set<#= attr.Name #>(value, Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } }
-        public <#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime moment)
+        public Task<<#= attr.OuterReturnTypeAsync #>> Get<#= attr.Name #>Async()
         {
-            return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(moment);
+            return Get<#= attr.Name #>Async(Transaction.Current?.TransactionDate ?? DateTime.UtcNow);
         }
-        public IEnumerable<CollectionItem<<#= attr.OuterReturnType #>>> Get<#= attr.Name.ToPlural() #>(DateTime? from, DateTime? till)
+        public Task<<#= attr.OuterReturnTypeAsync #>> Get<#= attr.Name #>Async(DateTime moment)
         {
-            return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(from, till);
+            return ((ILookupHelperAsync<<#= attr.OuterReturnTypeAsync #>>)InnerData.<#= attr.Name #>).GetItemAsync(moment);
         }
-        //public void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment)
-        //{
-        //    if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), value, moment))
-        //        ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(value, moment);
-        //}
+        public Task<IEnumerable<CollectionItem<<#= attr.OuterReturnTypeAsync #>>>> Get<#= attr.Name.ToPlural() #>Async(DateTime? from, DateTime? till)
+        {
+            return ((ILookupHelperAsync<<#= attr.OuterReturnTypeAsync #>>)InnerData.<#= attr.Name #>).GetItemsAsync(from, till);
+        }
 <#
                 }
                 else
                 {
 #>
-        public <#= attr.OuterReturnType #> <#= attr.Name #>
+        public Task<<#= attr.OuterReturnTypeAsync #>> Get<#= attr.Name #>Async()
         {
-            get { return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(null); }
-            set 
-            { 
-                if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(null), value))
-                    ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(value, null); 
-            }
+            return ((ILookupHelperAsync<<#= attr.OuterReturnTypeAsync #>>)InnerData.<#= attr.Name #>).GetItemAsync(null);
         }
 <#
                 }
@@ -681,9 +675,9 @@ if (!DALModel.IsAbstract)
                 if (attr.ForeignProperty is not null)
                 {
 #>
-        private void Clear<#= attr.Name #>(DateTime? moment)
+        private Task Clear<#= attr.Name #>Async(DateTime? moment)
         {
-            ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).ClearLookup(moment);
+            return ((ILookupHelperAsync<<#= attr.OuterReturnTypeAsync #>>)InnerData.<#= attr.Name #>).ClearLookupAsync(moment);
         }
 <#
                 }
@@ -695,20 +689,20 @@ if (!DALModel.IsAbstract)
                     if (attr.Nullable)
                     {
 #>
-        public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(InnerData.<#= attr.Name #>); } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value?.ToString())) InnerData.<#= attr.Name #> = value?.ToString(); } }
+        public <#= attr.OuterReturnTypeAsync  #> <#= attr.Name #> { get { LazyGet(); return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(InnerData.<#= attr.Name #>); } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value?.ToString())) InnerData.<#= attr.Name #> = value?.ToString(); } }
 <#
                     }
                     else
                     {
 #>
-        public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(InnerData.<#= attr.Name #>) ?? default; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value.ToString())) InnerData.<#= attr.Name #> = value.ToString(); } }
+        public <#= attr.OuterReturnTypeAsync  #> <#= attr.Name #> { get { LazyGet(); return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(InnerData.<#= attr.Name #>) ?? default; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value.ToString())) InnerData.<#= attr.Name #> = value.ToString(); } }
 <#
                     }
                 }
                 else
                 {
 #>
-        public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value; } }
+        public <#= attr.OuterReturnTypeAsync  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value; } }
 <#
                 }
             }
@@ -863,7 +857,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -883,11 +877,11 @@ if (!DALModel.IsAbstract)
                     }
                 }
 #>
-            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
+            return ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItemAsync(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
         }
-        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>)
+        public async Task Remove<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>)
         {
-            <#= attr.Name #>.Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>);
+            (await <#= attr.Name #>Async()).Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>);
         }
 
         #endregion
@@ -1008,7 +1002,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -1031,11 +1025,11 @@ if (!DALModel.IsAbstract)
                     }
                 }
 #>
-            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
+            return ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItemAsync(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
         }
-        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment)
+        public async Task Remove<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment)
         {
-            <#= attr.Name #>.Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment);
+            (await <#= attr.Name #>Async()).Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment);
         }
 
         #endregion
@@ -1155,7 +1149,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public Task Set<#= attr.Name #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -1176,7 +1170,7 @@ if (!DALModel.IsAbstract)
                 }
 #>
 
-            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
+            return ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItemAsync(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
         }
 
         #endregion
@@ -1386,7 +1380,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public Task Set<#= attr.Name #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -1410,7 +1404,7 @@ if (!DALModel.IsAbstract)
                 }
 #>
         
-            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
+            return ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItemAsync(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
         }
 
         #endregion
@@ -1726,7 +1720,7 @@ if (!DALModel.IsAbstract)
             foreach (TypeSafeStaticData value in values)
             {
 #>
-                public const <#= DALModel.Key.OuterReturnTypeReadOnly #> <#= value.SafeValue #> = <#= EmitConstantValue(value.KeyValue, DALModel.Key.SystemReturnType) #>;
+                public const <#= DALModel.Key.OuterReturnTypeReadOnlyAsync #> <#= value.SafeValue #> = <#= EmitConstantValue(value.KeyValue, DALModel.Key.SystemReturnType) #>;
 <#
             }
 #>
@@ -1779,7 +1773,7 @@ if (!DALModel.IsAbstract)
             if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
             {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>.OriginalData; } }
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync  #>> I<#= inherited.Name #>OriginalData.<#= attr.Name #>Async() { return OriginalData.<#= attr.Name #>.OriginalDataAsync(); }
 <#
                 if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
                 {
@@ -1787,7 +1781,7 @@ if (!DALModel.IsAbstract)
                     {
                         string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
 #>
-        <#= concreteOuterType  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #>_<#= concrete.Name #> { get { return OriginalData.<#= attr.Name #>.OriginalData.Where(item => item is <#= concrete.ClassName #>).Select(item => item as <#= concrete.ClassName #>); } }
+        async Task<<#= concreteOuterType  #>> I<#= inherited.Name #>OriginalData.<#= attr.Name #>_<#= concrete.Name #>Async() { return (await OriginalData.<#= attr.Name #>.OriginalDataAsync()).Where(item => item is <#= concrete.ClassName #>).Select(item => item as <#= concrete.ClassName #>); }
 <#
                     }
                 }
@@ -1797,13 +1791,14 @@ if (!DALModel.IsAbstract)
                 if (attr.Relationship.IsTimeDependent)
                 {
 #>
-        <#= attr.OuterReturnTypeReadOnly #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return ((ILookupHelper<<#= attr.OuterReturnTypeReadOnly #>>)OriginalData.<#= attr.Name #>).GetOriginalItem(DateTime.UtcNow); } }
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync #>> I<#= inherited.Name #>OriginalData.Get<#= attr.Name #>Async() { return ((ILookupHelperAsync<<#= attr.OuterReturnTypeReadOnlyAsync #>>)OriginalData.<#= attr.Name #>).GetOriginalItemAsync(DateTime.UtcNow); }
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync #>> I<#= inherited.Name #>OriginalData.Get<#= attr.Name #>Async(DateTime moment) { return ((ILookupHelperAsync<<#= attr.OuterReturnTypeReadOnlyAsync #>>)OriginalData.<#= attr.Name #>).GetOriginalItemAsync(moment); }
 <#
                 }
                 else
                 {
 #>
-        <#= attr.OuterReturnTypeReadOnly #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return ((ILookupHelper<<#= attr.OuterReturnTypeReadOnly #>>)OriginalData.<#= attr.Name #>).GetOriginalItem(null); } }
+        Task<<#= attr.OuterReturnTypeReadOnlyAsync #>> I<#= inherited.Name #>OriginalData.Get<#= attr.Name #>Async() { return ((ILookupHelperAsync<<#= attr.OuterReturnTypeReadOnlyAsync #>>)OriginalData.<#= attr.Name #>).GetOriginalItemAsync(null); }
 <#
                 }
             }
@@ -1814,20 +1809,20 @@ if (!DALModel.IsAbstract)
                     if (attr.Nullable)
                     {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(OriginalData.<#= attr.Name #>); } }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(OriginalData.<#= attr.Name #>); } }
 <#
                     }
                     else
                     {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(OriginalData.<#= attr.Name #>) ?? default; } }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(OriginalData.<#= attr.Name #>) ?? default; } }
 <#
                     }
                 }
                 else
                 {
 #>
-        <#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>; } }
+        <#= attr.OuterReturnTypeReadOnlyAsync  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>; } }
 <#
                 }
             }

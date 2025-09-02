@@ -23,7 +23,7 @@ namespace Blueprint41.Persistence
         public OGM? OutItem { get; private set; }
         public bool IsExecutedInMemory { get; set; } = false;
 
-        public void ExecuteInMemory(EntityCollectionBase target)
+        public void ExecuteInMemory(IReplayableCollection target)
         {
             if (!target.IsLoaded)
                 return;
@@ -42,7 +42,7 @@ namespace Blueprint41.Persistence
 
             IsExecutedInMemory = true;
         }
-        protected abstract void InMemoryLogic(EntityCollectionBase target);
+        protected abstract void InMemoryLogic(IReplayableCollection target);
 
         public void ExecuteInDatastore()
         {

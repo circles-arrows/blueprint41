@@ -21,7 +21,7 @@ namespace Blueprint41.Persistence
             PersistenceProvider.Add(relationship, InItem!, OutItem!, Moment, true, Properties);
         }
 
-        protected override void InMemoryLogic(EntityCollectionBase target)
+        protected override void InMemoryLogic(IReplayableCollection target)
         {
             bool wasUpdated = false;
             int[] indexes = target.IndexOf(target.ForeignItem(this)!);

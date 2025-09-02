@@ -946,19 +946,12 @@ namespace Blueprint41
                     lock (this)
                     {
                         _entityEventArgsType ??= new RuntimeRegistered<Type>(
-                            delegate ()
+                            delegate (EntityFlavor flavor)
                             {
-                                if (!RuntimeReturnType.IsBlockingSet)
+                                if (!RuntimeReturnType.IsSet(flavor))
                                     throw new InvalidOperationException("Runtime-type not set.");
 
-                                return typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType.Blocking);
-                            },
-                            delegate ()
-                            {
-                                if (!RuntimeReturnType.IsAsyncSet)
-                                    throw new InvalidOperationException("Runtime-type not set.");
-
-                                return typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType.Async);
+                                return typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType.Get(flavor));
                             });
                     }
                 }
@@ -1665,7 +1658,7 @@ namespace Blueprint41
             if (IsAbstract)
                 throw new NotSupportedException($"You cannot instantiate the abstract entity {Name}.");
 
-            Func<OGM>? method = activator.GetOrSet(flavor, delegate ()
+            Func<OGM>? method = activator.GetOrSet(flavor, delegate (EntityFlavor flavor)
             {
                 Type? type = RuntimeReturnType.Get(flavor);
                 if (type is null)
@@ -1735,7 +1728,7 @@ namespace Blueprint41
         }
         internal OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode, EntityFlavor flavor)
         {
-            Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>? method = mapMethod.GetOrSet(flavor, delegate ()
+            Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, EntityFlavor, OGM?>? method = mapMethod.GetOrSet(flavor, delegate (EntityFlavor flavor)
             {
                 Type? type = RuntimeClassType.Get(flavor);
                 if (type is null)

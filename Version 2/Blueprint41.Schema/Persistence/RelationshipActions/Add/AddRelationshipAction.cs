@@ -21,13 +21,11 @@ namespace Blueprint41.Persistence
             PersistenceProvider.Add(relationship, InItem!, OutItem!, null, false, Properties);
         }
 
-        protected override void InMemoryLogic(EntityCollectionBase target)
+        protected override void InMemoryLogic(IReplayableCollection target)
         {
             bool contains = target.IndexOf(target.ForeignItem(this)!).Length != 0;
             if (!contains)
                 target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this)!, null, null));
         }
-
-
     }
 }

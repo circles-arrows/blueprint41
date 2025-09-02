@@ -8,6 +8,7 @@ using Blueprint41.Config;
 using Blueprint41.Core;
 using Blueprint41.Persistence;
 using Blueprint41.Events;
+using System.Collections.ObjectModel;
 
 namespace Blueprint41
 {
@@ -553,7 +554,7 @@ namespace Blueprint41
                 return entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded;
             }
 
-            foreach (Core.EntityCollectionBase collection in registeredCollections.Values.SelectMany(item => item.Values).SelectMany(item => item))
+            foreach (Core.EntityCollectionAsyncBase collection in registeredCollections.Values.SelectMany(item => item.Values).SelectMany(item => item))
             {
                 collection.AfterFlush();
             }
@@ -820,7 +821,7 @@ namespace Blueprint41
 
         private Dictionary<OGM, PersistenceState> beforeCommitEntityState = new Dictionary<OGM, PersistenceState>();
         private Dictionary<(string name, EntityFlavor flavor), Dictionary<OGM, OGM>> registeredEntities = new Dictionary<(string, EntityFlavor), Dictionary<OGM, OGM>>(50);
-        private Dictionary<(string name, EntityFlavor flavor), Dictionary<string, HashSet<Core.EntityCollectionBase>>> registeredCollections = new Dictionary<(string, EntityFlavor), Dictionary<string, HashSet<Core.EntityCollectionBase>>>(100);
+        private Dictionary<(string name, EntityFlavor flavor), Dictionary<string, HashSet<IReplayableCollection>>> registeredCollections = new Dictionary<(string, EntityFlavor), Dictionary<string, HashSet<IReplayableCollection>>>(100);
 
         internal void Register(OGM item)
         {
@@ -876,7 +877,7 @@ namespace Blueprint41
                 values.Add(key, item);
         }
 
-        internal void Register(Core.EntityCollectionBase item)
+        internal void Register(IReplayableCollection item)
         {
             if (item is null)
                 return;
@@ -886,19 +887,19 @@ namespace Blueprint41
             string relationshipName = item.Relationship.Name;
             EntityFlavor flavor = item.Parent.Flavor;
 
-            Dictionary<string, HashSet<Core.EntityCollectionBase>>? properties;
+            Dictionary<string, HashSet<IReplayableCollection>>? properties;
             if (!registeredCollections.TryGetValue((relationshipName, flavor), out properties))
             {
-                properties = new Dictionary<string, HashSet<Core.EntityCollectionBase>>();
+                properties = new Dictionary<string, HashSet<IReplayableCollection>>();
                 registeredCollections.Add((relationshipName, flavor), properties);
             }
 
             string propertyName = string.Concat(item.Parent.GetEntity().Name, ".", item.ParentProperty?.Name ?? "NonExisting");
 
-            HashSet<Core.EntityCollectionBase>? values;
+            HashSet<IReplayableCollection>? values;
             if (!properties.TryGetValue(propertyName, out values))
             {
-                values = new HashSet<Core.EntityCollectionBase>();
+                values = new HashSet<IReplayableCollection>();
                 properties.Add(propertyName, values);
             }
 
@@ -919,7 +920,7 @@ namespace Blueprint41
             }
             registeredEntities.Clear();
 
-            foreach (Core.EntityCollectionBase item in registeredCollections.Values.SelectMany(item => item.Values).SelectMany(item => item))
+            foreach (IReplayableCollection item in registeredCollections.Values.SelectMany(item => item.Values).SelectMany(item => item))
                 item.Transaction = null;
 
             registeredCollections.Clear();
@@ -962,15 +963,15 @@ namespace Blueprint41
                 Register(action);
         }
 
-        internal void Replay(Core.EntityCollectionBase collection)
+        internal void Replay(IReplayableCollection collection)
         {
             foreach (RelationshipAction action in actions)
                 action.ExecuteInMemory(collection);
         }
         private void Distribute(RelationshipAction action)
         {
-            List<EntityCollectionBase>? collections = registeredCollections.SelectMany(item => item.Value).SelectMany(item => item.Value).ToList();
-            foreach (Core.EntityCollectionBase collection in collections)
+            List<IReplayableCollection>? collections = registeredCollections.SelectMany(item => item.Value).SelectMany(item => item.Value).ToList();
+            foreach (IReplayableCollection collection in collections)
                 action.ExecuteInMemory(collection);
         }
 
@@ -982,32 +983,79 @@ namespace Blueprint41
             string relationshipName = collection.Relationship.Name;
             EntityFlavor flavor = collection.Parent.Flavor;
 
-            Dictionary<string, HashSet<Core.EntityCollectionBase>>? properties;
+            Dictionary<string, HashSet<IReplayableCollection>>? properties;
             if (!registeredCollections.TryGetValue((relationshipName, flavor), out properties))
             {
-                properties = new Dictionary<string, HashSet<Core.EntityCollectionBase>>();
+                properties = new Dictionary<string, HashSet<IReplayableCollection>>();
                 registeredCollections.Add((relationshipName, flavor), properties);
             }
 
             string propertyName = string.Concat(collection.Parent.GetEntity().Name, ".", collection.ParentProperty?.Name ?? "NonExisting");
 
-            HashSet<Core.EntityCollectionBase>? values;
+            HashSet<IReplayableCollection>? values;
             if (properties.TryGetValue(propertyName, out values))
             {
-                List<Core.EntityCollectionBase> collections = values.Where(item => !item.IsLoaded).ToList();
+                List<IReplayableCollection> collections = values.Where(item => !item.IsLoaded).ToList();
 
                 const int chunkSize = 10000;
                 int initialSize = Math.Min(chunkSize, collections.Count);
-                foreach (var chunk in collections.Chunks(chunkSize))
+                foreach (ReadOnlyCollection<IReplayableCollection> chunk in collections.Chunks(chunkSize))
                 {
                     List<OGM> parents = new List<OGM>(initialSize);
-                    foreach (Core.EntityCollectionBase item in chunk)
+                    foreach (IReplayableCollection item in chunk)
                         if (item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
                             parents.Add(item.Parent);
 
                     Dictionary<OGM, RelationshipPersistenceProvider.CollectionItemList> allItems = RelationshipPersistenceProvider.Load(parents, collection);
 
-                    foreach (Core.EntityCollectionBase item in chunk)
+                    foreach (IReplayableCollection item in chunk)
+                    {
+                        RelationshipPersistenceProvider.CollectionItemList? items = null;
+                        if (allItems.TryGetValue(item.Parent, out items))
+                            item.InitialLoad(items.Items);
+                        else
+                            item.InitialLoad(new List<CollectionItem>());
+                    }
+                }
+            }
+
+            if (!collection.IsLoaded)
+                collection.InitialLoad(new List<CollectionItem>());
+        }
+        internal async Task LoadAllAsync(Core.EntityCollectionAsyncBase collection)
+        {
+            if (collection is null)
+                return;
+
+            string relationshipName = collection.Relationship.Name;
+            EntityFlavor flavor = collection.Parent.Flavor;
+
+            Dictionary<string, HashSet<IReplayableCollection>>? properties;
+            if (!registeredCollections.TryGetValue((relationshipName, flavor), out properties))
+            {
+                properties = new Dictionary<string, HashSet<IReplayableCollection>>();
+                registeredCollections.Add((relationshipName, flavor), properties);
+            }
+
+            string propertyName = string.Concat(collection.Parent.GetEntity().Name, ".", collection.ParentProperty?.Name ?? "NonExisting");
+
+            HashSet<IReplayableCollection>? values;
+            if (properties.TryGetValue(propertyName, out values))
+            {
+                List<IReplayableCollection> collections = values.Where(item => !item.IsLoaded).ToList();
+
+                const int chunkSize = 10000;
+                int initialSize = Math.Min(chunkSize, collections.Count);
+                foreach (ReadOnlyCollection<IReplayableCollection> chunk in collections.Chunks(chunkSize))
+                {
+                    List<OGM> parents = new List<OGM>(initialSize);
+                    foreach (IReplayableCollection item in chunk)
+                        if (item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
+                            parents.Add(item.Parent);
+
+                    Dictionary<OGM, RelationshipPersistenceProvider.CollectionItemList> allItems = await RelationshipPersistenceProvider.LoadAsync(parents, collection);
+
+                    foreach (IReplayableCollection item in chunk)
                     {
                         RelationshipPersistenceProvider.CollectionItemList? items = null;
                         if (allItems.TryGetValue(item.Parent, out items))

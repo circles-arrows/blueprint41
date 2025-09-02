@@ -45,51 +45,51 @@ namespace Datastore.Manipulation.Async
         {
             #region LoadByKeys
             
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+            RegisterQuery(nameof(LoadByKeysAsync), (query, alias) => query.
                 Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
             #endregion
 
             #region LoadByCode
 
-            RegisterQuery(nameof(LoadByCode), (query, alias) => query.
+            RegisterQuery(nameof(LoadByCodeAsync), (query, alias) => query.
                 Where(alias.Code == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             #region LoadByName
 
-            RegisterQuery(nameof(LoadByName), (query, alias) => query.
+            RegisterQuery(nameof(LoadByNameAsync), (query, alias) => query.
                 Where(alias.Name == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             #region LoadByUid
 
-            RegisterQuery(nameof(LoadByUid), (query, alias) => query.
+            RegisterQuery(nameof(LoadByUidAsync), (query, alias) => query.
                 Where(alias.Uid == Parameter.New<System.String>(Param0)));
 
             #endregion
 
             AdditionalGeneratedStoredQueries();
         }
-        public static Rating LoadByCode(System.String code)
+        public async static Task<Rating> LoadByCodeAsync(System.String code)
         {
-            return FromQuery(nameof(LoadByCode), new Parameter(Param0, code)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByCodeAsync), new Parameter(Param0, code)).ConfigureAwait(false)).FirstOrDefault();
         }
-        public static Rating LoadByName(System.String name)
+        public async static Task<Rating> LoadByNameAsync(System.String name)
         {
-            return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByNameAsync), new Parameter(Param0, name)).ConfigureAwait(false)).FirstOrDefault();
         }
-        public static Rating LoadByUid(System.String uid)
+        public async static Task<Rating> LoadByUidAsync(System.String uid)
         {
-            return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
+            return (await FromQueryAsync(nameof(LoadByUidAsync), new Parameter(Param0, uid)).ConfigureAwait(false)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Rating> LoadByKeys(IEnumerable<System.String> uids)
+        public static async Task<Dictionary<System.String, Rating>> LoadByKeysAsync(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return (await FromQueryAsync(nameof(LoadByKeysAsync), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ConfigureAwait(false)).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.RatingAlias, IWhereQuery> query)

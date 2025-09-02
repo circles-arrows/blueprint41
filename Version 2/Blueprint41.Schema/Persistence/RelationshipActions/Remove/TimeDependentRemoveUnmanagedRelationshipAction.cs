@@ -18,7 +18,7 @@ namespace Blueprint41.Persistence
             PersistenceProvider.RemoveUnmanaged(relationship, InItem!, OutItem!, Moment);
         }
 
-        protected override void InMemoryLogic(EntityCollectionBase target)
+        protected override void InMemoryLogic(IReplayableCollection target)
         {
             int[] indexes = target.IndexOf(target.ForeignItem(this)!);
             foreach (int index in indexes)

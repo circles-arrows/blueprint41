@@ -46,7 +46,7 @@ namespace <#= Settings.FullCRUDNamespace #>
     foreach (var attr in DALRelation.Properties)
     {
 #>
-            <#= attr.Name #> = (<#= attr.OuterReturnType #>)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
+            <#= attr.Name #> = (<#= attr.OuterReturnTypeAsync #>)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnTypeAsync #>), properties.GetValue("<#= attr.Name #>"));
 <#
     }
 #>
@@ -67,7 +67,7 @@ namespace <#= Settings.FullCRUDNamespace #>
     foreach (var attr in DALRelation.Properties)
     {
 #>
-        public <#= attr.OuterReturnType #> <#= attr.Name #> { get; private set; }
+        public <#= attr.OuterReturnTypeAsync #> <#= attr.Name #> { get; private set; }
 <#
     }
 #>
