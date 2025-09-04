@@ -284,7 +284,7 @@ namespace Datastore.Manipulation.Async
         public Task AddSubscriberAsync(Person person, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);

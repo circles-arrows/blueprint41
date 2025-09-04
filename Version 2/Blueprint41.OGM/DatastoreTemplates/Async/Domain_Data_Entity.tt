@@ -1005,7 +1005,7 @@ if (!DALModel.IsAbstract)
         public Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -1190,7 +1190,7 @@ if (!DALModel.IsAbstract)
         public async Task<<#= attr.Relationship.Name #>> <#= attr.Name #>RelationAsync(DateTime? moment = null)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             return (await <#= attr.Relationship.Name #>.LoadAsync(_query<#= attr.Name #>Relation.Value, ("key", <#= DALModel.Key.Name #>), ("moment", moment))).FirstOrDefault();
         }
@@ -1244,7 +1244,7 @@ if (!DALModel.IsAbstract)
         public async Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             var query = Cypher
 <#
@@ -1272,7 +1272,7 @@ if (!DALModel.IsAbstract)
         public async Task<<#= attr.Relationship.Name #>> Get<#= attr.Name #>IfAsync(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             var query = Cypher
 <#
@@ -1383,7 +1383,7 @@ if (!DALModel.IsAbstract)
         public Task Set<#= attr.Name #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#

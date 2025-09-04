@@ -497,7 +497,7 @@ namespace Datastore.Manipulation.Sync
         public void AddStreamingServiceSubscription(StreamingService streamingService, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);
@@ -576,7 +576,7 @@ namespace Datastore.Manipulation.Sync
         public PERSON_LIVES_IN CityRelation(DateTime? moment = null)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             return PERSON_LIVES_IN.Load(_queryCityRelation.Value, ("key", Uid), ("moment", moment)).FirstOrDefault();
         }
@@ -604,7 +604,7 @@ namespace Datastore.Manipulation.Sync
         public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN.Alias, QueryCondition> expression)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -619,7 +619,7 @@ namespace Datastore.Manipulation.Sync
         public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN.Alias, QueryCondition[]> expression)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
@@ -685,7 +685,7 @@ namespace Datastore.Manipulation.Sync
         public void SetCity(City city, DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {
             if (moment is null)
-                moment = DateTime.UtcNow;
+                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (AddressLine1.HasValue) properties.Add("AddressLine1", AddressLine1.Value);

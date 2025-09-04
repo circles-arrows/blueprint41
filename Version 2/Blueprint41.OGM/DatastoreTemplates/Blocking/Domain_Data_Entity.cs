@@ -3836,9 +3836,9 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            if (moment is null)\r\n                moment = DateTime." +
-                    "UtcNow;\r\n\r\n            Dictionary<string, object> properties = new Dictionary<st" +
-                    "ring, object>();\r\n");
+            this.Write(")\r\n        {\r\n            if (moment is null)\r\n                moment = Transacti" +
+                    "on.Current?.TransactionDate ??  DateTime.UtcNow;\r\n\r\n            Dictionary<strin" +
+                    "g, object> properties = new Dictionary<string, object>();\r\n");
             
             #line 1014 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
@@ -4661,7 +4661,8 @@ if (!DALModel.IsAbstract)
             #line default
             #line hidden
             this.Write("Relation(DateTime? moment = null)\r\n        {\r\n            if (moment is null)\r\n  " +
-                    "              moment = DateTime.UtcNow;\r\n\r\n            return ");
+                    "              moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;" +
+                    "\r\n\r\n            return ");
             
             #line 1198 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -4933,7 +4934,8 @@ if (!DALModel.IsAbstract)
             #line default
             #line hidden
             this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            if (moment is null)\r\n" +
-                    "                moment = DateTime.UtcNow;\r\n\r\n            var query = Cypher\r\n");
+                    "                moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNo" +
+                    "w;\r\n\r\n            var query = Cypher\r\n");
             
             #line 1253 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
@@ -5067,7 +5069,8 @@ if (!DALModel.IsAbstract)
             #line default
             #line hidden
             this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            if (moment is null)" +
-                    "\r\n                moment = DateTime.UtcNow;\r\n\r\n            var query = Cypher\r\n");
+                    "\r\n                moment = Transaction.Current?.TransactionDate ??  DateTime.Utc" +
+                    "Now;\r\n\r\n            var query = Cypher\r\n");
             
             #line 1281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
@@ -5598,9 +5601,9 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            if (moment is null)\r\n                moment = DateTime." +
-                    "UtcNow;\r\n\r\n            Dictionary<string, object> properties = new Dictionary<st" +
-                    "ring, object>();\r\n");
+            this.Write(")\r\n        {\r\n            if (moment is null)\r\n                moment = Transacti" +
+                    "on.Current?.TransactionDate ??  DateTime.UtcNow;\r\n\r\n            Dictionary<strin" +
+                    "g, object> properties = new Dictionary<string, object>();\r\n");
             
             #line 1392 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
