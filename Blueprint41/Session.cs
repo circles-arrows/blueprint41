@@ -1,14 +1,9 @@
 ﻿using Blueprint41.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Blueprint41.Core.RelationshipPersistenceProvider;
-using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41
 {
@@ -76,6 +71,8 @@ namespace Blueprint41
 
         public abstract RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
         public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
+        public abstract Task<RawResult> RunAsync(string cypher, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
+        public abstract Task<RawResult> RunAsync(string cypher, Dictionary<string, object?>? parameters, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
 
         public static Session RunningSession
         {

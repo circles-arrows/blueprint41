@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Blueprint41.Core;
+using Blueprint41.Query;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Reflection;
-using System.Linq.Expressions;
-using System.Collections;
-
-using Blueprint41.Core;
-using Blueprint41.Query;
 
 namespace Blueprint41
 {
@@ -55,9 +52,26 @@ namespace Blueprint41
         }
         public List<dynamic> Execute(NodeMapping nodeMapping = NodeMapping.AsReadOnlyEntity)
         {
-            List<dynamic> items = new List<dynamic>();
+            Transaction transaction = Transaction.RunningTransaction;
+            Dictionary<string, object?> parameters = BuildParameterDictionary(transaction);
+            RawResult result = transaction.Run(CompiledQuery.QueryText, parameters);
+
+            return MapResults(result, parameters, nodeMapping);
+        }
+
+        public async Task<List<dynamic>> ExecuteAsync(NodeMapping nodeMapping = NodeMapping.AsReadOnlyEntity, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
 
             Transaction transaction = Transaction.RunningTransaction;
+            Dictionary<string, object?> parameters = BuildParameterDictionary(transaction);
+            RawResult result = await transaction.RunAsync(CompiledQuery.QueryText, parameters, cancellationToken).ConfigureAwait(false);
+
+            return MapResults(result, parameters, nodeMapping);
+        }
+
+        private Dictionary<string, object?> BuildParameterDictionary(Transaction transaction)
+        {
             Dictionary<string, object?> parameters = new Dictionary<string, object?>(QueryParameters.Count);
             foreach (KeyValuePair<string, (object? value, bool isConstant)> queryParameter in QueryParameters)
             {
@@ -67,7 +81,13 @@ namespace Blueprint41
                     parameters.Add(queryParameter.Key, transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));
             }
 
-            var result = transaction.Run(CompiledQuery.QueryText, parameters);
+            return parameters;
+        }
+
+        private List<dynamic> MapResults(RawResult result, Dictionary<string, object?> parameters, NodeMapping nodeMapping)
+        {
+            List<dynamic> items = new List<dynamic>();
+
             foreach (var row in result)
             {
                 IDictionary<string, object?> record = new ExpandoObject();
@@ -200,7 +220,7 @@ namespace Blueprint41
         {
             Type type = value.GetType();
             if (type == typeof(string))
-                return  string.Format("'{0}'", value.ToString());
+                return string.Format("'{0}'", value.ToString());
 
             if (value is IEnumerable enumerable)
             {
@@ -212,7 +232,7 @@ namespace Blueprint41
 
                 return $"[{string.Join(", ", items)}]";
             }
-            
+
             return value.ToString();
         }
         private string DebuggerDisplay { get => ToString(); }

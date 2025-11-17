@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.CompilerServices;
-
-using Blueprint41.Core;
+﻿using Blueprint41.Core;
 using Blueprint41.Log;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace Blueprint41.Neo4j.Persistence.Void
@@ -40,6 +39,16 @@ namespace Blueprint41.Neo4j.Persistence.Void
 #endif
 
             return new Neo4jRawResult();
+        }
+        public override Task<RawResult> RunAsync(string cypher, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult<RawResult>(Run(cypher, memberName, sourceFilePath, sourceLineNumber));
+        }
+        public override Task<RawResult> RunAsync(string cypher, Dictionary<string, object?>? parameters, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult<RawResult>(Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber));
         }
 
         protected internal TransactionLogger? Logger { get; private set; }

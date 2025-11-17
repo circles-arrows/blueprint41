@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-using System.Threading.Tasks;
-
-using Neo4j.Driver;
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence;
+using Neo4j.Driver;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
@@ -20,7 +14,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             TaskResult = taskResult;
         }
         private CustomTaskScheduler Scheduler;
-        private IResultCursor TaskResult;
+        private readonly IResultCursor TaskResult;
 
         private IResultCursor? Result
         {
@@ -84,7 +78,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         public override IEnumerator<RawRecord> GetEnumerator()
         {
             return Enumerator;
-        }        
+        }
 
         public override RawResultStatistics Statistics()
         {

@@ -1,14 +1,11 @@
 ﻿using Blueprint41.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static Blueprint41.Core.RelationshipPersistenceProvider;
-using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41
 {
@@ -83,6 +80,8 @@ namespace Blueprint41
 
         public abstract RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
         public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
+        public abstract Task<RawResult> RunAsync(string cypher, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
+        public abstract Task<RawResult> RunAsync(string cypher, Dictionary<string, object?>? parameters, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
         protected abstract void ApplyFunctionalId(FunctionalId functionalId);
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushInternal()
@@ -95,7 +94,7 @@ namespace Blueprint41
 
                 if (HasChanges(entity))
                 {
-                    if(!beforeCommitEntityState.ContainsKey(entity))
+                    if (!beforeCommitEntityState.ContainsKey(entity))
                         beforeCommitEntityState.Add(entity, entity.PersistenceState);
 
                     entity.GetEntity().RaiseOnSave((OGMImpl)entity, this);
@@ -209,7 +208,8 @@ namespace Blueprint41
         {
             Transaction trans = RunningTransaction;
             bool repeat = false;
-            do {
+            do
+            {
                 try
                 {
                     repeat = false;
@@ -283,7 +283,7 @@ namespace Blueprint41
 
         protected void ApplyFunctionalIds()
         {
-            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item=> item is not null))
+            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item => item is not null))
             {
                 ApplyFunctionalId(functionalId);
             }
@@ -594,10 +594,10 @@ namespace Blueprint41
         {
             if (!this.FireEntityEvents)
                 return;
-            
+
             TransactionEventArgs args = TransactionEventArgs.CreateInstance(EventTypeEnum.OnCommit, this);
             onCommit?.Invoke(this, args);
-            
+
             // Wipe custom-state so the garbage collection can collect it. If anyone thinks this causes a bug for them, feel free to remove this line of code :o)
             customState = null;
         }

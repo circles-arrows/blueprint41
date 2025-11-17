@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.CompilerServices;
-
-using neo4j = Neo4j.Driver.V1;
-
-using Blueprint41.Core;
+﻿using Blueprint41.Core;
 using Blueprint41.Log;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using neo4j = Neo4j.Driver.V1;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.v3
 {
@@ -57,6 +55,24 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 #endif
 
             return new Neo4jRawResult(results);
+        }
+        public override Task<RawResult> RunAsync(string cypher, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Run(cypher, memberName, sourceFilePath, sourceLineNumber);
+            }, cancellationToken);
+        }
+        public override Task<RawResult> RunAsync(string cypher, Dictionary<string, object?>? parameters, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+            }, cancellationToken);
         }
 
         public Neo4jPersistenceProvider Provider { get; set; }

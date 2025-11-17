@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Blueprint41.Core;
+using Blueprint41.Log;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.CompilerServices;
-
-using neo4j = Neo4j.Driver;
-
-using Blueprint41.Core;
-using Blueprint41.Log;
+using System.Threading;
 using System.Threading.Tasks;
+using neo4j = Neo4j.Driver;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.v5
 {
@@ -59,7 +57,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
 #endif
 
             //DebugQueryString(cypher, null);
-            return new Neo4jRawResult(Provider.TaskScheduler, results);
+            return new Neo4jCursorRawResult(results);
         }
         public override RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
@@ -81,6 +79,14 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
 
             //DebugQueryString(cypher, parameters);
             return new Neo4jRawResult(Provider.TaskScheduler, results);
+        }
+        public override async Task<RawResult> RunAsync(string cypher, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return await RunAsyncInternal(cypher, null, cancellationToken, memberName, sourceFilePath, sourceLineNumber).ConfigureAwait(false);
+        }
+        public override async Task<RawResult> RunAsync(string cypher, Dictionary<string, object?>? parameters, CancellationToken cancellationToken = default, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return await RunAsyncInternal(cypher, parameters, cancellationToken, memberName, sourceFilePath, sourceLineNumber).ConfigureAwait(false);
         }
 
         public Neo4jPersistenceProvider Provider { get; set; }
@@ -142,6 +148,32 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
                 }
             }
             System.Diagnostics.Debug.WriteLine(cypherQuery);
+        }
+
+        private async Task<RawResult> RunAsyncInternal(string cypher, Dictionary<string, object?>? parameters, CancellationToken cancellationToken, string memberName, string sourceFilePath, int sourceLineNumber)
+        {
+            if (StatementRunner is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+#if DEBUG
+            Logger?.Start();
+#endif
+
+            neo4j.IResultCursor results = parameters is null
+                ? await StatementRunner.RunAsync(cypher).ConfigureAwait(false)
+                : await StatementRunner.RunAsync(cypher, parameters).ConfigureAwait(false);
+
+#if DEBUG
+            if (Logger is not null)
+            {
+                await results.PeekAsync().ConfigureAwait(false);
+                Logger.Stop(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+            }
+#endif
+
+            return new Neo4jRawResult(Provider.TaskScheduler, results);
         }
     }
 }

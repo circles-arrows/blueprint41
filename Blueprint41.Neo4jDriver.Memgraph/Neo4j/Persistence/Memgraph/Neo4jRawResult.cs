@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-using System.Threading.Tasks;
-
-using Neo4j.Driver;
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence;
+using Neo4j.Driver;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
@@ -84,7 +78,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         public override IEnumerator<RawRecord> GetEnumerator()
         {
             return Enumerator;
-        }        
+        }
 
         public override RawResultStatistics Statistics()
         {
