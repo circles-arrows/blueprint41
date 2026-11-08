@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Threading.Tasks;
 
 using Blueprint41.Core;
 using Blueprint41.Dynamic;
@@ -1269,6 +1270,9 @@ namespace Blueprint41
         /// <returns>The property value</returns>
         public object GetValue(OGM instance, DateTime? moment = null)
         {
+            if (instance.Flavor == EntityFlavor.Async && (PropertyType == PropertyType.Lookup || PropertyType == PropertyType.Collection))
+                return null!; // Async relationships have no synchronous accessor, use GetValueAsync.
+
             if (Parent is Entity entity)
             {
                 if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
@@ -1316,6 +1320,21 @@ namespace Blueprint41
             {
                 throw new NotSupportedException("There is no OGM mapping generated for relationships or their properties.");
             }
+        }
+        internal async Task<object?> GetValueAsync(OGM instance, DateTime? moment = null)
+        {
+            if (instance.Flavor != EntityFlavor.Async || PropertyType != PropertyType.Lookup)
+                return GetValue(instance, moment);
+
+            string name = string.Concat("Get", Name, "Async");
+            MethodInfo? method = instance.GetType().GetMethods().FirstOrDefault(item => item.Name == name && item.GetParameters().Length == ((Relationship?.IsTimeDependent ?? false) ? 1 : 0));
+            if (method is null)
+                return null;
+
+            object?[] args = method.GetParameters().Length == 0 ? Array.Empty<object?>() : new object?[] { moment ?? DateTime.UtcNow };
+            Task task = (Task)method.Invoke(instance, args)!;
+            await task.ConfigureAwait(false);
+            return task.GetType().GetProperty("Result")?.GetValue(task);
         }
         private readonly RuntimeRegistered<Func<OGM, object>?> getValue = new RuntimeRegistered<Func<OGM, object>?>();
         private readonly RuntimeRegistered<Func<OGM, DateTime?, object>?> getValueWithMoment = new RuntimeRegistered<Func<OGM, DateTime?, object>?>();
@@ -1410,6 +1429,36 @@ namespace Blueprint41
             }
         }
         private Dictionary<Type, Action<OGM, DateTime?>> clearLookupCache = new Dictionary<Type, Action<OGM, DateTime?>>();
+
+        internal Task ClearLookupAsync(OGM instance, DateTime? moment = null)
+        {
+            if (PropertyType != PropertyType.Lookup || instance is DynamicEntity)
+                return Task.CompletedTask;
+
+            Func<OGM, DateTime?, Task>? clearLookup = GetClearLookupAsync(instance.GetType());
+            if (clearLookup is null)
+            {
+                ClearLookup(instance, moment);
+                return Task.CompletedTask;
+            }
+
+            return clearLookup.Invoke(instance, moment);
+        }
+        private Func<OGM, DateTime?, Task>? GetClearLookupAsync(Type type)
+        {
+            lock (clearLookupAsyncCache)
+            {
+                if (!clearLookupAsyncCache.TryGetValue(type, out Func<OGM, DateTime?, Task>? clearLookup))
+                {
+                    string name = string.Concat("Clear", Name, "Async");
+                    MethodInfo? method = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.InvokeMethod).FirstOrDefault(item => item.Name == name);
+                    clearLookup = (method is null) ? null : DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, DateTime?, Task>>(method, DelegateHelper.CreateOptions.Downcasting);
+                    clearLookupAsyncCache.Add(type, clearLookup);
+                }
+                return clearLookup;
+            }
+        }
+        private Dictionary<Type, Func<OGM, DateTime?, Task>?> clearLookupAsyncCache = new Dictionary<Type, Func<OGM, DateTime?, Task>?>();
 
         #endregion
 

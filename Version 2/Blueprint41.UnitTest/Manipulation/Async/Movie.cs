@@ -218,11 +218,19 @@ namespace Datastore.Manipulation.Async
         {
             return ((ILookupHelperAsync<Person>)InnerData.Director).GetItemAsync(null);
         }
+        private void ClearDirector(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Person>)InnerData.Director).ClearLookup(moment);
+        }
         private Task ClearDirectorAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Person>)InnerData.Director).ClearLookupAsync(moment);
         }
         public Task<EntityCollectionAsync<Person>> ActorsAsync() { return InnerData.Actors.LoadAsync(); }
+        private void ClearActors(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Person>)InnerData.Actors).ClearLookup(moment);
+        }
         private Task ClearActorsAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Person>)InnerData.Actors).ClearLookupAsync(moment);
@@ -355,10 +363,11 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddActorAsync(Person person)
+        public async Task AddActorAsync(Person person)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            return ((ILookupHelperAsync<Person>)InnerData.Actors).AddItemAsync(person, null, properties);
+            await InnerData.Actors.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Person>)InnerData.Actors).AddItem(person, null, properties);
         }
         public async Task RemoveActorAsync(Person person)
         {

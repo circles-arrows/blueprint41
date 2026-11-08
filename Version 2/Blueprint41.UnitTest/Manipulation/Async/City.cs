@@ -221,6 +221,10 @@ namespace Datastore.Manipulation.Async
         public string State { get { LazyGet(); return InnerData.State; } set { if (LazySet(Members.State, InnerData.State, value)) InnerData.State = value; } }
         public string Country { get { LazyGet(); return InnerData.Country; } set { if (LazySet(Members.Country, InnerData.Country, value)) InnerData.Country = value; } }
         public Task<EntityCollectionAsync<Restaurant>> RestaurantsAsync() { return InnerData.Restaurants.LoadAsync(); }
+        private void ClearRestaurants(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
+        }
         private Task ClearRestaurantsAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).ClearLookupAsync(moment);
@@ -293,10 +297,11 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddRestaurantAsync(Restaurant restaurant)
+        public async Task AddRestaurantAsync(Restaurant restaurant)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).AddItemAsync(restaurant, null, properties);
+            await InnerData.Restaurants.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).AddItem(restaurant, null, properties);
         }
         public async Task RemoveRestaurantAsync(Restaurant restaurant)
         {

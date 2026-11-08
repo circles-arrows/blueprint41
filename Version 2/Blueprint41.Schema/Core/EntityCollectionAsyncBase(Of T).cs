@@ -76,26 +76,17 @@ namespace Blueprint41.Core
             else if (Parent.PersistenceState == PersistenceState.OutOfScope)
                 throw new InvalidOperationException("The transaction for this object has already ended.");
 
-            LazyLoad();
+            // No load needed: actions are registered on the transaction and replayed onto the collection when it gets loaded.
 
             if (Parent.PersistenceState == PersistenceState.New)
                 Parent.PersistenceState = PersistenceState.NewAndChanged;
             else if (Parent.PersistenceState == PersistenceState.Loaded)
                 Parent.PersistenceState = PersistenceState.LoadedAndChanged;
         }
-        protected virtual async Task LazySetAsync()
+        protected virtual Task LazySetAsync()
         {
-            if (Parent.PersistenceState == PersistenceState.Persisted && Transaction != Transaction.RunningTransaction)
-                throw new InvalidOperationException("This object was already flushed to the data-store.");
-            else if (Parent.PersistenceState == PersistenceState.OutOfScope)
-                throw new InvalidOperationException("The transaction for this object has already ended.");
-
-            await LazyLoadAsync();
-
-            if (Parent.PersistenceState == PersistenceState.New)
-                Parent.PersistenceState = PersistenceState.NewAndChanged;
-            else if (Parent.PersistenceState == PersistenceState.Loaded)
-                Parent.PersistenceState = PersistenceState.LoadedAndChanged;
+            LazySet();
+            return Task.CompletedTask;
         }
         internal protected override void AfterFlush()
         {
@@ -202,7 +193,10 @@ namespace Blueprint41.Core
         protected abstract TEntity? GetItem(DateTime? moment);
         protected abstract Task<TEntity?> GetItemAsync(DateTime? moment);
         protected abstract void AddItem(TEntity item, DateTime? moment, Dictionary<string, object>? properties);
-        protected abstract Task AddItemAsync(TEntity item, DateTime? moment, Dictionary<string, object>? properties);
+        void ILookupHelperAsync<TEntity>.AddItem(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
+        {
+            AddItem(item, moment, properties);
+        }
         protected abstract void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties);
         protected abstract Task SetItemAsync(TEntity? item, DateTime? moment, Dictionary<string, object>? properties);
         protected abstract bool IsNull(bool isUpdate);
@@ -221,10 +215,6 @@ namespace Blueprint41.Core
         {
             return GetItemsAsync(from, till);
         }
-        Task ILookupHelperAsync<TEntity>.AddItemAsync(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
-        {
-            return AddItemAsync(item, moment, properties);
-        }
         Task ILookupHelperAsync<TEntity>.SetItemAsync(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
             return SetItemAsync(item, moment, properties);
@@ -232,6 +222,10 @@ namespace Blueprint41.Core
         bool ILookupHelperAsync<TEntity>.IsNull(bool isUpdate)
         {
             return IsNull(isUpdate);
+        }
+        void ILookupHelperAsync<TEntity>.ClearLookup(DateTime? moment)
+        {
+            ClearLookup(moment);
         }
         Task ILookupHelperAsync<TEntity>.ClearLookupAsync(DateTime? moment)
         {

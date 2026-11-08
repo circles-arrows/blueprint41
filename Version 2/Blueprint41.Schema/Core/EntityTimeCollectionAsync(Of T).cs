@@ -409,12 +409,6 @@ namespace Blueprint41.Core
         {
             Add(item, moment, true, properties);
         }
-        protected override Task AddItemAsync(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
-        {
-            throw new NotImplementedException();
-
-            //Add(item, moment, true, properties);
-        }
 
         protected override void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
@@ -510,12 +504,12 @@ namespace Blueprint41.Core
             {
                 if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
-                    if (oldForeignValue is not null)
-                        ParentProperty?.ClearLookup(oldForeignValue, moment);
+                    OGM? oldForeignValue = (item is null) ? null : (OGM?)await ForeignProperty.GetValueAsync(item, moment).ConfigureAwait(false);
+                    if (oldForeignValue is not null && ParentProperty is not null)
+                        await ParentProperty.ClearLookupAsync(oldForeignValue, moment).ConfigureAwait(false);
 
                     foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        ForeignProperty.ClearLookup(entity, moment);
+                        await ForeignProperty.ClearLookupAsync(entity, moment).ConfigureAwait(false);
                 }
 
                 if (item is null)
@@ -585,6 +579,7 @@ namespace Blueprint41.Core
         }
         protected override async Task ClearLookupAsync(DateTime? moment)
         {
+            await LazyLoadAsync().ConfigureAwait(false);
             await LazySetAsync();
             ExecuteAction(ClearAction(moment));
         }

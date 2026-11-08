@@ -201,11 +201,19 @@ namespace Datastore.Manipulation.Async
         {
             return ((ILookupHelperAsync<City>)InnerData.City).GetItemAsync(null);
         }
+        private void ClearCity(DateTime? moment)
+        {
+            ((ILookupHelperAsync<City>)InnerData.City).ClearLookup(moment);
+        }
         private Task ClearCityAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<City>)InnerData.City).ClearLookupAsync(moment);
         }
         public Task<EntityCollectionAsync<Person>> PersonsAsync() { return InnerData.Persons.LoadAsync(); }
+        private void ClearPersons(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Person>)InnerData.Persons).ClearLookup(moment);
+        }
         private Task ClearPersonsAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Person>)InnerData.Persons).ClearLookupAsync(moment);
@@ -334,10 +342,11 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddPersonAsync(Person person)
+        public async Task AddPersonAsync(Person person)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            return ((ILookupHelperAsync<Person>)InnerData.Persons).AddItemAsync(person, null, properties);
+            await InnerData.Persons.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Person>)InnerData.Persons).AddItem(person, null, properties);
         }
         public async Task RemovePersonAsync(Person person)
         {

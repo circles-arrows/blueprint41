@@ -322,12 +322,6 @@ namespace Blueprint41.Core
         {
             Add(item, true, properties);
         }
-        protected override Task AddItemAsync(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
-        {
-            throw new NotImplementedException();
-
-            //return Add(item, true, properties);
-        }
 
         protected override void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
@@ -399,20 +393,20 @@ namespace Blueprint41.Core
             await LazyLoadAsync();
             await LazySetAsync();
 
-            if (item is not null && EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
+            if (item is not null && EagerLoadLogicAsync is not null)
+                await EagerLoadLogicAsync.Invoke(item).ConfigureAwait(false);
 
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
             if (NeedsToAssign(ParentProperty?.Relationship) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
             {
                 if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
-                    if (oldForeignValue is not null)
-                        ParentProperty?.ClearLookup(oldForeignValue, null);
+                    OGM? oldForeignValue = (item is null) ? null : (OGM?)await ForeignProperty.GetValueAsync(item, moment).ConfigureAwait(false);
+                    if (oldForeignValue is not null && ParentProperty is not null)
+                        await ParentProperty.ClearLookupAsync(oldForeignValue, null).ConfigureAwait(false);
 
                     foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        ForeignProperty.ClearLookup(entity, null);
+                        await ForeignProperty.ClearLookupAsync(entity, null).ConfigureAwait(false);
                 }
 
                 if (item is null)
@@ -468,6 +462,7 @@ namespace Blueprint41.Core
         }
         protected override async Task ClearLookupAsync(DateTime? moment)
         {
+            await LazyLoadAsync().ConfigureAwait(false);
             await LazySetAsync();
             ExecuteAction(ClearAction(moment));
         }

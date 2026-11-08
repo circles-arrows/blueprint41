@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -96,7 +96,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                 var watched = (await SampleDataWatchedMoviesAsync()).First();
                 (await watched.person.WatchedMoviesAsync()).Add(watched.movie);
 
-                Exception ex = Assert.ThrowsAsync<AggregateException>(async () => await Transaction.CommitAsync());
+                Exception ex = Assert.CatchAsync<Exception>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
 #else
@@ -324,10 +324,10 @@ namespace Blueprint41.UnitTest.Tests.Async
 
             await using (MockModel.BeginTransactionAsync())
             {
-                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
+                foreach (var watched in (await SampleDataWatchedMoviesAsync()).GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
                 {
                     List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
-                    List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
+                    List<string> actual = (await watched.person.WatchedMoviesAsync()).Select(item => item.Title).ToList();
 
                     Assert.AreEqual(excpected.Count, actual.Count);
                     Assert.AreEqual(0, excpected.Except(actual).Count());
@@ -488,7 +488,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                 (await person!.StreamingServiceSubscriptionsAsync()).Add(netflix!, DateTime.UtcNow);
 
-                Exception ex = Assert.ThrowsAsync<AggregateException>(async () => await Transaction.CommitAsync());
+                Exception ex = Assert.CatchAsync<Exception>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
 #else

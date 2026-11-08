@@ -650,10 +650,10 @@ namespace Blueprint41.UnitTest.Tests.Async
             await using (MockModel.BeginTransactionAsync())
             {
                 // Person lives in
-                foreach ((s.Person person, List<(DateTime from, DateTime till)> relations, s.City city, Dictionary<string, object> properties) data in SampleDataLivesIn())
+                foreach ((a.Person person, List<(DateTime from, DateTime till)> relations, a.City city, Dictionary<string, object> properties) data in await SampleDataLivesInAsync())
                 {
                     foreach ((DateTime from, DateTime till) in data.relations)
-                        await WriteRelationAsync(data.person, s.PERSON_LIVES_IN.Relationship, data.city, from, till, data.properties);
+                        await WriteRelationAsync(data.person, a.PERSON_LIVES_IN.Relationship, data.city, from, till, data.properties);
                 }
 
                 // Movie certifications
@@ -670,29 +670,29 @@ namespace Blueprint41.UnitTest.Tests.Async
                 }
 
                 // Subscribed streaming service
-                var person = s.Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                var person = await a.Person.LoadAsync(DatabaseUids.Persons.LinusTorvalds);
                 Assert.IsNotNull(person);
 
-                var netflix = s.StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                var netflix = await a.StreamingService.LoadAsync(DatabaseUids.StreamingServices.Netflix);
                 Assert.IsNotNull(netflix);
 
                 var price = StreamingServiceUids.Rates.Netflix;
 
-                foreach (var state in GetSubscribedToState(TestScenario.RelationsFromMask(0b1111), netflix!, price))
+                foreach (var state in await GetSubscribedToStateAsync(TestScenario.RelationsFromMask(0b1111), netflix!, price))
                 {
                     foreach (var relation in state.relations)
                     {
-                        WriteRelation(person!, s.SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                        await WriteRelationAsync(person!, a.SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
                         {
-                            { nameof(s.SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
+                            { nameof(a.SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
                         });
                     }
                 }
 
                 // Watched minutes
-                foreach (var watched in SampleDataWatchedMovies())
+                foreach (var watched in await SampleDataWatchedMoviesAsync())
                 {
-                    watched.person.AddWatchedMovie(watched.movie, MinutesWatched: watched.minutes);
+                    await watched.person.AddWatchedMovieAsync(watched.movie, MinutesWatched: watched.minutes);
                 }
 
                 await Transaction.CommitAsync();

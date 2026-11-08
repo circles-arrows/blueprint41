@@ -163,7 +163,7 @@ namespace Blueprint41.Core
 
         private static readonly List<CollectionItem> empty = new List<CollectionItem>();
 
-        protected void LazyLoad()
+        protected virtual void LazyLoad()
         {
             if (IsLoaded)
                 return;
@@ -174,18 +174,10 @@ namespace Blueprint41.Core
                 return;
             }
 
-            Transaction trans = Transaction.RunningTransaction;
-            if (trans.OptimizeFor == OptimizeFor.RecursiveSubGraphAccess)
-            {
-                // TODO: This should be awaited, but that would require all calling methods to be async as well.
-                Task.Run(() => trans.LoadAllAsync(this)).Wait();
-                return;
-            }
-
-            // TODO: This should be awaited, but that would require all calling methods to be async as well.
-            IEnumerable<CollectionItem> items = Task.Run(() => RelationshipPersistenceProvider.LoadAsync(Parent, this)).Result;
-            InitialLoad(items);
+            throw new InvalidOperationException($"The collection '{ParentProperty?.Name}' is not loaded. Load it first by awaiting its async accessor.");
         }
+        internal bool IsLoadedOrNew => IsLoaded || Parent.PersistenceState == PersistenceState.New || Parent.PersistenceState == PersistenceState.NewAndChanged;
+
         protected virtual async Task LazyLoadAsync()
         {
             if (IsLoaded)
@@ -200,11 +192,11 @@ namespace Blueprint41.Core
             Transaction trans = Transaction.RunningTransaction;
             if (trans.OptimizeFor == OptimizeFor.RecursiveSubGraphAccess)
             {
-                await trans.LoadAllAsync(this);
+                await trans.LoadAllAsync(this).ConfigureAwait(false);
                 return;
             }
 
-            IEnumerable<CollectionItem> items = await RelationshipPersistenceProvider.LoadAsync(Parent, this);
+            IEnumerable<CollectionItem> items = await RelationshipPersistenceProvider.LoadAsync(Parent, this).ConfigureAwait(false);
             InitialLoad(items);
         }
 

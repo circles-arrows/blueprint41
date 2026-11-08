@@ -207,6 +207,10 @@ namespace Datastore.Manipulation.Async
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
         public Task<EntityTimeCollectionAsync<Person>> SubscribersAsync() { return InnerData.Subscribers.LoadAsync(); }
+        private void ClearSubscribers(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Person>)InnerData.Subscribers).ClearLookup(moment);
+        }
         private Task ClearSubscribersAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Person>)InnerData.Subscribers).ClearLookupAsync(moment);
@@ -281,14 +285,15 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddSubscriberAsync(Person person, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
+        public async Task AddSubscriberAsync(Person person, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
             if (moment is null)
                 moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);
-            return ((ILookupHelperAsync<Person>)InnerData.Subscribers).AddItemAsync(person, moment, properties);
+            await InnerData.Subscribers.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Person>)InnerData.Subscribers).AddItem(person, moment, properties);
         }
         public async Task RemoveSubscriberAsync(Person person, DateTime? moment)
         {

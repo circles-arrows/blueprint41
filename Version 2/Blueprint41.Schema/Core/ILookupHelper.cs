@@ -21,9 +21,10 @@ namespace Blueprint41.Core
         Task<TInterface?> GetOriginalItemAsync(DateTime? moment);
         Task<TInterface?> GetItemAsync(DateTime? moment);
         Task<IEnumerable<CollectionItem<TInterface>>> GetItemsAsync(DateTime? from, DateTime? till);
-        Task AddItemAsync(TInterface item, DateTime? moment, Dictionary<string, object>? properties = null);
+        void AddItem(TInterface item, DateTime? moment, Dictionary<string, object>? properties = null);
         Task SetItemAsync(TInterface? item, DateTime? moment, Dictionary<string, object>? properties = null);
         bool IsNull(bool isUpdate);
+        void ClearLookup(DateTime? moment);
         Task ClearLookupAsync(DateTime? moment);
     }
 }

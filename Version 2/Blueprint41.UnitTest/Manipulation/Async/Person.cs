@@ -217,21 +217,37 @@ namespace Datastore.Manipulation.Async
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
         public Task<EntityCollectionAsync<Restaurant>> RestaurantsAsync() { return InnerData.Restaurants.LoadAsync(); }
+        private void ClearRestaurants(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
+        }
         private Task ClearRestaurantsAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).ClearLookupAsync(moment);
         }
         public Task<EntityCollectionAsync<Movie>> DirectedMoviesAsync() { return InnerData.DirectedMovies.LoadAsync(); }
+        private void ClearDirectedMovies(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Movie>)InnerData.DirectedMovies).ClearLookup(moment);
+        }
         private Task ClearDirectedMoviesAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Movie>)InnerData.DirectedMovies).ClearLookupAsync(moment);
         }
         public Task<EntityCollectionAsync<Movie>> ActedInMoviesAsync() { return InnerData.ActedInMovies.LoadAsync(); }
+        private void ClearActedInMovies(DateTime? moment)
+        {
+            ((ILookupHelperAsync<Movie>)InnerData.ActedInMovies).ClearLookup(moment);
+        }
         private Task ClearActedInMoviesAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<Movie>)InnerData.ActedInMovies).ClearLookupAsync(moment);
         }
         public Task<EntityTimeCollectionAsync<StreamingService>> StreamingServiceSubscriptionsAsync() { return InnerData.StreamingServiceSubscriptions.LoadAsync(); }
+        private void ClearStreamingServiceSubscriptions(DateTime? moment)
+        {
+            ((ILookupHelperAsync<StreamingService>)InnerData.StreamingServiceSubscriptions).ClearLookup(moment);
+        }
         private Task ClearStreamingServiceSubscriptionsAsync(DateTime? moment)
         {
             return ((ILookupHelperAsync<StreamingService>)InnerData.StreamingServiceSubscriptions).ClearLookupAsync(moment);
@@ -317,10 +333,11 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddRestaurantAsync(Restaurant restaurant)
+        public async Task AddRestaurantAsync(Restaurant restaurant)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            return ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).AddItemAsync(restaurant, null, properties);
+            await InnerData.Restaurants.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Restaurant>)InnerData.Restaurants).AddItem(restaurant, null, properties);
         }
         public async Task RemoveRestaurantAsync(Restaurant restaurant)
         {
@@ -376,10 +393,11 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddDirectedMovieAsync(Movie movie)
+        public async Task AddDirectedMovieAsync(Movie movie)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            return ((ILookupHelperAsync<Movie>)InnerData.DirectedMovies).AddItemAsync(movie, null, properties);
+            await InnerData.DirectedMovies.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Movie>)InnerData.DirectedMovies).AddItem(movie, null, properties);
         }
         public async Task RemoveDirectedMovieAsync(Movie movie)
         {
@@ -435,10 +453,11 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddActedInMovieAsync(Movie movie)
+        public async Task AddActedInMovieAsync(Movie movie)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            return ((ILookupHelperAsync<Movie>)InnerData.ActedInMovies).AddItemAsync(movie, null, properties);
+            await InnerData.ActedInMovies.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Movie>)InnerData.ActedInMovies).AddItem(movie, null, properties);
         }
         public async Task RemoveActedInMovieAsync(Movie movie)
         {
@@ -496,14 +515,15 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddStreamingServiceSubscriptionAsync(StreamingService streamingService, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
+        public async Task AddStreamingServiceSubscriptionAsync(StreamingService streamingService, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
             if (moment is null)
                 moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);
-            return ((ILookupHelperAsync<StreamingService>)InnerData.StreamingServiceSubscriptions).AddItemAsync(streamingService, moment, properties);
+            await InnerData.StreamingServiceSubscriptions.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<StreamingService>)InnerData.StreamingServiceSubscriptions).AddItem(streamingService, moment, properties);
         }
         public async Task RemoveStreamingServiceSubscriptionAsync(StreamingService streamingService, DateTime? moment)
         {
@@ -560,11 +580,12 @@ namespace Datastore.Manipulation.Async
                 return conditions.ToArray();
             });
         }
-        public Task AddWatchedMovieAsync(Movie movie, JsNotation<int> MinutesWatched = default)
+        public async Task AddWatchedMovieAsync(Movie movie, JsNotation<int> MinutesWatched = default)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
             if (MinutesWatched.HasValue) properties.Add("MinutesWatched", MinutesWatched.Value);
-            return ((ILookupHelperAsync<Movie>)InnerData.WatchedMovies).AddItemAsync(movie, null, properties);
+            await InnerData.WatchedMovies.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<Movie>)InnerData.WatchedMovies).AddItem(movie, null, properties);
         }
         public async Task RemoveWatchedMovieAsync(Movie movie)
         {

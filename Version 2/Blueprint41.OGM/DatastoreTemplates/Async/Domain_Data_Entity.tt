@@ -636,6 +636,10 @@ if (!DALModel.IsAbstract)
                 if (attr.ForeignProperty is not null)
                 {
 #>
+        private void Clear<#= attr.Name #>(DateTime? moment)
+        {
+            ((ILookupHelperAsync<<#= attr.EntityReturnType.ClassName #>>)InnerData.<#= attr.Name #>).ClearLookup(moment);
+        }
         private Task Clear<#= attr.Name #>Async(DateTime? moment)
         {
             return ((ILookupHelperAsync<<#= attr.EntityReturnType.ClassName #>>)InnerData.<#= attr.Name #>).ClearLookupAsync(moment);
@@ -675,6 +679,10 @@ if (!DALModel.IsAbstract)
                 if (attr.ForeignProperty is not null)
                 {
 #>
+        private void Clear<#= attr.Name #>(DateTime? moment)
+        {
+            ((ILookupHelperAsync<<#= attr.OuterReturnTypeAsync #>>)InnerData.<#= attr.Name #>).ClearLookup(moment);
+        }
         private Task Clear<#= attr.Name #>Async(DateTime? moment)
         {
             return ((ILookupHelperAsync<<#= attr.OuterReturnTypeAsync #>>)InnerData.<#= attr.Name #>).ClearLookupAsync(moment);
@@ -857,7 +865,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public async Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -877,7 +885,8 @@ if (!DALModel.IsAbstract)
                     }
                 }
 #>
-            return ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItemAsync(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
+            await InnerData.<#= attr.Name #>.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
         }
         public async Task Remove<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>)
         {
@@ -1002,7 +1011,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public async Task Add<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
                 moment = Transaction.Current?.TransactionDate ??  DateTime.UtcNow;
@@ -1025,7 +1034,8 @@ if (!DALModel.IsAbstract)
                     }
                 }
 #>
-            return ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItemAsync(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
+            await InnerData.<#= attr.Name #>.LoadAsync().ConfigureAwait(false);
+            ((ILookupHelperAsync<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
         }
         public async Task Remove<#= attr.Name.ToSingular() #>Async(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment)
         {
