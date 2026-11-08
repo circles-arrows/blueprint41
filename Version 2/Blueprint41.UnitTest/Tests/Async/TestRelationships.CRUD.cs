@@ -96,7 +96,7 @@ namespace Blueprint41.UnitTest.Tests.Async
                 var watched = (await SampleDataWatchedMoviesAsync()).First();
                 (await watched.person.WatchedMoviesAsync()).Add(watched.movie);
 
-                Exception ex = Assert.CatchAsync<Exception>(async () => await Transaction.CommitAsync());
+                Exception ex = Assert.ThrowsAsync<ClientException>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
 #else
@@ -488,7 +488,7 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                 (await person!.StreamingServiceSubscriptionsAsync()).Add(netflix!, DateTime.UtcNow);
 
-                Exception ex = Assert.CatchAsync<Exception>(async () => await Transaction.CommitAsync());
+                Exception ex = Assert.ThrowsAsync<ClientException>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
 #else
