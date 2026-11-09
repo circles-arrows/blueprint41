@@ -17,7 +17,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires while calling the save internal method
         /// </summary>
-        event EventHandler<EntityEventArgs> OnSave;
+        event EventHandler<EntityEventArgs> OnSave; // TODO: Remove Event
         /// <summary>
         /// True when a OnSave event is registered
         /// </summary>
@@ -26,7 +26,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires while calling the after save internal method
         /// </summary>
-        event EventHandler<EntityEventArgs> OnAfterSave;
+        event EventHandler<EntityEventArgs> OnAfterSave; // TODO: Remove Event
         /// <summary>
         /// True when a OnAfterSave event is registered
         /// </summary>
@@ -35,7 +35,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires while calling the Delete method
         /// </summary>
-        event EventHandler<EntityEventArgs> OnDelete;
+        event EventHandler<EntityEventArgs> OnDelete; // TODO: Remove Event
         /// <summary>
         /// True when a OnDelete event is registered
         /// </summary>
@@ -44,7 +44,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires when a node is about to be loaded into memory
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeLoading;
+        event EventHandler<NodeEventArgs> OnNodeLoading; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeLoading event is registered
         /// </summary>
@@ -53,7 +53,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires after a node was loaded into memory
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeLoaded;
+        event EventHandler<NodeEventArgs> OnNodeLoaded; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeLoaded event is registered
         /// </summary>
@@ -62,7 +62,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires after a batch command, like loading or deleting a collection, was finished
         /// </summary>
-        event EventHandler<NodeEventArgs> OnBatchFinished;
+        event EventHandler<NodeEventArgs> OnBatchFinished; // TODO: Remove Event
         /// <summary>
         /// True when a OnBatchFinished event is registered
         /// </summary>
@@ -71,7 +71,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires during the commit stage, when a new node is about to be created
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeCreate;
+        event EventHandler<NodeEventArgs> OnNodeCreate; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeCreate event is registered
         /// </summary>
@@ -80,7 +80,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires during the commit stage, after the node was created. The transaction is read-only at this moment.
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeCreated;
+        event EventHandler<NodeEventArgs> OnNodeCreated; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeCreated event is registered
         /// </summary>
@@ -89,7 +89,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires during the commit stage, when an existing node is about to be updated
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeUpdate;
+        event EventHandler<NodeEventArgs> OnNodeUpdate; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeUpdate event is registered
         /// </summary>
@@ -98,7 +98,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires during the commit stage, when an existing node was updated. The transaction is read-only at this moment.
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeUpdated;
+        event EventHandler<NodeEventArgs> OnNodeUpdated; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeUpdated event is registered
         /// </summary>
@@ -107,7 +107,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires during the commit stage, when an existing node is about to be deleted
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeDelete;
+        event EventHandler<NodeEventArgs> OnNodeDelete; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeDelete event is registered
         /// </summary>
@@ -116,7 +116,7 @@ namespace Blueprint41.Events
         /// <summary>
         /// This event fires during the commit stage, when an existing node was deleted. The transaction is read-only at this moment.
         /// </summary>
-        event EventHandler<NodeEventArgs> OnNodeDeleted;
+        event EventHandler<NodeEventArgs> OnNodeDeleted; // TODO: Remove Event
         /// <summary>
         /// True when a OnNodeDeleted event is registered
         /// </summary>

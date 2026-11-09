@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -978,8 +978,12 @@ namespace Blueprint41
             if (!trans.FireEntityEvents)
                 return;
 
+            if (onNew is not null && !CanRaiseEvents(sender))
+                throw new NotSupportedException("Entity events are not supported for async entities yet.");
+
             onNew?.Invoke(sender, args);
         }
+        private static bool CanRaiseEvents(OgmClass sender) => sender.Flavor != EntityFlavor.Async;
         private EventHandler<EntityEventArgs>? onNew;
 
         /// <summary>
@@ -999,6 +1003,9 @@ namespace Blueprint41
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnSave, sender, trans);
             if (!trans.FireEntityEvents)
                 return;
+
+            if (onSave is not null && !CanRaiseEvents(sender))
+                throw new NotSupportedException("Entity events are not supported for async entities yet.");
 
             onSave?.Invoke(sender, args);
         }
@@ -1022,6 +1029,9 @@ namespace Blueprint41
             if (!trans.FireEntityEvents)
                 return;
 
+            if (onAfterSave is not null && !CanRaiseEvents(sender))
+                throw new NotSupportedException("Entity events are not supported for async entities yet.");
+
             onAfterSave?.Invoke(sender, args);
         }
         private EventHandler<EntityEventArgs>? onAfterSave;
@@ -1043,6 +1053,9 @@ namespace Blueprint41
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnDelete, sender, trans);
             if (!trans.FireEntityEvents)
                 return;
+
+            if (onDelete is not null && !CanRaiseEvents(sender))
+                throw new NotSupportedException("Entity events are not supported for async entities yet.");
 
             onDelete?.Invoke(sender, args);
         }

@@ -11,13 +11,9 @@ namespace Blueprint41.Core
     public abstract class EntityCollectionAsyncBase<TEntity> : EntityCollectionAsyncBase, ICollection<TEntity>, ILookupHelperAsync<TEntity>, IInnerDataCol<TEntity>
         where TEntity : class, OGM
     {
-        protected EntityCollectionAsyncBase(OGM parent, Property property, EntityFlavor flavor, Func<TEntity, Task>? eagerLoadLogicAsync) : base(parent, property)
+        protected EntityCollectionAsyncBase(OGM parent, Property property, EntityFlavor flavor) : base(parent, property)
         {
-            EagerLoadLogicAsync = eagerLoadLogicAsync;
         }
-
-        protected Action<TEntity>? EagerLoadLogic;
-        protected Func<TEntity, Task>? EagerLoadLogicAsync;
 
         protected private IObservableList<TEntity>? innerData = null;
         protected IObservableList<TEntity> InnerData

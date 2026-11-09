@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" inherits="GeneratorBaseAsync" visibility="public" #>
+<#@ template language="C#" inherits="GeneratorBaseAsync" visibility="public" #>
 <#@ output extension=".cs" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
@@ -414,14 +414,14 @@ if (!DALModel.IsAbstract)
                 if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnTypeAsync #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async, async item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { object loadHack = await item.Get<#= attr.ForeignProperty.Name #>Async(); } });
+                <#= attr.Name #> = new <#= attr.InnerReturnTypeAsync #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async);
 <#
                 }
                 else if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Collection)
                 {
                     string countMethod = (attr.Relationship.IsTimeDependent) ? "CountAll" : "Count";
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnTypeAsync #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async, async item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = (await item.<#= attr.ForeignProperty.Name #>Async()).<#= countMethod #>; } });
+                <#= attr.Name #> = new <#= attr.InnerReturnTypeAsync #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Async);
 <#
                 }
                 else

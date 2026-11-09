@@ -303,44 +303,13 @@ namespace Blueprint41.Core
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
             if (NeedsToAssign(ParentProperty?.Relationship) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
             {
-                if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
-                {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
-                    if (oldForeignValue is not null)
-                        ParentProperty?.ClearLookup(oldForeignValue, null);
+                if (item is not null && currentItem.Count == 1 && currentItem[0].Item.Equals(item))
+                    return;
 
-                    foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        ForeignProperty.ClearLookup(entity, null);
-                }
+                if (item is null && currentItem.Count == 0)
+                    return;
 
-                if (item is null)
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            Remove(currentItem[0].Item);
-
-                        if (Count > 0)
-                            Clear(false); // Clear should not be called here as this is for lookup.
-                    }
-                }
-                else
-                {
-                    if (currentItem.Count == 1 && currentItem[0].Item.Equals(item))
-                        return;
-
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            Remove(currentItem[0].Item);
-
-                        if (Count > 0)
-                            Clear(false); // Clear should not be called here as this is for lookup.
-                    }
-
-                    if (Count == 0)
-                        Add(item, false, properties);
-                }
+                ExecuteAction(new LookupRelationshipAction(RelationshipPersistenceProvider, Relationship, ParentProperty!, ForeignProperty, Parent, item, properties));
             }
 
             static bool NeedsToAssign(Relationship? relationship)

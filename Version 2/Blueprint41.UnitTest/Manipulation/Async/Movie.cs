@@ -158,8 +158,8 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Movie";
 
-                Director = new EntityCollectionAsync<Person>(Wrapper, Members.Director, EntityFlavor.Async, async item => { if (Members.Director.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.DirectedMoviesAsync()).Count; } });
-                Actors = new EntityCollectionAsync<Person>(Wrapper, Members.Actors, EntityFlavor.Async, async item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.ActedInMoviesAsync()).Count; } });
+                Director = new EntityCollectionAsync<Person>(Wrapper, Members.Director, EntityFlavor.Async);
+                Actors = new EntityCollectionAsync<Person>(Wrapper, Members.Actors, EntityFlavor.Async);
                 Certification = new EntityCollectionAsync<Rating>(Wrapper, Members.Certification, EntityFlavor.Async);
             }
             public string NodeType { get; private set; }

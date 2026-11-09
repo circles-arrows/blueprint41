@@ -154,10 +154,10 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Person";
 
-                Restaurants = new EntityCollectionAsync<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async, async item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.PersonsAsync()).Count; } });
-                DirectedMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.DirectedMovies, EntityFlavor.Async, async item => { if (Members.DirectedMovies.Events.HasRegisteredChangeHandlers) { object loadHack = await item.GetDirectorAsync(); } });
-                ActedInMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.ActedInMovies, EntityFlavor.Async, async item => { if (Members.ActedInMovies.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.ActorsAsync()).Count; } });
-                StreamingServiceSubscriptions = new EntityTimeCollectionAsync<StreamingService>(Wrapper, Members.StreamingServiceSubscriptions, EntityFlavor.Async, async item => { if (Members.StreamingServiceSubscriptions.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.SubscribersAsync()).CountAll; } });
+                Restaurants = new EntityCollectionAsync<Restaurant>(Wrapper, Members.Restaurants, EntityFlavor.Async);
+                DirectedMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.DirectedMovies, EntityFlavor.Async);
+                ActedInMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.ActedInMovies, EntityFlavor.Async);
+                StreamingServiceSubscriptions = new EntityTimeCollectionAsync<StreamingService>(Wrapper, Members.StreamingServiceSubscriptions, EntityFlavor.Async);
                 WatchedMovies = new EntityCollectionAsync<Movie>(Wrapper, Members.WatchedMovies, EntityFlavor.Async);
                 City = new EntityTimeCollectionAsync<City>(Wrapper, Members.City, EntityFlavor.Async);
             }

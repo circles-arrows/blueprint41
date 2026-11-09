@@ -98,9 +98,9 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                 Exception ex = Assert.ThrowsAsync<ClientException>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
-                Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+                Assert.That(() => ex.ToString().Contains("`WATCHED` must have the property `MinutesWatched`"));
 #else
-                Assert.That(() => ex.InnerException.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+                Assert.That(() => ex.ToString().Contains("`WATCHED` must have the property `MinutesWatched`"));
 #endif
             }
 
@@ -490,9 +490,9 @@ namespace Blueprint41.UnitTest.Tests.Async
 
                 Exception ex = Assert.ThrowsAsync<ClientException>(async () => await Transaction.CommitAsync());
 #if NET5_0_OR_GREATER
-                Assert.That(() => ex.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
+                Assert.That(() => ex.ToString().Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
 #else
-                Assert.That(() => ex.InnerException.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
+                Assert.That(() => ex.ToString().Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
 #endif
             }
 

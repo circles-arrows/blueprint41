@@ -34,14 +34,18 @@ namespace Blueprint41.Persistence
             if (Relationship is not null && Relationship.Name != target.Relationship.Name)
                 return;
 
-            OGM? parent = target.ParentItem(this);
-            if (parent is not null && target.Parent != parent)
-                return;
+            if (FilterByParent)
+            {
+                OGM? parent = target.ParentItem(this);
+                if (parent is not null && target.Parent != parent)
+                    return;
+            }
 
             InMemoryLogic(target);
 
             IsExecutedInMemory = true;
         }
+        protected virtual bool FilterByParent => true;
         protected abstract void InMemoryLogic(IReplayableCollection target);
 
         public void ExecuteInDatastore()

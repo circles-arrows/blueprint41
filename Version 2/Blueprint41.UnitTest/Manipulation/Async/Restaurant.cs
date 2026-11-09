@@ -143,8 +143,8 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "Restaurant";
 
-                City = new EntityCollectionAsync<City>(Wrapper, Members.City, EntityFlavor.Async, async item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.RestaurantsAsync()).Count; } });
-                Persons = new EntityCollectionAsync<Person>(Wrapper, Members.Persons, EntityFlavor.Async, async item => { if (Members.Persons.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.RestaurantsAsync()).Count; } });
+                City = new EntityCollectionAsync<City>(Wrapper, Members.City, EntityFlavor.Async);
+                Persons = new EntityCollectionAsync<Person>(Wrapper, Members.Persons, EntityFlavor.Async);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }

@@ -123,6 +123,24 @@ namespace Blueprint41.UnitTest.Helper
                             WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
                             SET rel.EndDate = $moment
                             """,
+                            $$"""
+                            MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}})
+                            WHERE COALESCE(rel.StartDate, $min) >= $moment
+                            DELETE rel
+
+                            MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}})
+                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                            SET rel.EndDate = $moment
+                            """,
+                            $$"""
+                            MATCH (in:{{inNode}})-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
+                            WHERE COALESCE(rel.StartDate, $min) >= $moment
+                            DELETE rel
+
+                            MATCH (in:{{inNode}})-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
+                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                            SET rel.EndDate = $moment
+                            """,
                             @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
                             @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r",
                             @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode}) DELETE r",
@@ -161,7 +179,7 @@ namespace Blueprint41.UnitTest.Helper
                     one = true;
             }
 
-            Assert.IsTrue(one ^ not);
+            Assert.IsTrue(one ^ not, output);
         }
         private void AllLines(bool not, params string[] lines)
         {

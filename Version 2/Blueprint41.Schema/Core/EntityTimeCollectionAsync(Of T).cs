@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace Blueprint41.Core
     public partial class EntityTimeCollectionAsync<TEntity> : EntityCollectionAsyncBase<TEntity>
         where TEntity : class, OGM
     {
-        public EntityTimeCollectionAsync(OGM parent, Property property, EntityFlavor flavor, Func<TEntity, Task>? eagerLoadLogicAsync = null) : base(parent, property, flavor, eagerLoadLogicAsync) { }
+        public EntityTimeCollectionAsync(OGM parent, Property property, EntityFlavor flavor) : base(parent, property, flavor) { }
 
         #region Manipulation
 
@@ -66,13 +66,6 @@ namespace Blueprint41.Core
             LazyLoad();
             LazySet();
 
-            if (EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
-
-            if (fireEvents)
-                if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
-                    return;
-
             ExecuteAction(AddAction(item, moment, properties));
         }
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents, Dictionary<string, object>? properties)
@@ -89,13 +82,6 @@ namespace Blueprint41.Core
             {
                 if (item is null)
                     continue;
-
-                if (EagerLoadLogic is not null)
-                    EagerLoadLogic.Invoke(item);
-
-                if (fireEvents)
-                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
-                        continue;
 
                 actions.AddLast(AddAction(item, moment, properties));
             }
@@ -144,16 +130,7 @@ namespace Blueprint41.Core
                 if (item is null)
                     continue;
 
-                if (fireEvents)
-                {
-
-                    if (!(ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), moment, OperationEnum.Remove) ?? false))
-                        ExecuteAction(RemoveAction(item, moment));
-                }
-                else
-                {
-                    ExecuteAction(RemoveAction(item, moment));
-                }
+                ExecuteAction(RemoveAction(item, moment));
             }
         }
         public void Remove(TEntity item, DateTime? moment)
@@ -169,13 +146,6 @@ namespace Blueprint41.Core
                 return;
 
             LazyLoad();
-
-            if (EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
-
-            if (fireEvents)
-                if (ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), moment, OperationEnum.Remove) ?? false)
-                    return;
 
             ExecuteAction(RemoveAction(item, moment));
         }
@@ -202,39 +172,6 @@ namespace Blueprint41.Core
                 return;
 
             LazySet();
-
-            if (fireEvents)
-            {
-                HashSet<CollectionItem> cancel = new HashSet<CollectionItem>();
-                ForEach(delegate (int index, CollectionItem item)
-                {
-                    if (item is null)
-                        return;
-
-                    if (EagerLoadLogic is not null)
-                        EagerLoadLogic.Invoke((TEntity)item.Item);
-
-                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, item.Item, default(TEntity), moment, (OperationEnum)OperationEnum.Remove) ?? false)
-                        cancel.Add((CollectionItem)item);
-                });
-
-                if (cancel.Count != 0)
-                {
-                    LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
-
-                    ForEach(delegate (int index, CollectionItem item)
-                    {
-                        if (cancel.Contains(item))
-                            return;
-
-                        actions.AddLast(RemoveAction(item.Item, moment));
-                    });
-
-                    ExecuteAction(actions);
-
-                    return;
-                }
-            }
 
             ExecuteAction(ClearAction(moment));
         }
@@ -421,51 +358,13 @@ namespace Blueprint41.Core
             //if (!moment.HasValue)
             //    moment = RunningTransaction.TransactionDate;
 
-            if (item is not null && EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
-
             List<CollectionItem<TEntity>> currentItem = InnerData.Where(e => e.Overlaps(moment, null)).ToList();
             if (NeedsToAssign(ParentProperty?.Relationship, currentItem, item, moment, properties))
             {
-                if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
-                {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
-                    if (oldForeignValue is not null)
-                        ParentProperty?.ClearLookup(oldForeignValue, moment);
+                if (item is null && currentItem.Count == 0)
+                    return;
 
-                    foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        ForeignProperty.ClearLookup(entity, moment);
-                }
-
-                if (item is null)
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            foreach (CollectionItem<TEntity> current in currentItem)
-                                if (current?.Item is not null)
-                                    Remove(current.Item, moment);
-
-                        if (Count() > 0)
-                            Clear(moment, false); // Clear should not be called here as this is for lookup.
-                    }
-                }
-                else
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            foreach (CollectionItem<TEntity> current in currentItem)
-                                if (current?.Item is not null)
-                                    Remove(current.Item, moment);
-
-                        if (Count() > 0)
-                            Clear(moment, false); // Clear should not be called here as this is for lookup.
-                    }
-
-                    if (Count() == 0)
-                        Add(item, moment, false, properties);
-                }
+                ExecuteAction(new TimeDependentLookupRelationshipAction(RelationshipPersistenceProvider, Relationship, ParentProperty!, ForeignProperty, Parent, item, moment, properties));
             }
 
 
@@ -496,55 +395,17 @@ namespace Blueprint41.Core
             //if (!moment.HasValue)
             //    moment = RunningTransaction.TransactionDate;
 
-            if (item is not null && EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
-
             List<CollectionItem<TEntity>> currentItem = InnerData.Where(e => e.Overlaps(moment, null)).ToList();
             if (NeedsToAssign(ParentProperty?.Relationship, currentItem, item, moment, properties))
             {
-                if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
-                {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM?)await ForeignProperty.GetValueAsync(item, moment).ConfigureAwait(false);
-                    if (oldForeignValue is not null && ParentProperty is not null)
-                        await ParentProperty.ClearLookupAsync(oldForeignValue, moment).ConfigureAwait(false);
+                if (item is null && currentItem.Count == 0)
+                    return;
 
-                    foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        await ForeignProperty.ClearLookupAsync(entity, moment).ConfigureAwait(false);
-                }
-
-                if (item is null)
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            foreach (CollectionItem<TEntity> current in currentItem)
-                                if (current?.Item is not null)
-                                    Remove(current.Item, moment);
-
-                        if (Count() > 0)
-                            Clear(moment, false); // Clear should not be called here as this is for lookup.
-                    }
-                }
-                else
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            foreach (CollectionItem<TEntity> current in currentItem)
-                                if (current?.Item is not null)
-                                    Remove(current.Item, moment);
-
-                        if (Count() > 0)
-                            Clear(moment, false); // Clear should not be called here as this is for lookup.
-                    }
-
-                    if (Count() == 0)
-                        Add(item, moment, false, properties);
-                }
+                ExecuteAction(new TimeDependentLookupRelationshipAction(RelationshipPersistenceProvider, Relationship, ParentProperty!, ForeignProperty, Parent, item, moment, properties));
             }
 
 
-            static bool NeedsToAssign(Relationship? relationship, List< CollectionItem<TEntity>> currentItem, TEntity? assignValue, DateTime? moment, Dictionary<string, object>? properties)
+            static bool NeedsToAssign(Relationship? relationship, List<CollectionItem<TEntity>> currentItem, TEntity? assignValue, DateTime? moment, Dictionary<string, object>? properties)
             {
                 if (relationship is null || (relationship.Properties.Count - relationship.ExcludedProperties().Count) > 0)
                     return true;

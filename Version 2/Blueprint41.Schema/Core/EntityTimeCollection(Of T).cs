@@ -389,49 +389,14 @@ namespace Blueprint41.Core
             List<CollectionItem<TEntity>> currentItem = InnerData.Where(e => e.Overlaps(moment, null)).ToList();
             if (NeedsToAssign(ParentProperty?.Relationship, currentItem, item, moment, properties))
             {
-                if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
-                {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
-                    if (oldForeignValue is not null)
-                        ParentProperty?.ClearLookup(oldForeignValue, moment);
+                if (item is null && currentItem.Count == 0)
+                    return;
 
-                    foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        ForeignProperty.ClearLookup(entity, moment);
-                }
-
-                if (item is null)
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            foreach (CollectionItem<TEntity> current in currentItem)
-                                if (current?.Item is not null)
-                                    Remove(current.Item, moment);
-
-                        if (Count() > 0)
-                            Clear(moment, false); // Clear should not be called here as this is for lookup.
-                    }
-                }
-                else
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            foreach (CollectionItem<TEntity> current in currentItem)
-                                if (current?.Item is not null)
-                                    Remove(current.Item, moment);
-
-                        if (Count() > 0)
-                            Clear(moment, false); // Clear should not be called here as this is for lookup.
-                    }
-
-                    if (Count() == 0)
-                        Add(item, moment, false, properties);
-                }
+                ExecuteAction(new TimeDependentLookupRelationshipAction(RelationshipPersistenceProvider, Relationship, ParentProperty!, ForeignProperty, Parent, item, moment, properties));
             }
 
 
-            static bool NeedsToAssign(Relationship? relationship, List< CollectionItem<TEntity>> currentItem, TEntity? assignValue, DateTime? moment, Dictionary<string, object>? properties)
+            static bool NeedsToAssign(Relationship? relationship, List<CollectionItem<TEntity>> currentItem, TEntity? assignValue, DateTime? moment, Dictionary<string, object>? properties)
             {
                 if (relationship is null || (relationship.Properties.Count - relationship.ExcludedProperties().Count) > 0)
                     return true;

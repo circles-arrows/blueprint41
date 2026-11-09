@@ -12,8 +12,8 @@ namespace Blueprint41.Core
     public partial class EntityCollectionAsync<TEntity> : EntityCollectionAsyncBase<TEntity>
         where TEntity : class, OGM
     {
-        public EntityCollectionAsync(OGM parent, Property property, EntityFlavor flavor, Func<TEntity, Task>? eagerLoadLogic = null)
-            : base(parent, property, flavor, eagerLoadLogic) { }
+        public EntityCollectionAsync(OGM parent, Property property, EntityFlavor flavor)
+            : base(parent, property, flavor) { }
 
         #region Manipulation
 
@@ -35,13 +35,6 @@ namespace Blueprint41.Core
 
             LazySet();
 
-            if (EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
-
-            if (fireEvents)
-                if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
-                    return;
-
             ExecuteAction(AddAction(item, null, properties));
         }
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents, Dictionary<string, object>? properties)
@@ -53,13 +46,6 @@ namespace Blueprint41.Core
             {
                 if (item is null)
                     continue;
-
-                if (EagerLoadLogic is not null)
-                    EagerLoadLogic.Invoke(item);
-
-                if (fireEvents)
-                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
-                        return;
 
                 actions.AddLast(AddAction(item, null, properties));
             }
@@ -81,13 +67,6 @@ namespace Blueprint41.Core
 
             LazySet();
 
-            if (EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
-
-            if (fireEvents)
-                if (ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false)
-                    return;
-
             ExecuteAction(RemoveAction(item, null));
         }
         internal sealed override void Clear(bool fireEvents)
@@ -99,39 +78,6 @@ namespace Blueprint41.Core
             
             if (InnerData.Count == 0)
                 return;
-
-            if (fireEvents)
-            {
-                HashSet<CollectionItem> cancel = new HashSet<CollectionItem>();
-                ForEach(delegate (int index, CollectionItem item)
-                {
-                    if (item is null)
-                        return;
-
-                    if (EagerLoadLogic is not null)
-                        EagerLoadLogic.Invoke((TEntity)item.Item);
-
-                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, item.Item, default(TEntity), null , (OperationEnum)OperationEnum.Remove) ?? false)
-                        cancel.Add(item);
-                });
-
-                if (cancel.Count != 0)
-                {
-                    LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
-
-                    ForEach(delegate (int index, CollectionItem item)
-                    {
-                        if (cancel.Contains(item))
-                            return;
-
-                        actions.AddLast(RemoveAction(item.Item, null));
-                    });
-
-                    ExecuteAction(actions);
-
-                    return;
-                }
-            }
 
             ExecuteAction(ClearAction(null));
         }
@@ -154,16 +100,7 @@ namespace Blueprint41.Core
                 if (item is null)
                     continue;
 
-                if (fireEvents)
-                {
-
-                    if (!(ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false))
-                        ExecuteAction(RemoveAction(item, null));
-                }
-                else
-                {
-                    ExecuteAction(RemoveAction(item, null));
-                }
+                ExecuteAction(RemoveAction(item, null));
             }
         }
 
@@ -331,9 +268,6 @@ namespace Blueprint41.Core
             LazyLoad();
             LazySet();
 
-            if (item is not null && EagerLoadLogic is not null)
-                EagerLoadLogic.Invoke(item);
-
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
             if (NeedsToAssign(ParentProperty?.Relationship) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
             {
@@ -393,50 +327,16 @@ namespace Blueprint41.Core
             await LazyLoadAsync();
             await LazySetAsync();
 
-            if (item is not null && EagerLoadLogicAsync is not null)
-                await EagerLoadLogicAsync.Invoke(item).ConfigureAwait(false);
-
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
             if (NeedsToAssign(ParentProperty?.Relationship) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
             {
-                if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
-                {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM?)await ForeignProperty.GetValueAsync(item, moment).ConfigureAwait(false);
-                    if (oldForeignValue is not null && ParentProperty is not null)
-                        await ParentProperty.ClearLookupAsync(oldForeignValue, null).ConfigureAwait(false);
+                if (item is not null && currentItem.Count == 1 && currentItem[0].Item.Equals(item))
+                    return;
 
-                    foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        await ForeignProperty.ClearLookupAsync(entity, null).ConfigureAwait(false);
-                }
+                if (item is null && currentItem.Count == 0)
+                    return;
 
-                if (item is null)
-                {
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            Remove(currentItem[0].Item);
-
-                        if (Count > 0)
-                            Clear(false); // Clear should not be called here as this is for lookup.
-                    }
-                }
-                else
-                {
-                    if (currentItem.Count == 1 && currentItem[0].Item.Equals(item))
-                        return;
-
-                    if (currentItem.Count > 0)
-                    {
-                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                            Remove(currentItem[0].Item);
-
-                        if (Count > 0)
-                            Clear(false); // Clear should not be called here as this is for lookup.
-                    }
-
-                    if (Count == 0)
-                        Add(item, false, properties);
-                }
+                ExecuteAction(new LookupRelationshipAction(RelationshipPersistenceProvider, Relationship, ParentProperty!, ForeignProperty, Parent, item, properties));
             }
 
             static bool NeedsToAssign(Relationship? relationship)

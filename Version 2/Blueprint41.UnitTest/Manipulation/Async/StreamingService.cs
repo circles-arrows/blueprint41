@@ -154,7 +154,7 @@ namespace Datastore.Manipulation.Async
             {
                 NodeType = "StreamingService";
 
-                Subscribers = new EntityTimeCollectionAsync<Person>(Wrapper, Members.Subscribers, EntityFlavor.Async, async item => { if (Members.Subscribers.Events.HasRegisteredChangeHandlers) { int loadHack = (await item.StreamingServiceSubscriptionsAsync()).CountAll; } });
+                Subscribers = new EntityTimeCollectionAsync<Person>(Wrapper, Members.Subscribers, EntityFlavor.Async);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
