@@ -155,7 +155,7 @@ namespace Blueprint41.Persistence
             List<CollectionItem> items = new List<CollectionItem>();
             var result = await Transaction.RunAsync(string.Join(" UNION ", fullMatch), parameters2);
 
-            foreach (var record in result.ToList())
+            foreach (var record in await result.ToListAsync())
             {
                 driver.NodeResult node = record["out"].As<driver.NodeResult>();
                 if (node is null)

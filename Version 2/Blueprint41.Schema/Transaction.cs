@@ -504,7 +504,7 @@ namespace Blueprint41
             {
                 foreach (var action in actions)
                 {
-                    action.ExecuteInDatastore();
+                    await action.ExecuteInDatastoreAsync();
                     forRetry.AddLast(action);
                 }
                 actions.Clear();

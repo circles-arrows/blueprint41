@@ -78,5 +78,23 @@ namespace Blueprint41.Persistence
             }
         }
         protected abstract void InDatastoreLogic(Relationship relationship);
+
+        public async System.Threading.Tasks.Task ExecuteInDatastoreAsync()
+        {
+            if (Relationship is not null)
+            {
+                await InDatastoreLogicAsync(Relationship);
+            }
+            else
+            {
+                Entity? entity = InItem?.GetEntity();
+                if (entity is not null)
+                {
+                    foreach (var relationship in entity.Parent.Relations)
+                        await InDatastoreLogicAsync(relationship);
+                }
+            }
+        }
+        protected abstract System.Threading.Tasks.Task InDatastoreLogicAsync(Relationship relationship);
     }
 }

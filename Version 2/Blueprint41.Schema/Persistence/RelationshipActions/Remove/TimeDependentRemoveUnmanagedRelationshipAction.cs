@@ -18,6 +18,11 @@ namespace Blueprint41.Persistence
             PersistenceProvider.RemoveUnmanaged(relationship, InItem!, OutItem!, Moment);
         }
 
+        protected override async System.Threading.Tasks.Task InDatastoreLogicAsync(Relationship relationship)
+        {
+            await PersistenceProvider.RemoveUnmanagedAsync(relationship, InItem!, OutItem!, Moment);
+        }
+
         protected override void InMemoryLogic(IReplayableCollection target)
         {
             int[] indexes = target.IndexOf(target.ForeignItem(this)!);

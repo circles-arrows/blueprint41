@@ -26,6 +26,21 @@ namespace Blueprint41.Persistence
             }
         }
 
+        protected override async System.Threading.Tasks.Task InDatastoreLogicAsync(Relationship relationship)
+        {
+            Entity entity = InItem!.GetEntity();
+            if (entity.IsSelfOrSubclassOf(relationship.InEntity))
+            {
+                if (relationship.OutProperty is null || relationship.OutProperty.Nullable || relationship.OutProperty.PropertyType == PropertyType.Collection)
+                    await PersistenceProvider.RemoveAsync(relationship, InItem, (OGM?)null, Moment, true);
+            }
+            if (entity.IsSelfOrSubclassOf(relationship.OutEntity))
+            {
+                if (relationship.InProperty is null || relationship.InProperty.Nullable || relationship.InProperty.PropertyType == PropertyType.Collection)
+                    await PersistenceProvider.RemoveAsync(relationship, (OGM?)null, OutItem, Moment, true);
+            }
+        }
+
         protected override void InMemoryLogic(IReplayableCollection target)
         {
             target.ForEach(delegate (int index, CollectionItem item)

@@ -57,6 +57,27 @@ namespace Blueprint41.Persistence
             PersistenceProvider.Add(relationship, InItem!, OutItem!, null, false, Properties);
         }
 
+        protected override async System.Threading.Tasks.Task InDatastoreLogicAsync(Relationship relationship)
+        {
+            if (ParentIsIn)
+                await PersistenceProvider.RemoveAsync(relationship, Parent, (OGM?)null, null, false);
+            else
+                await PersistenceProvider.RemoveAsync(relationship, (OGM?)null, Parent, null, false);
+
+            if (Item is null)
+                return;
+
+            if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
+            {
+                if (ParentIsIn)
+                    await PersistenceProvider.RemoveAsync(relationship, (OGM?)null, Item, null, false);
+                else
+                    await PersistenceProvider.RemoveAsync(relationship, Item, (OGM?)null, null, false);
+            }
+
+            await PersistenceProvider.AddAsync(relationship, InItem!, OutItem!, null, false, Properties);
+        }
+
         protected override void InMemoryLogic(IReplayableCollection target)
         {
             if (Same(target.ParentProperty, ParentProperty))

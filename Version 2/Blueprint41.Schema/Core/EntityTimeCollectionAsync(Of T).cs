@@ -88,9 +88,9 @@ namespace Blueprint41.Core
 
             ExecuteAction(actions);
         }
-        public void AddUnmanaged(TEntity item, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
+        public Task AddUnmanagedAsync(TEntity item, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
         {
-            RunningTransaction.RelationshipPersistenceProvider.AddUnmanaged(Relationship, InItem(item), OutItem(item), startDate, endDate, properties, fullyUnmanaged);
+            return RunningTransaction.RelationshipPersistenceProvider.AddUnmanagedAsync(Relationship, InItem(item), OutItem(item), startDate, endDate, properties, fullyUnmanaged);
         }
         public sealed override bool Contains(TEntity item)
         {
@@ -149,9 +149,9 @@ namespace Blueprint41.Core
 
             ExecuteAction(RemoveAction(item, moment));
         }
-        public void RemoveUmanaged(TEntity item, DateTime? startDate)
+        public Task RemoveUnmanagedAsync(TEntity item, DateTime? startDate)
         {
-            RunningTransaction.RelationshipPersistenceProvider.RemoveUnmanaged(Relationship, InItem(item), OutItem(item), startDate);
+            return RunningTransaction.RelationshipPersistenceProvider.RemoveUnmanagedAsync(Relationship, InItem(item), OutItem(item), startDate);
         }
         internal sealed override void Clear(bool fireEvents)
         {

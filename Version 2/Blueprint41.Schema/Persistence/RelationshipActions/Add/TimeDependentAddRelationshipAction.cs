@@ -21,6 +21,11 @@ namespace Blueprint41.Persistence
             PersistenceProvider.Add(relationship, InItem!, OutItem!, Moment, true, Properties);
         }
 
+        protected override async System.Threading.Tasks.Task InDatastoreLogicAsync(Relationship relationship)
+        {
+            await PersistenceProvider.AddAsync(relationship, InItem!, OutItem!, Moment, true, Properties);
+        }
+
         protected override void InMemoryLogic(IReplayableCollection target)
         {
             bool wasUpdated = false;

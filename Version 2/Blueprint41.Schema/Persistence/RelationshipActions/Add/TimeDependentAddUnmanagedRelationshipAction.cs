@@ -23,6 +23,11 @@ namespace Blueprint41.Persistence
             PersistenceProvider.AddUnmanaged(relationship, InItem!, OutItem!, Moment, EndDate, Properties);
         }
 
+        protected override async System.Threading.Tasks.Task InDatastoreLogicAsync(Relationship relationship)
+        {
+            await PersistenceProvider.AddUnmanagedAsync(relationship, InItem!, OutItem!, Moment, EndDate, Properties);
+        }
+
         protected override void InMemoryLogic(IReplayableCollection target)
         {
             DateTime minStartDate = Moment;
