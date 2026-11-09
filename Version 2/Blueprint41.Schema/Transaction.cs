@@ -483,7 +483,7 @@ namespace Blueprint41
 
 
                         if (HasChanges(entity))
-                            entity.ValidateSave();
+                            await entity.ValidateSaveAsync();
                     }
                 }
             }
@@ -522,7 +522,7 @@ namespace Blueprint41
                         if (!beforeCommitEntityState.ContainsKey(entity))
                             beforeCommitEntityState.Add(entity, entity.PersistenceState);
 
-                        entity.ValidateDelete();
+                        await entity.ValidateDeleteAsync();
                     }
                 }
             }

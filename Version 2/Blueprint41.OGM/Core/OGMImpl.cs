@@ -99,6 +99,10 @@ namespace Blueprint41.Core
         {
             return PersistenceProvider.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);
         }
+        protected Task<bool> RelationshipExistsAsync(EntityProperty foreignProperty, OGM instance)
+        {
+            return PersistenceProvider.NodePersistenceProvider.RelationshipExistsAsync(foreignProperty, instance);
+        }
 
         public void ForceDelete()
         {

@@ -65,6 +65,16 @@ namespace Blueprint41.Core
         protected abstract void SetRowVersion(DateTime? value);
         protected abstract void ValidateDelete();
         protected abstract void ValidateSave();
+        protected virtual Task ValidateSaveAsync()
+        {
+            ValidateSave();
+            return Task.CompletedTask;
+        }
+        protected virtual Task ValidateDeleteAsync()
+        {
+            ValidateDelete();
+            return Task.CompletedTask;
+        }
 
         public abstract void Save();
         public abstract Task SaveAsync();
@@ -80,7 +90,9 @@ namespace Blueprint41.Core
         IDictionary<string, object?> OGM.GetData() => GetData();
         void OGM.SetData(IReadOnlyDictionary<string, object?> data) => SetData(data);
         void OGM.ValidateSave() => ValidateSave();
+        Task OGM.ValidateSaveAsync() => ValidateSaveAsync();
         void OGM.ValidateDelete() => ValidateDelete();
+        Task OGM.ValidateDeleteAsync() => ValidateDeleteAsync();
         Entity OGM.GetEntity() => GetEntity();
         void OGM.SetChanged() => SetChanged();
         public abstract EntityFlavor Flavor { get; }

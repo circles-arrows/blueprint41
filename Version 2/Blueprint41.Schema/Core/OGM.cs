@@ -20,7 +20,9 @@ namespace Blueprint41.Core
         void Save();
         Task SaveAsync();
         void ValidateSave();
+        Task ValidateSaveAsync();
         void ValidateDelete();
+        Task ValidateDeleteAsync();
 
         PersistenceState OriginalPersistenceState { get; set; }
         PersistenceState PersistenceState { get; set; }

@@ -1250,7 +1250,85 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("        }\r\n\r\n        #endregion\r\n\r\n        #region Inner Data\r\n\r\n        public c" +
+            this.Write("        }\r\n\r\n");
+
+            #line 364 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity.tt"
+
+    bool hasDeleteChecks = false;
+    foreach (var relationship in Datastore.Relations)
+    {
+        if (DALModel.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty is not null && relationship.OutProperty.Nullable == false)
+        {
+            foreach (var entity in relationship.OutEntity.GetSubclassesOrSelf())
+                if (!entity.IsAbstract)
+                    hasDeleteChecks = true;
+        }
+        if (DALModel.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty is not null && relationship.InProperty.Nullable == false)
+        {
+            foreach (var entity in relationship.InEntity.GetSubclassesOrSelf())
+                if (!entity.IsAbstract)
+                    hasDeleteChecks = true;
+        }
+    }
+    if (hasDeleteChecks)
+    {
+
+
+            #line default
+            #line hidden
+            this.Write("        protected override async Task ValidateDeleteAsync()\r\n        {\r\n");
+
+            #line 386 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity.tt"
+
+        foreach (var relationship in Datastore.Relations)
+        {
+            if (DALModel.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty is not null && relationship.OutProperty.Nullable == false)
+            {
+                foreach (var entity in relationship.OutEntity.GetSubclassesOrSelf())
+                {
+                    if (entity.IsAbstract)
+                        continue;
+
+
+            #line default
+            #line hidden
+            this.Write("            if (await RelationshipExistsAsync(" + Settings.FullCRUDNamespace + "." + entity.Name + ".Members." + relationship.OutProperty.Name + ", this))\r\n                throw new PersistenceException(string.Format(\"Cannot delete " + DALModel.ClassName + " with key '{0}' because it is participating in a " + relationship.Neo4JRelationshipType + " relationship.\", this." + DALModel.Key.Name + "?.ToString() ?? \"<null>\"));\r\n");
+
+            #line 400 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity.tt"
+
+                }
+            }
+            if (DALModel.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty is not null && relationship.InProperty.Nullable == false)
+            {
+                foreach (var entity in relationship.InEntity.GetSubclassesOrSelf())
+                {
+                    if (entity.IsAbstract)
+                        continue;
+
+
+            #line default
+            #line hidden
+            this.Write("            if (await RelationshipExistsAsync(" + Settings.FullCRUDNamespace + "." + entity.Name + ".Members." + relationship.InProperty.Name + ", this))\r\n                throw new PersistenceException(string.Format(\"Cannot delete " + DALModel.ClassName + " with key '{0}' because it is participating in a " + relationship.Neo4JRelationshipType + " relationship.\", this." + DALModel.Key.Name + "?.ToString() ?? \"<null>\"));\r\n");
+
+            #line 415 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity.tt"
+
+                }
+            }
+        }
+
+
+            #line default
+            #line hidden
+            this.Write("        }\r\n\r\n");
+
+            #line 421 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity.tt"
+
+    }
+
+
+            #line default
+            #line hidden
+            this.Write("        #endregion\r\n\r\n        #region Inner Data\r\n\r\n        public c" +
                     "lass ");
             
             #line 370 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity.tt"

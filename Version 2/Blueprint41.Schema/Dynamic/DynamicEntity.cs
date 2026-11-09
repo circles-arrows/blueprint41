@@ -445,6 +445,30 @@ namespace Blueprint41.Dynamic
             }
         }
 
+        Task OGM.ValidateSaveAsync()
+        {
+            ((OGM)this).ValidateSave();
+            return Task.CompletedTask;
+        }
+
+        async Task OGM.ValidateDeleteAsync()
+        {
+            object? key = GetKey();
+            foreach (var relationship in DynamicEntityType.Parent.Relations)
+            {
+                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty is not null && relationship.OutProperty.Nullable == false)
+                {
+                    if (await RelationshipExistsAsync(relationship.OutProperty, this))
+                        throw new PersistenceException(string.Format("Cannot delete {0} with key '{1}' because it is participating in a {2} relationship.", DynamicEntityType.Name, key, relationship.Neo4JRelationshipType));
+                }
+                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty is not null && relationship.InProperty.Nullable == false)
+                {
+                    if (await RelationshipExistsAsync(relationship.InProperty, this))
+                        throw new PersistenceException(string.Format("Cannot delete {0} with key '{1}' because it is participating in a {2} relationship.", DynamicEntityType.Name, key, relationship.Neo4JRelationshipType));
+                }
+            }
+        }
+
         void OGM.ValidateDelete()
         {
             object? key = GetKey();
@@ -748,6 +772,11 @@ namespace Blueprint41.Dynamic
                 object? key = ((OGM)this).GetKey();
                 return (key is not null);
             }
+        }
+
+        protected Task<bool> RelationshipExistsAsync(EntityProperty foreignProperty, OGM instance)
+        {
+            return RunningTransaction.NodePersistenceProvider.RelationshipExistsAsync(foreignProperty, instance);
         }
 
         protected bool RelationshipExists(EntityProperty foreignProperty, OGM instance)
