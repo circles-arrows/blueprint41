@@ -33,7 +33,8 @@ namespace Blueprint41.Core
                 throw new InvalidOperationException("You cannot set the key after it was already assigned.");
 
             PersistenceState = PersistenceState.HasUid;
-            Transaction.RunningTransaction.Register(Wrapper.GetEntity().Name, Wrapper.Flavor, Wrapper);
+            if (Wrapper.Flavor != EntityFlavor.Async)
+                Transaction.RunningTransaction.Register(Wrapper.GetEntity().Name, Wrapper.Flavor, Wrapper);
         }
     }
 }

@@ -61,6 +61,8 @@ namespace Blueprint41.Core
             if (item.PersistenceState != PersistenceState.DoesntExist)
                 await item.LazyGetAsync(locked);
 
+            Transaction.RunningTransaction.Register(Entity.Name, EntityFlavor.Async, item, true);
+
             if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
                 return item;
             else
@@ -95,6 +97,9 @@ namespace Blueprint41.Core
                 ogm.SetData(properties);
                 instance.PersistenceState = (mappingMode == persistence.NodeMapping.AsWritableEntity) ? PersistenceState.Loaded : PersistenceState.OutOfScope;
             }
+
+            if (flavor == EntityFlavor.Async)
+                trans.Register(Entity.Name, flavor, instance, true);
 
             return instance;
         }
@@ -231,6 +236,9 @@ namespace Blueprint41.Core
 
         internal protected override void LazyGet(bool locked = false)
         {
+            if (Flavor == EntityFlavor.Async && (locked || PersistenceState == PersistenceState.HasUid))
+                throw new NotSupportedException($"{GetEntity().Name} is an {Flavor} entity, the sync method 'LazyGet' cannot load it from the datastore, use LoadAsync instead.");
+
             switch (PersistenceState)
             {
                 case PersistenceState.New:

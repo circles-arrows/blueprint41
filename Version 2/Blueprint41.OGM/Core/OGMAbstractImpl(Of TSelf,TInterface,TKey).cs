@@ -73,6 +73,9 @@ namespace Blueprint41.Core
                 instance.OriginalPersistenceState = instance.PersistenceState;
             }
 
+            if (flavor == EntityFlavor.Async)
+                trans.Register(entity.Name, flavor, (OGM)instance, true);
+
             return instance;
         }
 
