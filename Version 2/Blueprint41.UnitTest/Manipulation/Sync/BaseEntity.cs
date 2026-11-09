@@ -91,6 +91,8 @@ namespace Datastore.Manipulation.Sync
 
         }
 
+        protected override EntityFlavor Flavor => EntityFlavor.Blocking;
+
         sealed protected override Entity GetEntity()
         {
             if (entity is null)

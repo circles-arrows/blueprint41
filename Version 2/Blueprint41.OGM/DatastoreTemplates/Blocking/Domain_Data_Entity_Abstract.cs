@@ -1587,8 +1587,7 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("\r\n        sealed protected override Entity GetEntity()\r\n        {\r\n            if" +
-                    " (entity is null)\r\n            {\r\n                lock (typeof(");
+            this.Write("\r\n        protected override EntityFlavor Flavor => EntityFlavor.Blocking;\r\n\r\n        sealed protected override Entity GetEntity()\r\n        {\r\n            if" +                    " (entity is null)\r\n            {\r\n                lock (typeof(");
             
             #line 421 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));

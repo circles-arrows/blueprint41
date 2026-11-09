@@ -21,6 +21,7 @@ namespace Blueprint41.Core
         public static TWrapper? Load(TKey key) => Load(key, false);
         public static TWrapper? Load(TKey key, bool locked)
         {
+            EnsureStaticFlavor(false);
             if (key is null && locked)
                 throw new ArgumentNullException(nameof(key), "The key cannot be null when trying to acquire a lock.");
 
@@ -45,6 +46,7 @@ namespace Blueprint41.Core
         public static Task<TWrapper?> LoadAsync(TKey key) => LoadAsync(key, false);
         public static async Task<TWrapper?> LoadAsync(TKey key, bool locked)
         {
+            EnsureStaticFlavor(true);
             if (key is null && locked)
                 throw new ArgumentNullException(nameof(key), "The key cannot be null when trying to acquire a lock.");
 
@@ -106,27 +108,33 @@ namespace Blueprint41.Core
 
         public static List<TWrapper> GetAll()
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TWrapper>(Entity);
         }
         public static List<TWrapper> GetAll(int page, int pageSize, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return GetAll(page, pageSize, true, orderBy);
         }
         public static List<TWrapper> GetAll(int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TWrapper>(Entity, page, pageSize, ascending, orderBy);
         }
 
         public static Task<List<TWrapper>> GetAllAsync()
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.GetAllAsync<TWrapper>(Entity);
         }
         public static Task<List<TWrapper>> GetAllAsync(int page, int pageSize, params Property[] orderBy)
         {
+            EnsureStaticFlavor(true);
             return GetAllAsync(page, pageSize, true, orderBy);
         }
         public static Task<List<TWrapper>> GetAllAsync(int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.GetAllAsync<TWrapper>(Entity, page, pageSize, ascending, orderBy);
         }
 
@@ -134,85 +142,105 @@ namespace Blueprint41.Core
         [Obsolete("This method will be made internal in the next release.", false)]
         public static List<TWrapper> LoadWhere(string conditions, IParameter[] parameters)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, conditions, parameters, 0, 0);
         }
         [Obsolete("This method will be made internal in the next release.", false)]
         public static List<TWrapper> LoadWhere(string conditions, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return LoadWhere(conditions, parameters, page, pageSize, true, orderBy);
         }
         [Obsolete("This method will be made internal in the next release.", false)]
         public static List<TWrapper> LoadWhere(string conditions, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }
         public static List<TWrapper> LoadWhere(ICompiledQuery query)
         {
+            EnsureStaticFlavor(false);
             return LoadWhere(query, new IParameter[0]);
         }
         public static List<TWrapper> LoadWhere(ICompiledQuery query, params IParameter[] parameters)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, query, parameters);
         }
         public static List<TWrapper> LoadWhere(ICompiledQuery query, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return LoadWhere(query, parameters, page, pageSize, true, orderBy);
         }
         public static List<TWrapper> LoadWhere(ICompiledQuery query, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, query, parameters, page, pageSize, ascending, orderBy);
         }
         public static List<TWrapper> Search(string text, params Property[] properties)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties);
         }
         public static List<TWrapper> Search(string text, int page = 0, int pageSize = 0, params Property[] properties)
         {
+            EnsureStaticFlavor(false);
             return Search(text, page, pageSize, true, properties);
         }
         public static List<TWrapper> Search(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties, page, pageSize, ascending, properties);
         }
 
         internal static Task<List<TWrapper>> LoadWhereAsync(string conditions, IParameter[] parameters)
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, conditions, parameters, 0, 0);
         }
         internal static Task<List<TWrapper>> LoadWhereAsync(string conditions, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
+            EnsureStaticFlavor(true);
             return LoadWhereAsync(conditions, parameters, page, pageSize, true, orderBy);
         }
         internal static Task<List<TWrapper>> LoadWhereAsync(string conditions, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }
         public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query)
         {
+            EnsureStaticFlavor(true);
             return LoadWhereAsync(query, new IParameter[0]);
         }
         public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query, params IParameter[] parameters)
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, query, parameters);
         }
         public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
+            EnsureStaticFlavor(true);
             return LoadWhereAsync(query, parameters, page, pageSize, true, orderBy);
         }
         public static Task<List<TWrapper>> LoadWhereAsync(ICompiledQuery query, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhereAsync<TWrapper>(Entity, query, parameters, page, pageSize, ascending, orderBy);
         }
         public static Task<List<TWrapper>> SearchAsync(string text, params Property[] properties)
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.SearchAsync<TWrapper>(Entity, text, properties);
         }
         public static Task<List<TWrapper>> SearchAsync(string text, int page = 0, int pageSize = 0, params Property[] properties)
         {
+            EnsureStaticFlavor(true);
             return SearchAsync(text, page, pageSize, true, properties);
         }
         public static Task<List<TWrapper>> SearchAsync(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
         {
+            EnsureStaticFlavor(true);
             return Transaction.RunningTransaction.NodePersistenceProvider.SearchAsync<TWrapper>(Entity, text, properties, page, pageSize, ascending, properties);
         }
 
@@ -233,6 +261,7 @@ namespace Blueprint41.Core
         }
 
         internal static readonly TWrapper Instance = (TWrapper)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(TWrapper));
+        protected static void EnsureStaticFlavor(bool async, [System.Runtime.CompilerServices.CallerMemberName] string? member = null) => Instance.EnsureFlavor(async, member);
 
         internal protected override void LazyGet(bool locked = false)
         {
@@ -582,6 +611,7 @@ namespace Blueprint41.Core
         }
         public static List<TWrapper> FromQuery(string name, params IParameter[] parameters)
         {
+            EnsureStaticFlavor(false);
             InitializeStoredQueries();
 
             ICompiledQuery query = StoredQueries![name];
@@ -589,6 +619,7 @@ namespace Blueprint41.Core
         }
         public static List<TWrapper> FromQuery(string name, IParameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             InitializeStoredQueries();
 
             ICompiledQuery query = StoredQueries![name];
@@ -596,6 +627,7 @@ namespace Blueprint41.Core
         }
         public static Task<List<TWrapper>> FromQueryAsync(string name, params IParameter[] parameters)
         {
+            EnsureStaticFlavor(true);
             InitializeStoredQueries();
 
             ICompiledQuery query = StoredQueries![name];
@@ -603,6 +635,7 @@ namespace Blueprint41.Core
         }
         public static Task<List<TWrapper>> FromQueryAsync(string name, IParameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(true);
             InitializeStoredQueries();
 
             ICompiledQuery query = StoredQueries![name];

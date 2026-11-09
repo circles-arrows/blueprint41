@@ -27,6 +27,8 @@ namespace Blueprint41.Core
 
         public static TInterface? Load(TKey key)
         {
+            EnsureStaticFlavor(false);
+
             if (Entity.Key is null)
                 throw new InvalidOperationException("No key has been defined for this entity.");
 
@@ -81,6 +83,7 @@ namespace Blueprint41.Core
 
         public static List<TInterface> GetAll()
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TInterface>(Entity);
         }
         public static List<TInterface> GetAll(int page, int pageSize, params Property[] orderBy)
@@ -89,6 +92,7 @@ namespace Blueprint41.Core
         }
         public static List<TInterface> GetAll(int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TInterface>(Entity, page, pageSize, ascending, orderBy);
         }
 
@@ -105,6 +109,7 @@ namespace Blueprint41.Core
         [Obsolete("This method will be made internal in the next release.", false)]
         public static List<TInterface> LoadWhere(string conditions, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }
         public static List<TInterface> LoadWhere(ICompiledQuery query)
@@ -113,19 +118,22 @@ namespace Blueprint41.Core
         }
         public static List<TInterface> LoadWhere(ICompiledQuery query, params IParameter[] parameters)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, query, parameters);
         }
 
         public static List<TInterface> Search(string text, params Property[] properties)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.Search<TInterface>(Entity, text, properties);
         }
         public static List<TInterface> Search(string text, int page = 0, int pageSize = 0, params Property[] properties)
         {
             return Search(text, page, pageSize, true, properties);
         }
-        public static List<TInterface> Search(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
+        public static List<TInterface> Search(string text, int page, int pageSize, bool ascending, params Property[] properties)
         {
+            EnsureStaticFlavor(false);
             return Transaction.RunningTransaction.NodePersistenceProvider.Search<TInterface>(Entity, text, properties, page, pageSize, ascending, properties);
         }
 
@@ -150,6 +158,16 @@ namespace Blueprint41.Core
 
         internal static readonly TSelf Instance = (TSelf)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(TSelf));
         protected internal abstract Entity GetEntity();
+        protected abstract EntityFlavor Flavor { get; }
+
+        private static void EnsureStaticFlavor(bool async, [System.Runtime.CompilerServices.CallerMemberName] string? member = null)
+        {
+            EntityFlavor flavor = Instance.Flavor;
+            if (async && flavor != EntityFlavor.Async)
+                throw new NotSupportedException($"{member} is async and not supported on a {flavor} entity.");
+            if (!async && flavor == EntityFlavor.Async)
+                throw new NotSupportedException($"{member} is sync and not supported on an Async entity.");
+        }
 
         #region Stored Queries
 

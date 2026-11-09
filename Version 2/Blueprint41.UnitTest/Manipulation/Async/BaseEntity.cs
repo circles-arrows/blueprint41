@@ -93,6 +93,8 @@ namespace Datastore.Manipulation.Async
 
         }
 
+        protected override EntityFlavor Flavor => EntityFlavor.Async;
+
         sealed protected override Entity GetEntity()
         {
             if (entity is null)
