@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +16,7 @@ using Blueprint41.Persistence;
 namespace Blueprint41
 {
     [DebuggerDisplay("{Parent.Name}.{Name}")]
-    public abstract partial class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
+    public abstract partial class Property : IRefactorProperty, IPropertyCondition
     {
         private protected Property(IEntity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType) : this()
         {
@@ -1459,131 +1459,6 @@ namespace Blueprint41
             }
         }
         private Dictionary<Type, Func<OGM, DateTime?, Task>?> clearLookupAsyncCache = new Dictionary<Type, Func<OGM, DateTime?, Task>?>();
-
-        #endregion
-
-        #region Event Handlers
-
-        /// <summary>
-        /// The property events
-        /// </summary>
-        public IPropertyEvents Events { get { return this; } }
-
-        /// <summary>
-        /// This event fires when setting the property value
-        /// </summary>
-        event EventHandler<PropertyEventArgs> IPropertyEvents.OnChange
-        {
-            add { onChange += value; }
-            remove { onChange -= value; }
-        }
-        /// <summary>
-        /// True when a OnChange event is registered
-        /// </summary>
-        bool IPropertyEvents.HasRegisteredChangeHandlers
-        {
-            get
-            {
-                return onChange is not null || ForeignProperty?.onChange is not null;
-            }
-        }
-        internal bool RaiseOnChange<T>(OgmClass sender, [AllowNull] T previousValue, [AllowNull] T assignedValue, DateTime? moment, OperationEnum operation)
-        {
-            Transaction trans = Transaction.RunningTransaction;
-            if (!trans.FireEntityEvents)
-                return false;
-
-            OgmClass? otherSender;
-            bool canceled = false;
-
-            if (ForeignProperty is not null)
-            {
-                otherSender = previousValue as OgmClass;
-
-                if (operation == OperationEnum.Set || operation == OperationEnum.Remove)
-                    if (RaiseOther(otherSender, ForeignProperty, sender, null, OperationEnum.Remove))
-                        canceled = true;
-
-                if (assignedValue is not null)
-                {
-                    otherSender = ForeignProperty.GetValue((OGM)assignedValue, moment) as OgmClass;
-                    if (operation == OperationEnum.Set || operation == OperationEnum.Remove)
-                        if (RaiseOther(otherSender, this, assignedValue, null, OperationEnum.Remove))
-                            canceled = true;
-                }
-
-                if (RaiseMain(sender, previousValue!, assignedValue!, operation))
-                    canceled = true;
-
-                otherSender = assignedValue as OgmClass;
-
-                if (operation == OperationEnum.Set || operation == OperationEnum.Add)
-                    if (RaiseOther(otherSender, ForeignProperty, null, sender, OperationEnum.Add))
-                        canceled = true;
-            }
-            else
-            {
-                if (RaiseMain(sender, previousValue!, assignedValue!, operation))
-                    canceled = true;
-            }
-
-            return canceled;
-
-            bool RaiseMain(OgmClass target, T oldValue, T newValue, OperationEnum op)
-            {
-                if (target is null)
-                    return false;
-
-                PropertyEventArgs args = PropertyEventArgs.CreateInstance(EventTypeEnum.OnPropertyChange, target, this, oldValue, newValue, moment ?? trans.TransactionDate, op, trans);
-                onChange?.Invoke(target, args);
-
-                args.Lock();
-                return args.Canceled;
-            }
-            bool RaiseOther(OgmClass? target, Property? property, object? oldValue, object? newValue, OperationEnum op)
-            {
-                if (target is null || property is null)
-                    return false;
-
-                if (property.PropertyType == PropertyType.Lookup)
-                {
-                    op = OperationEnum.Set;
-                    if (oldValue is null)
-                        oldValue = property.GetValue(target, moment);
-                }
-
-                PropertyEventArgs args = PropertyEventArgs.CreateInstance(EventTypeEnum.OnPropertyChange, target, property, oldValue, newValue, moment ?? trans.TransactionDate, op, trans);
-                property.onChange?.Invoke(target, args);
-
-                args.Lock();
-                return args.Canceled;
-            }
-        }
-        private EventHandler<PropertyEventArgs>? onChange;
-
-        internal Type GetPropertyEventArgsType(Type senderType, EntityFlavor flavor)
-        {
-            Type? type;
-            if (!propertyEventArgsType.TryGetValue((senderType.Name, flavor), out type))
-            {
-                lock (this)
-                {
-                    if (!propertyEventArgsType.TryGetValue((senderType.Name, flavor), out type))
-                    {
-                        Type? innerType = SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType.Get(flavor);
-                        if (innerType is null)
-                            throw new NotSupportedException($"{flavor} code not generated.");
-
-                        type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, innerType);
-
-                        propertyEventArgsType.Add((senderType.Name, flavor), type);
-                    }
-                }
-            }
-            return type;
-        }
-
-        private Dictionary<(string, EntityFlavor), Type> propertyEventArgsType = new Dictionary<(string, EntityFlavor), Type>();
 
         #endregion
     }

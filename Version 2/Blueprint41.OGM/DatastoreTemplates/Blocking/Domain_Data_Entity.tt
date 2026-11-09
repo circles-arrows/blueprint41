@@ -410,14 +410,14 @@ if (!DALModel.IsAbstract)
                 if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Blocking, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { object loadHack = item.<#= attr.ForeignProperty.Name #>; } });
+                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Blocking, null);
 <#
                 }
                 else if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Collection)
                 {
                     string countMethod = (attr.Relationship.IsTimeDependent) ? "CountAll" : "Count";
 #>
-                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Blocking, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = item.<#= attr.ForeignProperty.Name #>.<#= countMethod #>; } });
+                <#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, EntityFlavor.Blocking, null);
 <#
                 }
                 else
@@ -1538,9 +1538,6 @@ if (!DALModel.IsAbstract)
 <#
     List<string> events = new List<string>();
     events.Add("OnNew");
-    events.Add("OnDelete");
-    events.Add("OnSave");
-    events.Add("OnAfterSave");
 
     foreach (string evnt in events)
     {
@@ -1592,68 +1589,6 @@ if (!DALModel.IsAbstract)
     }
 #>
 
-            #region OnPropertyChange
-
-            public static class OnPropertyChange
-            {
-
-<#
-    foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
-    {
-        foreach (Property attr in inherited.Properties)
-        {		
-            string evnt = "On" + attr.Name;
-#>
-                #region <#= evnt #>
-
-                private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
-
-                private static EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> <#= evnt.ToCamelCase() #>;
-                public static event EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> <#= evnt #>
-                {
-                    add
-                    {
-                        lock (typeof(OnPropertyChange))
-                        {
-                            if (!<#= evnt.ToCamelCase() #>IsRegistered)
-                            {
-                                Members.<#= attr.Name #>.Events.OnChange -= <#= evnt.ToCamelCase() #>Proxy;
-                                Members.<#= attr.Name #>.Events.OnChange += <#= evnt.ToCamelCase() #>Proxy;
-                                <#= evnt.ToCamelCase() #>IsRegistered = true;
-                            }
-                            <#= evnt.ToCamelCase() #> += value;
-                        }
-                    }
-                    remove
-                    {
-                        lock (typeof(OnPropertyChange))
-                        {
-                            <#= evnt.ToCamelCase() #> -= value;
-                            if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
-                            {
-                                Members.<#= attr.Name #>.Events.OnChange -= <#= evnt.ToCamelCase() #>Proxy;
-                                <#= evnt.ToCamelCase() #>IsRegistered = false;
-                            }
-                        }
-                    }
-                }
-            
-                private static void <#= evnt.ToCamelCase() #>Proxy(object sender, PropertyEventArgs args)
-                {
-                    EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> handler = <#= evnt.ToCamelCase() #>;
-                    if (handler is not null)
-                        handler.Invoke((<#= DALModel.ClassName #>)sender, args);
-                }
-
-                #endregion
-
-<#
-        }
-    }
-#>
-            }
-
-            #endregion
         }
 
         #endregion

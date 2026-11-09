@@ -65,13 +65,6 @@ namespace Blueprint41.Core
             OGM ogm = instance as OGM;
 
             Dictionary<string, object?> properties = (Dictionary<string, object?>)node.Properties;
-            if (cypher is not null)
-            {
-                Dictionary<string, object?>? customState = null;
-                NodeEventArgs loadingArgs = entity.RaiseOnNodeLoading(trans, ogm, cypher, parameters, ref customState);
-                NodeEventArgs args = entity.RaiseOnNodeLoaded(trans, loadingArgs, node.ElementId, node.Labels, properties);
-                properties = args.Properties!;
-            }
 
             if (instance.PersistenceState == PersistenceState.HasUid || instance.PersistenceState == PersistenceState.Loaded)
             {

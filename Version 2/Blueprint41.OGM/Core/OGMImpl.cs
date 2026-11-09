@@ -106,7 +106,6 @@ namespace Blueprint41.Core
             {
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
-                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.Deleted;
                     ExecuteAction(new persistence.ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
@@ -114,7 +113,6 @@ namespace Blueprint41.Core
                 case PersistenceState.Loaded:
                 case PersistenceState.Persisted:
                 case PersistenceState.LoadedAndChanged:
-                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.ForceDelete;
                     ExecuteAction(new persistence.ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
@@ -137,7 +135,6 @@ namespace Blueprint41.Core
             {
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
-                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.Deleted;
                     ExecuteAction(new persistence.ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
@@ -145,7 +142,6 @@ namespace Blueprint41.Core
                 case PersistenceState.Loaded:
                 case PersistenceState.Persisted:
                 case PersistenceState.LoadedAndChanged:
-                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.Delete;
                     ExecuteAction(new persistence.ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
@@ -282,34 +278,7 @@ namespace Blueprint41.Core
         internal protected abstract Task LazyGetAsync(bool locked = false);
         internal protected abstract void AfterSetData();
         internal protected abstract void LazySet();
-        internal protected virtual bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)
-        {
-            return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
-        }
-        internal protected virtual bool LazySet<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
-            where T : OGM
-        {
-            CollectionItem<T>? prevColItem = previousValues.FirstOrDefault(item => item.Overlaps(moment ?? Conversion.MinDateTime));
-            T? previousValue = (prevColItem is null) ? default : prevColItem.Item;
-
-            return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
-        }
         internal protected abstract Task LazySetAsync();
-        internal protected virtual Task<bool> LazySetAsync<T>(Property property, T previousValue, T assignValue, DateTime? moment)
-        {
-            //TODO: Make this async too!!!
-            return Task.FromResult(property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set));
-        }
-        internal protected virtual Task<bool> LazySetAsync<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
-            where T : OGM
-        {
-            CollectionItem<T>? prevColItem = previousValues.FirstOrDefault(item => item.Overlaps(moment ?? Conversion.MinDateTime));
-            T? previousValue = (prevColItem is null) ? default : prevColItem.Item;
-
-            //TODO: Make this async too!!!
-            return Task.FromResult(property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set));
-        }
-
 
         protected static TEnum? Parse<TEnum>(string self)
             where TEnum : struct

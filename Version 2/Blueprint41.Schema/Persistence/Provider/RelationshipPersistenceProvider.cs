@@ -442,7 +442,6 @@ namespace Blueprint41.Persistence
             else
                 Add(trans, relationship, inItem, outItem, properties);
 
-            relationship.RaiseOnRelationCreated(trans);
         }
         protected void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
         {
@@ -476,7 +475,6 @@ namespace Blueprint41.Persistence
             parameters.Add("created", createdDate);
 
             string query = match + "\r\n" + create;
-            relationship.RaiseOnRelationCreate(trans);
 
             driver.ResultCursor result = ((IStatementRunner)trans).Run(query, parameters);
         }
@@ -545,7 +543,6 @@ namespace Blueprint41.Persistence
             parameters.Add("map", map);
             parameters.Add("excl", relationship.ExcludedProperties());
 
-            relationship.RaiseOnRelationCreate(trans);
 
 #if DEBUG_QUERY
             Peek("Before Delete");
@@ -604,7 +601,6 @@ namespace Blueprint41.Persistence
             else
                 Remove(trans, relationship, inItem, outItem);
 
-            relationship.RaiseOnRelationDeleted(trans);
         }
         protected void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem)
         {
@@ -626,7 +622,6 @@ namespace Blueprint41.Persistence
 
             cypher = $"MATCH ({inLabel})-[r:{relationship.Neo4JRelationshipType}]->({outLabel}) DELETE r";
 
-            relationship.RaiseOnRelationDelete(trans);
 
             driver.ResultCursor result = ((IStatementRunner)trans).Run(cypher, parameters);
         }
@@ -674,7 +669,6 @@ namespace Blueprint41.Persistence
             parameters.Add("max", Conversion.MaxDateTimeInMS);
             parameters.Add("moment", momentConv);
 
-            relationship.RaiseOnRelationCreate(trans);
 
             driver.ResultCursor deleteResult = ((IStatementRunner)trans).Run(delete, parameters);
             driver.ResultCursor updateResult = ((IStatementRunner)trans).Run(update, parameters);
@@ -764,11 +758,9 @@ namespace Blueprint41.Persistence
 
             string query = match + "\r\n" + create;
 
-            relationship.RaiseOnRelationCreate(trans);
 
             ((IStatementRunner)trans).Run(query, parameters2);
 
-            relationship.RaiseOnRelationCreated(trans);
         }
         public void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate)
         {
@@ -800,11 +792,9 @@ namespace Blueprint41.Persistence
             parameters.Add("moment", Conversion<DateTime, long>.Convert(startDate ?? DateTime.MinValue));
             parameters.Add("minDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
 
-            relationship.RaiseOnRelationDelete(trans);
 
             ((IStatementRunner)trans).Run(match, parameters);
 
-            relationship.RaiseOnRelationDeleted(trans);
         }
         
         public class CollectionItemList

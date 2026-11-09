@@ -1376,21 +1376,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(", EntityFlavor.Blocking, item => { if (");
-            
-            #line 413 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers")))));
-            
-            #line default
-            #line hidden
-            this.Write(") { object loadHack = item.");
-            
-            #line 413 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.ForeignProperty.Name));
-            
-            #line default
-            #line hidden
-            this.Write("; } });\r\n");
+            this.Write(", EntityFlavor.Blocking, null);\r\n");
             
             #line 414 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
@@ -1423,28 +1409,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(", EntityFlavor.Blocking, item => { if (");
-            
-            #line 420 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers")))));
-            
-            #line default
-            #line hidden
-            this.Write(") { int loadHack = item.");
-            
-            #line 420 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.ForeignProperty.Name));
-            
-            #line default
-            #line hidden
-            this.Write(".");
-            
-            #line 420 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(countMethod));
-            
-            #line default
-            #line hidden
-            this.Write("; } });\r\n");
+            this.Write(", EntityFlavor.Blocking, null);\r\n");
             
             #line 421 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 
@@ -6011,9 +5976,6 @@ if (!DALModel.IsAbstract)
 
     List<string> events = new List<string>();
     events.Add("OnNew");
-    events.Add("OnDelete");
-    events.Add("OnSave");
-    events.Add("OnAfterSave");
 
     foreach (string evnt in events)
     {
@@ -6199,203 +6161,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("\r\n            #region OnPropertyChange\r\n\r\n            public static class OnPrope" +
-                    "rtyChange\r\n            {\r\n\r\n");
-            
-            #line 1600 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-
-    foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
-    {
-        foreach (Property attr in inherited.Properties)
-        {		
-            string evnt = "On" + attr.Name;
-
-            
-            #line default
-            #line hidden
-            this.Write("                #region ");
-            
-            #line 1607 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n\r\n                private static bool ");
-            
-            #line 1609 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("IsRegistered = false;\r\n\r\n                private static EventHandler<");
-            
-            #line 1611 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
-            
-            #line default
-            #line hidden
-            this.Write(", PropertyEventArgs> ");
-            
-            #line 1611 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write(";\r\n                public static event EventHandler<");
-            
-            #line 1612 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
-            
-            #line default
-            #line hidden
-            this.Write(", PropertyEventArgs> ");
-            
-            #line 1612 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n                {\r\n                    add\r\n                    {\r\n            " +
-                    "            lock (typeof(OnPropertyChange))\r\n                        {\r\n        " +
-                    "                    if (!");
-            
-            #line 1618 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("IsRegistered)\r\n                            {\r\n                                Mem" +
-                    "bers.");
-            
-            #line 1620 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
-            
-            #line default
-            #line hidden
-            this.Write(".Events.OnChange -= ");
-            
-            #line 1620 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("Proxy;\r\n                                Members.");
-            
-            #line 1621 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
-            
-            #line default
-            #line hidden
-            this.Write(".Events.OnChange += ");
-            
-            #line 1621 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("Proxy;\r\n                                ");
-            
-            #line 1622 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("IsRegistered = true;\r\n                            }\r\n                            " +
-                    "");
-            
-            #line 1624 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write(" += value;\r\n                        }\r\n                    }\r\n                   " +
-                    " remove\r\n                    {\r\n                        lock (typeof(OnPropertyC" +
-                    "hange))\r\n                        {\r\n                            ");
-            
-            #line 1631 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write(" -= value;\r\n                            if (");
-            
-            #line 1632 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write(" is null && ");
-            
-            #line 1632 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("IsRegistered)\r\n                            {\r\n                                Mem" +
-                    "bers.");
-            
-            #line 1634 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
-            
-            #line default
-            #line hidden
-            this.Write(".Events.OnChange -= ");
-            
-            #line 1634 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("Proxy;\r\n                                ");
-            
-            #line 1635 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("IsRegistered = false;\r\n                            }\r\n                        }\r\n" +
-                    "                    }\r\n                }\r\n            \r\n                private " +
-                    "static void ");
-            
-            #line 1641 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write("Proxy(object sender, PropertyEventArgs args)\r\n                {\r\n                " +
-                    "    EventHandler<");
-            
-            #line 1643 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
-            
-            #line default
-            #line hidden
-            this.Write(", PropertyEventArgs> handler = ");
-            
-            #line 1643 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
-            
-            #line default
-            #line hidden
-            this.Write(";\r\n                    if (handler is not null)\r\n                        handler." +
-                    "Invoke((");
-            
-            #line 1645 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
-            
-            #line default
-            #line hidden
-            this.Write(")sender, args);\r\n                }\r\n\r\n                #endregion\r\n\r\n");
-            
-            #line 1650 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
-
-        }
-    }
-
-            
-            #line default
-            #line hidden
-            this.Write("            }\r\n\r\n            #endregion\r\n        }\r\n\r\n        #endregion\r\n");
+            this.Write("\r\n        }\r\n\r\n        #endregion\r\n");
             
             #line 1660 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Blocking\Domain_Data_Entity.tt"
 

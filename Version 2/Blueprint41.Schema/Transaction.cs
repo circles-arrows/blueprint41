@@ -354,7 +354,6 @@ namespace Blueprint41
                     if (!beforeCommitEntityState.ContainsKey(entity))
                         beforeCommitEntityState.Add(entity, entity.PersistenceState);
 
-                    entity.GetEntity().RaiseOnSave(entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
                         item.Flush();
                 }
@@ -449,7 +448,6 @@ namespace Blueprint41
             {
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                 {
-                    entity.GetEntity().RaiseOnAfterSave(entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
                         item.Flush();
                 }
@@ -468,7 +466,6 @@ namespace Blueprint41
                     if (!beforeCommitEntityState.ContainsKey(entity))
                         beforeCommitEntityState.Add(entity, entity.PersistenceState);
 
-                    entity.GetEntity().RaiseOnSave(entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
                         item.Flush();
                 }
@@ -563,7 +560,6 @@ namespace Blueprint41
             {
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                 {
-                    entity.GetEntity().RaiseOnAfterSave(entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
                         item.Flush();
                 }

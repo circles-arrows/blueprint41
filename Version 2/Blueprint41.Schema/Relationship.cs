@@ -9,7 +9,7 @@ using Blueprint41.Refactoring;
 namespace Blueprint41
 {
     [DebuggerDisplay("Relationship: {Name}")]
-    public partial class Relationship : IRefactorRelationship, IRelationshipEvents
+    public partial class Relationship : IRefactorRelationship
     {
         internal Relationship(DatastoreModel parent, string name, string? neo4JRelationshipType, Entity? inEntity, Interface? inInterface, Entity? outEntity, Interface? outInterface)
         {
@@ -487,111 +487,6 @@ namespace Blueprint41
 
             Parent.Relations.Remove(Name);
         }
-
-        #endregion
-
-        #region Event Handlers
-
-        /// <summary>
-        /// The relationship events
-        /// </summary>
-        public IRelationshipEvents Events { get { return this; } }
-
-        /// <summary>
-        /// This event fires during the commit stage, when a new relationship is about to be created
-        /// </summary>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreate
-        {
-            add { onRelationCreate += value; }
-            remove { onRelationCreate -= value; }
-        }
-        /// <summary>
-        /// True when a OnRelationCreate event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationCreateHandlers { get { return onRelationCreate is not null; } }
-        internal RelationshipEventArgs RaiseOnRelationCreate(Transaction trans)
-        {
-            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationCreate, trans);
-            if (!trans.FireGraphEvents)
-                return args;
-
-            onRelationCreate?.Invoke(this, args);
-
-            return args;
-        }
-        private event EventHandler<RelationshipEventArgs>? onRelationCreate;
-
-        /// <summary>
-        /// This event fires during the commit stage, after the relationship was created. The transaction is read-only at this moment.
-        /// </summary>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreated
-        {
-            add { onRelationCreated += value; }
-            remove { onRelationCreated -= value; }
-        }
-        /// <summary>
-        /// True when a OnRelationCreated event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationCreatedHandlers { get { return onRelationCreated is not null; } }
-        internal RelationshipEventArgs RaiseOnRelationCreated(Transaction trans)
-        {
-            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationCreated, trans);
-            if (!trans.FireGraphEvents)
-                return args;
-
-            onRelationCreated?.Invoke(this, args);
-
-            return args;
-        }
-        private event EventHandler<RelationshipEventArgs>? onRelationCreated;
-
-        /// <summary>
-        /// This event fires during the commit stage, when an existing relationship is about to be deleted
-        /// </summary>>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDelete
-        {
-            add { onRelationDelete += value; }
-            remove { onRelationDelete -= value; }
-        }
-        /// <summary>
-        /// True when a OnRelationDelete event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationDeleteHandlers { get { return onRelationDelete is not null; } }
-        internal RelationshipEventArgs RaiseOnRelationDelete(Transaction trans)
-        {
-            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationDelete, trans);
-            if (!trans.FireGraphEvents)
-                return args;
-
-            onRelationDelete?.Invoke(this, args);
-
-            return args;
-        }
-        private event EventHandler<RelationshipEventArgs>? onRelationDelete;
-
-        /// <summary>
-        /// This event fires during the commit stage, when an existing relationship was deleted. The transaction is read-only at this moment.
-        /// </summary>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDeleted
-        {
-            add { onRelationDeleted += value; }
-            remove { onRelationDeleted -= value; }
-        }
-        /// <summary>
-        /// True when a OnRelationDeleted event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationDeletedHandlers { get { return onRelationDeleted is not null; } }
-        internal RelationshipEventArgs RaiseOnRelationDeleted(Transaction trans)
-        {
-            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationDelete, trans);
-            if (!trans.FireGraphEvents)
-                return args;
-
-            onRelationDeleted?.Invoke(this, args);
-      
-            return args;
-        }
-        private event EventHandler<RelationshipEventArgs>? onRelationDeleted;
 
         #endregion
 

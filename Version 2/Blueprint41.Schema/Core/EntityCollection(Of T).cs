@@ -38,10 +38,6 @@ namespace Blueprint41.Core
             if (EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);
 
-            if (fireEvents)
-                if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
-                    return;
-
             ExecuteAction(AddAction(item, null, properties));
         }
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents, Dictionary<string, object>? properties)
@@ -56,10 +52,6 @@ namespace Blueprint41.Core
 
                 if (EagerLoadLogic is not null)
                     EagerLoadLogic.Invoke(item);
-
-                if (fireEvents)
-                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
-                        return;
 
                 actions.AddLast(AddAction(item, null, properties));
             }
@@ -84,10 +76,6 @@ namespace Blueprint41.Core
             if (EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);
 
-            if (fireEvents)
-                if (ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false)
-                    return;
-
             ExecuteAction(RemoveAction(item, null));
         }
         internal sealed override void Clear(bool fireEvents)
@@ -99,39 +87,6 @@ namespace Blueprint41.Core
             
             if (InnerData.Count == 0)
                 return;
-
-            if (fireEvents)
-            {
-                HashSet<CollectionItem> cancel = new HashSet<CollectionItem>();
-                ForEach(delegate (int index, CollectionItem item)
-                {
-                    if (item is null)
-                        return;
-
-                    if (EagerLoadLogic is not null)
-                        EagerLoadLogic.Invoke((TEntity)item.Item);
-
-                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, item.Item, default(TEntity), null , (OperationEnum)OperationEnum.Remove) ?? false)
-                        cancel.Add(item);
-                });
-
-                if (cancel.Count != 0)
-                {
-                    LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
-
-                    ForEach(delegate (int index, CollectionItem item)
-                    {
-                        if (cancel.Contains(item))
-                            return;
-
-                        actions.AddLast(RemoveAction(item.Item, null));
-                    });
-
-                    ExecuteAction(actions);
-
-                    return;
-                }
-            }
 
             ExecuteAction(ClearAction(null));
         }
@@ -154,16 +109,7 @@ namespace Blueprint41.Core
                 if (item is null)
                     continue;
 
-                if (fireEvents)
-                {
-
-                    if (!(ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false))
-                        ExecuteAction(RemoveAction(item, null));
-                }
-                else
-                {
-                    ExecuteAction(RemoveAction(item, null));
-                }
+                ExecuteAction(RemoveAction(item, null));
             }
         }
 

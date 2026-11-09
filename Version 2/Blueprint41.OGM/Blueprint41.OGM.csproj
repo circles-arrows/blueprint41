@@ -83,11 +83,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DatastoreTemplates\Async\Domain_Data_GraphEvents.cs">
-      <DependentUpon>Domain_Data_GraphEvents.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="DatastoreTemplates\Async\Domain_Data_Register.cs">
       <DependentUpon>Domain_Data_Register.tt</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -105,11 +100,6 @@
     </Compile>
     <Compile Update="DatastoreTemplates\Blocking\Domain_Data_Entity_Relation.cs">
       <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Blocking\Domain_Data_GraphEvents.cs">
-      <DependentUpon>Domain_Data_GraphEvents.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
@@ -133,10 +123,6 @@
       <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="DatastoreTemplates\Async\Domain_Data_GraphEvents.tt">
-      <LastGenOutput>Domain_Data_GraphEvents.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
     <None Update="DatastoreTemplates\Async\Domain_Data_Register.tt">
       <LastGenOutput>Domain_Data_Register.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -151,10 +137,6 @@
     </None>
     <None Update="DatastoreTemplates\Blocking\Domain_Data_Entity_Relation.tt">
       <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="DatastoreTemplates\Blocking\Domain_Data_GraphEvents.tt">
-      <LastGenOutput>Domain_Data_GraphEvents.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
     <None Update="DatastoreTemplates\Blocking\Domain_Data_Register.tt">

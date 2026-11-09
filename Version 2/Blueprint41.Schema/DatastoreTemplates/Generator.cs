@@ -113,20 +113,6 @@ namespace Blueprint41.DatastoreTemplates
 
                 #endregion
 
-                #region GraphEvents
-
-                GeneratorBase? ge = GeneratorBase.Get(flavor.Flavor, "Domain_Data_GraphEvents");
-                if (ge is not null)
-                {
-                    ge.Settings = flavor;
-                    ge.DALModel = null;
-                    ge.Datastore = model;
-                    string geContent = ge.TransformText();
-                    generatorResult.EntityResult.Add(flavor.Flavor, "_GraphEvents", geContent);
-                }
-
-                #endregion
-
                 if (!string.IsNullOrEmpty(settings.ProjectFolder))
                 {
                     // create Entities, Nodes and Relationship

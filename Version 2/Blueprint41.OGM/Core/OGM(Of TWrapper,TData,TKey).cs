@@ -90,14 +90,6 @@ namespace Blueprint41.Core
             OGM ogm = instance as OGM;
 
             Dictionary<string, object?> properties = (Dictionary<string, object?>)node.Properties;
-            if (cypher is not null)
-            {
-                Dictionary<string, object?>? customState = null;
-                NodeEventArgs loadingArgs = Entity.RaiseOnNodeLoading(trans, ogm, cypher, parameters, ref customState);
-                NodeEventArgs args = Entity.RaiseOnNodeLoaded(trans, loadingArgs, node.ElementId, node.Labels, properties);
-                properties = args.Properties!;
-            }
-
             if (instance.PersistenceState == PersistenceState.HasUid || instance.PersistenceState == PersistenceState.Loaded)
             {
                 ogm.SetData(properties);
@@ -312,7 +304,7 @@ namespace Blueprint41.Core
                 PersistenceState = PersistenceState.LoadedAndChanged;
         }
         internal protected bool LazySet<T>(Property property, T previousValue, T assignValue) => LazySet<T>(property, previousValue, assignValue, Transaction.RunningTransaction.TransactionDate);
-        internal protected override bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)
+        internal protected bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)
         {
             if (previousValue is null && assignValue is null)
                 return false;
@@ -344,13 +336,11 @@ namespace Blueprint41.Core
                 }
             }
 
-            if (base.LazySet(property, previousValue, assignValue, moment))
-                return false;
-
             LazySet();
             return true;
         }
-        internal protected override bool LazySet<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+        internal protected bool LazySet<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+            where T : OGM
         {
             if (!previousValues.Any() && assignValue is null)
                 return false;
@@ -360,9 +350,6 @@ namespace Blueprint41.Core
 
             if (property.PropertyType == PropertyType.Attribute)
                 throw new NotSupportedException("Don't use this overload for attributes.");
-
-            if (base.LazySet(property, previousValues!, assignValue, moment))
-                return false;
 
             LazySet();
             return true;
@@ -380,7 +367,7 @@ namespace Blueprint41.Core
                 PersistenceState = PersistenceState.LoadedAndChanged;
         }
         internal protected Task<bool> LazySetAsync<T>(Property property, T previousValue, T assignValue) => LazySetAsync<T>(property, previousValue, assignValue, Transaction.RunningTransaction.TransactionDate);
-        internal protected override async Task<bool> LazySetAsync<T>(Property property, T previousValue, T assignValue, DateTime? moment)
+        internal protected async Task<bool> LazySetAsync<T>(Property property, T previousValue, T assignValue, DateTime? moment)
         {
             if (previousValue is null && assignValue is null)
                 return false;
@@ -412,13 +399,11 @@ namespace Blueprint41.Core
                 }
             }
 
-            if (await base.LazySetAsync(property, previousValue, assignValue, moment))
-                return false;
-
             await LazySetAsync();
             return true;
         }
-        internal protected override async Task<bool> LazySetAsync<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+        internal protected async Task<bool> LazySetAsync<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+            where T : OGM
         {
             if (!previousValues.Any() && assignValue is null)
                 return false;
@@ -428,9 +413,6 @@ namespace Blueprint41.Core
 
             if (property.PropertyType == PropertyType.Attribute)
                 throw new NotSupportedException("Don't use this overload for attributes.");
-
-            if (await base.LazySetAsync(property, previousValues!, assignValue, moment))
-                return false;
 
             await LazySetAsync();
             return true;

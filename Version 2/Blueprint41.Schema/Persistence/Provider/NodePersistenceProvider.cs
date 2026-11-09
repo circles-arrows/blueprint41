@@ -43,10 +43,8 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
-            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(match + returnStatement, parameters);
 
             driver.Record? record = result.FirstOrDefault();
             if (record is null || record["node"] is null)
@@ -57,16 +55,13 @@ namespace Blueprint41.Persistence
 
             driver.NodeResult loaded = record["node"]!.As<driver.NodeResult>();
 
-            args.ElementId = loaded.ElementId;
-            args.Labels = loaded.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args = entity.RaiseOnNodeLoaded(trans, args, loaded.ElementId, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
 
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
             {
-                item.SetData(args.Properties!);
+                item.SetData((Dictionary<string, object?>)loaded.Properties);
                 item.PersistenceState = PersistenceState.Loaded;
                 item.OriginalPersistenceState = PersistenceState.Loaded;
             }
@@ -94,15 +89,12 @@ namespace Blueprint41.Persistence
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(match, parameters);
             var counters = result.Statistics();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            entity.RaiseOnNodeDeleted(trans, args);
             item.PersistenceState = PersistenceState.Deleted;
         }
 
@@ -128,15 +120,12 @@ namespace Blueprint41.Persistence
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(match, parameters);
             var counters =  result.Statistics();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            entity.RaiseOnNodeDeleted(trans, args);
             item.PersistenceState = PersistenceState.Deleted;
         }
 
@@ -184,25 +173,19 @@ namespace Blueprint41.Persistence
                 create = $"MERGE (inserted:{labels} {{ {entity.Key.Name}: $key}}) ON CREATE SET inserted = $node ON MATCH SET inserted = $node RETURN inserted";
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
-            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(create, parameters);
             driver.Record? record = result.FirstOrDefault();
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
             driver.NodeResult inserted = record["inserted"].As<driver.NodeResult>();
 
-            args.ElementId = inserted.ElementId;
-            args.Labels = inserted.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args.Properties = (Dictionary<string, object?>)inserted.Properties;
-            args = entity.RaiseOnNodeCreated(trans, args, inserted.ElementId, inserted.Labels, (Dictionary<string, object?>)inserted.Properties);
 
-            item.SetData(args.Properties!);
+            item.SetData((Dictionary<string, object?>)inserted.Properties);
             item.PersistenceState = PersistenceState.Persisted;
             Transaction.RunningTransaction.Register(entity.Name, item.Flavor, item, true);
         }
@@ -233,14 +216,11 @@ namespace Blueprint41.Persistence
             IDictionary<string, object?> node = item.GetData();
             parameters.Add("newValues", node);
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
 
-            driver.ResultCursor result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
+            driver.ResultCursor result = ((IStatementRunner)trans).Run(match, parameters);
             if (!GetStatistics(result).ContainsUpdates)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            entity.RaiseOnNodeUpdated(trans, args);
             item.PersistenceState = PersistenceState.Persisted;
         }
 
@@ -313,16 +293,14 @@ namespace Blueprint41.Persistence
                 sb.Append(pageSize);
             }
 
-            Dictionary<string, object?>? customState = null;
             Dictionary<string, object?> arguments = new Dictionary<string, object?>();
             if (parameters is not null)
                 foreach (IParameter parameter in parameters)
                     arguments.Add(parameter.Name, parameter.Value);
 
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), arguments, ref customState);
 
-            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
-            return Load<T>(entity, args, result, trans);
+            var result = ((IStatementRunner)trans).Run(sb.ToString(), arguments);
+            return Load<T>(entity, result, trans);
         }
         public List<T> LoadWhere<T>(Entity entity, ICompiledQuery query, IParameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
             where T : class, OGM
@@ -359,15 +337,13 @@ namespace Blueprint41.Persistence
                 sb.Append(" LIMIT ");
                 sb.Append(pageSize);
             }
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.GetParameters(), ref customState);
 
-            var result = Transaction.Run(args.Cypher, args.Parameters);
+            var result = Transaction.Run(sb.ToString(), context.GetParameters());
 
-            return Load<T>(entity, args, result, trans);
+            return Load<T>(entity, result, trans);
         }
 
-        internal List<T> Load<T>(Entity entity, NodeEventArgs args, Persistence.ResultCursor result, Transaction trans)
+        internal List<T> Load<T>(Entity entity, Persistence.ResultCursor result, Transaction trans)
             where T : class, OGM
         {
             if (entity.Key is null)
@@ -409,28 +385,23 @@ namespace Blueprint41.Persistence
                 {
                     wrapper = (T)concrete.Activator(EntityFlavor.Blocking);
                     wrapper.SetKey(key);
-                    args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);
-                    wrapper.SetData(args.Properties!);
+                    wrapper.SetData((Dictionary<string, object?>)node.Properties);
                     wrapper.PersistenceState = PersistenceState.Loaded;
                     wrapper.OriginalPersistenceState = PersistenceState.Loaded;
                 }
                 else
                 {
-                    args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);
 
                     PersistenceState tmp = wrapper.PersistenceState;
                     if (tmp == PersistenceState.HasUid || tmp == PersistenceState.Loaded || tmp == PersistenceState.Persisted)
                     {
-                        wrapper.SetData(args.Properties!);
+                        wrapper.SetData((Dictionary<string, object?>)node.Properties);
                         wrapper.PersistenceState = PersistenceState.Loaded;
                         wrapper.OriginalPersistenceState = PersistenceState.Loaded;
                     }
                 }
                 items.Add(wrapper);
             }
-            entity.RaiseOnBatchFinished(trans, args);
             return items;
         }
 
@@ -507,11 +478,9 @@ namespace Blueprint41.Persistence
                 sb.Append(pageSize);
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), null, ref customState);
 
-            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
-            return Load<T>(entity, args, result, trans);
+            var result = ((IStatementRunner)trans).Run(sb.ToString());
+            return Load<T>(entity, result, trans);
         }
 
         public bool RelationshipExists(EntityProperty foreignProperty, OGM item)
@@ -574,10 +543,8 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
-            var result = await ((IStatementRunnerAsync)trans).RunAsync(args.Cypher, args.Parameters);
+            var result = await ((IStatementRunnerAsync)trans).RunAsync(match + returnStatement, parameters);
 
             driver.Record? record = await result.FirstOrDefaultAsync();
             if (record is null || record["node"] is null)
@@ -588,16 +555,13 @@ namespace Blueprint41.Persistence
 
             driver.NodeResult loaded = record["node"]!.As<driver.NodeResult>();
 
-            args.ElementId = loaded.ElementId;
-            args.Labels = loaded.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args = entity.RaiseOnNodeLoaded(trans, args, loaded.ElementId, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
 
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
             {
-                item.SetData(args.Properties!);
+                item.SetData((Dictionary<string, object?>)loaded.Properties);
                 item.PersistenceState = PersistenceState.Loaded;
                 item.OriginalPersistenceState = PersistenceState.Loaded;
             }
@@ -625,15 +589,12 @@ namespace Blueprint41.Persistence
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = await ((IStatementRunnerAsync)trans).RunAsync(args.Cypher, args.Parameters);
+            var result = await ((IStatementRunnerAsync)trans).RunAsync(match, parameters);
             var counters = await result.StatisticsAsync();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            entity.RaiseOnNodeDeleted(trans, args);
             item.PersistenceState = PersistenceState.Deleted;
         }
 
@@ -659,15 +620,12 @@ namespace Blueprint41.Persistence
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = await ((IStatementRunnerAsync)trans).RunAsync(args.Cypher, args.Parameters);
+            var result = await ((IStatementRunnerAsync)trans).RunAsync(match, parameters);
             var counters = await result.StatisticsAsync();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            entity.RaiseOnNodeDeleted(trans, args);
             item.PersistenceState = PersistenceState.Deleted;
         }
 
@@ -715,25 +673,19 @@ namespace Blueprint41.Persistence
                 create = $"MERGE (inserted:{labels} {{ {entity.Key.Name}: $key}}) ON CREATE SET inserted = $node ON MATCH SET inserted = $node RETURN inserted";
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
-            var result = await ((IStatementRunnerAsync)trans).RunAsync(args.Cypher, args.Parameters);
+            var result = await ((IStatementRunnerAsync)trans).RunAsync(create, parameters);
             driver.Record? record = await result.FirstOrDefaultAsync();
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
             driver.NodeResult inserted = record["inserted"].As<driver.NodeResult>();
 
-            args.ElementId = inserted.ElementId;
-            args.Labels = inserted.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args.Properties = (Dictionary<string, object?>)inserted.Properties;
-            args = entity.RaiseOnNodeCreated(trans, args, inserted.ElementId, inserted.Labels, (Dictionary<string, object?>)inserted.Properties);
 
-            item.SetData(args.Properties!);
+            item.SetData((Dictionary<string, object?>)inserted.Properties);
             item.PersistenceState = PersistenceState.Persisted;
             Transaction.RunningTransaction.Register(entity.Name, item.Flavor, item, true);
         }
@@ -764,14 +716,11 @@ namespace Blueprint41.Persistence
             IDictionary<string, object?> node = item.GetData();
             parameters.Add("newValues", node);
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
 
-            driver.ResultCursor result = await ((IStatementRunnerAsync)trans).RunAsync(args.Cypher, args.Parameters);
+            driver.ResultCursor result = await ((IStatementRunnerAsync)trans).RunAsync(match, parameters);
             if (!(await GetStatisticsAsync(result)).ContainsUpdates)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            entity.RaiseOnNodeUpdated(trans, args);
             item.PersistenceState = PersistenceState.Persisted;
         }
 
@@ -824,16 +773,14 @@ namespace Blueprint41.Persistence
                 sb.Append(pageSize);
             }
 
-            Dictionary<string, object?>? customState = null;
             Dictionary<string, object?> arguments = new Dictionary<string, object?>();
             if (parameters is not null)
                 foreach (IParameter parameter in parameters)
                     arguments.Add(parameter.Name, parameter.Value);
 
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), arguments, ref customState);
 
-            var result = await ((IStatementRunnerAsync)trans).RunAsync(args.Cypher, args.Parameters);
-            return await LoadAsync<T>(entity, args, result, trans);
+            var result = await ((IStatementRunnerAsync)trans).RunAsync(sb.ToString(), arguments);
+            return await LoadAsync<T>(entity, result, trans);
         }
         public async Task<List<T>> LoadWhereAsync<T>(Entity entity, ICompiledQuery query, IParameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
             where T : class, OGM
@@ -870,15 +817,13 @@ namespace Blueprint41.Persistence
                 sb.Append(" LIMIT ");
                 sb.Append(pageSize);
             }
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.GetParameters(), ref customState);
 
-            var result = await Transaction.RunAsync(args.Cypher, args.Parameters);
+            var result = await Transaction.RunAsync(sb.ToString(), context.GetParameters());
 
-            return await LoadAsync<T>(entity, args, result, trans);
+            return await LoadAsync<T>(entity, result, trans);
         }
 
-        internal async Task<List<T>> LoadAsync<T>(Entity entity, NodeEventArgs args, Persistence.ResultCursor result, Transaction trans)
+        internal async Task<List<T>> LoadAsync<T>(Entity entity, Persistence.ResultCursor result, Transaction trans)
             where T : class, OGM
         {
             if (entity.Key is null)
@@ -920,28 +865,23 @@ namespace Blueprint41.Persistence
                 {
                     wrapper = (T)concrete.Activator(EntityFlavor.Async);
                     wrapper.SetKey(key);
-                    args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);
-                    wrapper.SetData(args.Properties!);
+                    wrapper.SetData((Dictionary<string, object?>)node.Properties);
                     wrapper.PersistenceState = PersistenceState.Loaded;
                     wrapper.OriginalPersistenceState = PersistenceState.Loaded;
                 }
                 else
                 {
-                    args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);
 
                     PersistenceState tmp = wrapper.PersistenceState;
                     if (tmp == PersistenceState.HasUid || tmp == PersistenceState.Loaded || tmp == PersistenceState.Persisted)
                     {
-                        wrapper.SetData(args.Properties!);
+                        wrapper.SetData((Dictionary<string, object?>)node.Properties);
                         wrapper.PersistenceState = PersistenceState.Loaded;
                         wrapper.OriginalPersistenceState = PersistenceState.Loaded;
                     }
                 }
                 items.Add(wrapper);
             }
-            entity.RaiseOnBatchFinished(trans, args);
             return items;
         }
 
@@ -1018,11 +958,9 @@ namespace Blueprint41.Persistence
                 sb.Append(pageSize);
             }
 
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), null, ref customState);
 
-            var result = await ((IStatementRunnerAsync)trans).RunAsync(args.Cypher, args.Parameters);
-            return await LoadAsync<T>(entity, args, result, trans);
+            var result = await ((IStatementRunnerAsync)trans).RunAsync(sb.ToString());
+            return await LoadAsync<T>(entity, result, trans);
         }
 
         public async Task<bool> RelationshipExistsAsync(EntityProperty foreignProperty, OGM item)
