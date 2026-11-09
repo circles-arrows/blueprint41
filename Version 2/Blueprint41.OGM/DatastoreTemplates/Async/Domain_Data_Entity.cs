@@ -1402,7 +1402,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             
             #line 390 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Async\Domain_Data_Entity.tt"
-		
+        
     if (inheritedUnidentifiedProp is not null)
     {
 

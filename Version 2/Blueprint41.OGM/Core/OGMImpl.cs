@@ -25,6 +25,7 @@ namespace Blueprint41.Core
         }
         public override void Save()
         {
+            EnsureFlavor(false);
             switch (PersistenceState)
             {
                 case PersistenceState.New:
@@ -61,6 +62,7 @@ namespace Blueprint41.Core
         }
         public override async Task SaveAsync()
         {
+            EnsureFlavor(true);
             switch (PersistenceState)
             {
                 case PersistenceState.New:

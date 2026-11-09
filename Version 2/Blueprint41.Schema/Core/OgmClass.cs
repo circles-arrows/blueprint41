@@ -76,6 +76,14 @@ namespace Blueprint41.Core
             return Task.CompletedTask;
         }
 
+        protected void EnsureFlavor(bool async, [System.Runtime.CompilerServices.CallerMemberName] string? member = null)
+        {
+            if (async && Flavor != EntityFlavor.Async)
+                throw new NotSupportedException($"{GetType().Name} is a {Flavor} entity, the async method '{member}' can only be used on {EntityFlavor.Async} entities.");
+            if (!async && Flavor == EntityFlavor.Async)
+                throw new NotSupportedException($"{GetType().Name} is an {Flavor} entity, the sync method '{member}' cannot be used, call its Async counterpart instead.");
+        }
+
         public abstract void Save();
         public abstract Task SaveAsync();
         public abstract void Delete(bool force);
@@ -89,10 +97,10 @@ namespace Blueprint41.Core
         void OGM.SetRowVersion(DateTime? value) => SetRowVersion(value);
         IDictionary<string, object?> OGM.GetData() => GetData();
         void OGM.SetData(IReadOnlyDictionary<string, object?> data) => SetData(data);
-        void OGM.ValidateSave() => ValidateSave();
-        Task OGM.ValidateSaveAsync() => ValidateSaveAsync();
-        void OGM.ValidateDelete() => ValidateDelete();
-        Task OGM.ValidateDeleteAsync() => ValidateDeleteAsync();
+        void OGM.ValidateSave() { EnsureFlavor(false, nameof(ValidateSave)); ValidateSave(); }
+        Task OGM.ValidateSaveAsync() { EnsureFlavor(true, nameof(ValidateSaveAsync)); return ValidateSaveAsync(); }
+        void OGM.ValidateDelete() { EnsureFlavor(false, nameof(ValidateDelete)); ValidateDelete(); }
+        Task OGM.ValidateDeleteAsync() { EnsureFlavor(true, nameof(ValidateDeleteAsync)); return ValidateDeleteAsync(); }
         Entity OGM.GetEntity() => GetEntity();
         void OGM.SetChanged() => SetChanged();
         public abstract EntityFlavor Flavor { get; }

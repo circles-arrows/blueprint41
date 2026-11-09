@@ -373,42 +373,7 @@ namespace Blueprint41.Dynamic
                     throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
             }
         }
-        async Task OGM.SaveAsync()
-        {
-            switch (PersistenceState)
-            {
-                case PersistenceState.New:
-                    throw new NotSupportedException(string.Format("You created an instance of {0}, but inside this transaction but did not set any properties. If you did this intentionally, you can call the method 'SetChanged' on the instance before committing the transaction.", GetEntity().Name));
-                case PersistenceState.HasUid:
-                case PersistenceState.Loaded:
-                    break;
-                case PersistenceState.NewAndChanged:
-                    await RunningTransaction.NodePersistenceProvider.InsertAsync(this);
-                    PersistenceState = PersistenceState.Persisted;
-                    break;
-                case PersistenceState.LoadedAndChanged:
-                    await RunningTransaction.NodePersistenceProvider.UpdateAsync(this);
-                    PersistenceState = PersistenceState.Persisted;
-                    break;
-                case PersistenceState.Persisted:
-                    break;
-                case PersistenceState.Delete:
-                    await RunningTransaction.NodePersistenceProvider.DeleteAsync(this);
-                    PersistenceState = PersistenceState.Deleted;
-                    return;
-                case PersistenceState.ForceDelete:
-                    await RunningTransaction.NodePersistenceProvider.ForceDeleteAsync(this);
-                    PersistenceState = PersistenceState.Deleted;
-                    return;
-                case PersistenceState.OutOfScope:
-                case PersistenceState.Error:
-                    throw new InvalidOperationException(string.Format("The {0} with key '{1}' cannot be saved because it's state was {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
-                case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
-                default:
-                    throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
-            }
-        }
+        Task OGM.SaveAsync() => throw new NotSupportedException("Dynamic entities are sync-only, call Save() instead of SaveAsync().");
 
         void OGM.ValidateSave()
         {
@@ -445,29 +410,9 @@ namespace Blueprint41.Dynamic
             }
         }
 
-        Task OGM.ValidateSaveAsync()
-        {
-            ((OGM)this).ValidateSave();
-            return Task.CompletedTask;
-        }
+        Task OGM.ValidateSaveAsync() => throw new NotSupportedException("Dynamic entities are sync-only, call ValidateSave() instead of ValidateSaveAsync().");
 
-        async Task OGM.ValidateDeleteAsync()
-        {
-            object? key = GetKey();
-            foreach (var relationship in DynamicEntityType.Parent.Relations)
-            {
-                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty is not null && relationship.OutProperty.Nullable == false)
-                {
-                    if (await RelationshipExistsAsync(relationship.OutProperty, this))
-                        throw new PersistenceException(string.Format("Cannot delete {0} with key '{1}' because it is participating in a {2} relationship.", DynamicEntityType.Name, key, relationship.Neo4JRelationshipType));
-                }
-                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty is not null && relationship.InProperty.Nullable == false)
-                {
-                    if (await RelationshipExistsAsync(relationship.InProperty, this))
-                        throw new PersistenceException(string.Format("Cannot delete {0} with key '{1}' because it is participating in a {2} relationship.", DynamicEntityType.Name, key, relationship.Neo4JRelationshipType));
-                }
-            }
-        }
+        Task OGM.ValidateDeleteAsync() => throw new NotSupportedException("Dynamic entities are sync-only, call ValidateDelete() instead of ValidateDeleteAsync().");
 
         void OGM.ValidateDelete()
         {
@@ -772,11 +717,6 @@ namespace Blueprint41.Dynamic
                 object? key = ((OGM)this).GetKey();
                 return (key is not null);
             }
-        }
-
-        protected Task<bool> RelationshipExistsAsync(EntityProperty foreignProperty, OGM instance)
-        {
-            return RunningTransaction.NodePersistenceProvider.RelationshipExistsAsync(foreignProperty, instance);
         }
 
         protected bool RelationshipExists(EntityProperty foreignProperty, OGM instance)
